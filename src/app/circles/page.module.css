@@ -1,0 +1,95 @@
+@import url("https://fonts.googleapis.com/css?family=Raleway:900&display=swap");
+
+.container {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    margin: auto;
+    width: 100vw;
+    height: 80pt;
+    top: 0;
+    bottom: 0;
+    filter: url(#threshold) blur(0.6px);
+}
+.text1,
+.text2 {
+    position: absolute;
+    width: 100%;
+    display: inline-block;
+    font-family: "Raleway", sans-serif;
+    font-size: 80pt;
+    text-align: center;
+    user-select: none;
+}
+.circle{
+    z-index: 1000;
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: black;
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    transition: all 1s linear;
+    box-shadow: 0px 0px 15px 13px rgba(0,0,0,0.9);
+}
+@media screen and (max-width:1440px) and (orientation:landscape){
+    .text1,
+    .text2 {
+        font-size: 50pt;
+    }
+}
+@media screen and (min-width: 1138px) and (max-width:1140px) and (orientation:landscape){
+    .text1,
+    .text2 {
+        font-size: 38pt;
+    }
+}
+@media screen and (min-width: 658px) and (max-width:1137px) and (orientation:landscape){
+    .text1,
+    .text2 {
+        font-size: 38pt;
+    }
+}
+@media screen and (max-width:1024px) {
+    .text1,
+    .text2 {
+        font-size: 50pt;
+    }
+}
+@media screen and (max-width:768px) {
+    .text1,
+    .text2 {
+        font-size: 47pt;
+    }
+}
+@media screen and (max-width:430px) {
+    .text1,
+    .text2 {
+        font-size: 46pt;
+    }
+}
+@media screen and (max-width:390px) {
+    .text1,
+    .text2 {
+        font-size: 42pt;
+    }
+}
+@media screen and (max-width:375px) {
+    .text1,
+    .text2 {
+        font-size: 38pt;
+    }
+}
+@media screen and (max-width:320px) {
+    .container {
+        display: flex;
+        align-items: center;
+    }
+    .text1,
+    .text2 {
+        font-size: 32pt;
+    }
+}

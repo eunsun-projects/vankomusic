@@ -1,0 +1,704 @@
+.introdes{
+    margin-top: -5rem;
+    padding-bottom: 2rem;
+    text-align: center;
+}
+.introwater{
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    touch-action: none;
+}
+.handparents{
+    width: 160px;
+    height: 160px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.handdiv{
+    position: absolute;
+    animation: rotate 4s linear infinite; 
+}
+.hand{
+    width: 50px;
+    height: 50px;
+    top: 50%; 
+    left: 50%;
+    margin-top: -15px;
+    margin-left: -15px;
+    animation: rotate2 4s linear infinite; 
+}
+@keyframes rotate {
+    0% {
+      transform: rotate(0deg) translateX(-65px); /* 컨테이너 중앙에서 이미지의 반지름만큼 떨어진 위치 */
+    }
+    100% {
+      transform: rotate(360deg) translateX(-65px); /* 360도 회전 */
+    }
+}
+@keyframes rotate2 {
+    0% {
+      transform: rotate(0deg) ; /* 컨테이너 중앙에서 이미지의 반지름만큼 떨어진 위치 */
+    }
+    100% {
+      transform: rotate(-360deg) ; /* 360도 회전 */
+    }
+}
+
+.seonangpage{
+    width: 100%;
+    height: 100%;
+    /* min-height: 100vh; */
+    overflow: hidden;
+    background-image: url('/assets/img/cave2.jpg');
+    background-size: cover;
+}
+.seonangbox{
+    position: relative;
+    margin: 11rem auto 0;
+}
+.centerimg{
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    /* top: 50%;
+    transform: translateY(-50%); */
+    gap: 2rem;
+}
+.leftdiv{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height:410px
+}
+.home{
+    color: wheat;
+    padding-bottom: 2rem;
+}
+.paper{
+    width: 3rem;
+    height: auto;
+    padding-bottom: 1rem;
+}
+.torchleft{
+    width: 5rem;
+    padding-top: 0.5rem;
+}
+.torchright{
+    width: 5rem;
+    height: auto;
+}
+
+.gasacontainer{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 100;
+    background-color: rgba(0, 0, 0, 0);
+}
+.close{
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    color: gainsboro;
+    font-family: 'dimibang_new';
+    font-size: 1.5rem;
+    cursor: grab;
+}
+
+.gasabox{
+    position: fixed;
+    box-sizing: border-box;
+    width: 620px;
+    height: 410px;
+    overflow-y: scroll;
+    top: 11rem;
+    left: 50%;
+    padding-left: 0.5rem;
+    transform: translate(-50%);
+    color: wheat;
+    background-color: rgba(0, 0, 0, 0.351);
+    font-size: 1.5rem;
+    font-family: 'dimibang_new';
+}
+.gasabox p{
+    white-space: pre-line;
+}
+
+.gasabox::-webkit-scrollbar{
+    background-color: rgba(0,0,0,0);
+    width: 3px;
+}
+
+.gasabox::-webkit-scrollbar-thumb{
+    background-color: rgba(0,0,0,0.3);
+}
+
+.sampleversion{
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-family: serif;
+    color: white;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 620px;
+    height: 410px;
+    background-color: rgb(13, 13, 76);
+    z-index: 1;
+}
+.treebox{
+    position: relative;
+    width: 620px;
+    height: 410px;
+}
+.tree{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+.garaoke{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    /* font-family: 'Nanum Myeongjo', serif; */
+    /* font-family: 'TAEBAEKmilkyway'; */
+    /* font-family: 'Nanum Gothic', sans-serif; */
+    font-family: 'HakgyoansimWoojuR';
+    font-weight: bold;
+    font-size: 1.5rem;
+    text-align: center;
+    color: white;
+    text-shadow: 1px 0px black, 0px 1px black, -1px 0px black, 0px -1px black;
+    position: absolute;
+    /* z-index: 2; */
+}
+.garaoke p{
+    width: fit-content;
+    /* background-color: #000000ab; */
+    /* margin-bottom: 1rem; */
+    padding-bottom: 1rem;
+    padding-left: 0.3rem;
+    padding-right: 0.3rem;
+}
+.mungubox{
+    width: 100%;
+}
+.mungu{
+    white-space:pre-line;
+    text-align: center;
+    /* color: wheat; */
+    color: #d8c39b;
+    padding-top: 1rem;
+}
+
+.waterbox{
+    position: relative;
+    display: flex;
+    justify-content: center;
+    padding-top: 1rem;
+    touch-action: none;
+}
+.water{
+    width: 10rem;
+    height: 100%;
+}
+.magiceffect{
+    width: 10rem;
+    height: auto;
+    position: absolute;
+}
+
+.enter{
+    margin-top: 3rem;
+    color: black;
+    background-color: grey;
+    text-align: center;
+}
+
+/********** 운세 html **********/
+.x{
+    color:white;
+    font-size: 1.5rem;
+    font-family:'dimibang_new';
+    margin-bottom: 0.5rem;
+    text-align:right;
+    width:100%
+}
+
+.unseboxs{
+    position: relative;
+    display: flex;
+    gap: 3rem;
+    height: 100%;
+}
+.unsedivs{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.unseicon{
+    width: 2rem;
+    height: auto;
+}
+/********** 운세 컴포넌트 **********/
+.unseone{
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    z-index: 100;
+    background-color: rgba(0, 0, 0, 0);
+}
+.unsebackground{
+    background-color: #0d0d4c;
+    width: 620px;
+    height: 410px;
+}
+.unseimgdiv{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    top: 10%;
+}
+.buzeok{
+    width: 12rem;
+    height: auto;
+}
+.unseonep{
+    color: yellow;
+    font-size: 1.5rem;
+    font-family: 'Silkscreen';
+}
+.unsetwop{
+    color: white;
+    font-size: 1.5rem;
+    font-family: 'dimibang_new';
+    margin-bottom: 0.5rem;
+    text-align: center;
+}
+.taro{
+    display: flex;
+    gap: 1rem;
+}
+.tarocard{
+    width: 10rem;
+    height: auto;
+}
+
+/* 포춘쿠키 */
+.lotterycontainer{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 100;
+    background-color: rgba(0, 0, 0, 0);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.fortunewrapper {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.fortuneresult {
+    position: absolute;
+    /* top: 0;
+    left: 0; */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 300px;
+    height: 300px;
+    font-size: 2rem;
+    font-family: 'dimibang_new';
+    font-weight: bold;
+    background-image: url('/assets/img/paper.png');
+}
+
+.fortunecanvas {
+    position: relative;
+}
+
+/* 모바일버전~~~~ */
+.mseonangpage{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.mobilecenter{
+    position: relative;
+}
+.torchborder{
+    display: flex;
+    justify-content: space-around;
+    padding-bottom: 1.3rem;
+    box-sizing: border-box;
+    height: 7rem;
+}
+.torch{
+    width: 3rem;
+    height: auto;
+}
+.mtreebox{
+    position: relative;
+    width: 100%;
+    height: 17.5rem;
+}
+.mtree{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+.mgaraoke{
+        width: 100%;
+        height: 100%;
+        bottom: 0%;
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+        font-family: 'HakgyoansimWoojuR';
+        font-weight: bold;
+        font-size: 1.5rem;
+        text-align: center;
+        color: white;
+        text-shadow: 1px 0px black, 0px 1px black, -1px 0px black, 0px -1px black;
+        position: absolute;
+}
+.mgaraoke p{
+    width: fit-content;
+    padding-bottom: 0.5rem;
+    padding-left: 0.3rem;
+    padding-right: 0.3rem;
+}
+.hadan{
+    position: relative;
+    z-index: 999999;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 2.5rem;
+    bottom: 0%;
+    left: 1%;
+    width: 98%;
+}
+.mpaper{
+    width: 2.5rem;
+}
+.mhome{
+    color: wheat;
+}
+
+.landscape{
+    box-sizing: border-box;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    background-image: url('/assets/img/cave2.jpg');
+    background-size: cover;
+    font-size: 1rem;
+    color: wheat;
+    text-align: center;
+}
+
+/****** 미디어쿼리 portrait ******/
+@media screen and (min-width:1023px) and (max-width:1024px) and (orientation:portrait){
+    .seonangbox{
+        margin: 25rem auto 0;
+    }
+}
+@media screen and (min-width:714px) and (max-width:820px) and (orientation:portrait){
+    .seonangbox{
+        margin: 16rem auto 0;
+    }
+    .centerimg{
+        gap: 1.2rem;
+    }
+    .torchleft{
+        width: 4rem;
+    }
+    .torchright{
+        width: 4rem;
+    }
+    .fortuneresult{
+        width: 299px;
+        height: 299px;
+    }
+}
+
+@media screen and (min-width:712px) and (max-width:713px) and (orientation:portrait){
+    .seonangbox{
+        margin: 19rem auto 0;
+    }
+    .centerimg{
+        gap: 1rem;
+    }
+    .torchleft{
+        width: 3.5rem;
+        padding-top: 0rem;
+    }
+    .torchright{
+        width: 3.5rem;
+    }
+    .treebox{
+        height: 370px;
+    }
+    .leftdiv{
+        height: 370px;
+    }
+    .water{
+        width: 9rem;
+    }
+    .magiceffect{
+        width: 9rem;
+    }
+    .sampleversion{
+        width: 580px;
+        height: 370px;
+    }
+    .unsebackground{
+        width: 580px;
+        height: 370px;
+    }
+    .buzeok{
+        width: 10rem;
+    }
+    .tarocard{
+        width: 8rem;
+    }
+}
+
+@media screen and (max-width:711px) and (orientation:portrait){
+    .introdes{
+        width: 19rem;
+    }
+    .mungubox{
+        width: 84%;
+        margin: 0 auto;
+    }
+    .mungu{
+        padding-top: 2rem;
+    }
+    .water{
+        width: 8rem;
+    }
+    .magiceffect{
+        width: 8rem;
+    }
+    .sampleversion{
+        width: 100%;
+        height: 17.5rem;
+        top: 12rem;
+    }
+    .unseone{
+        display: block;
+        margin: 7rem auto;
+        height: fit-content;
+    }
+    .unseboxs{
+        gap: 1.5rem;
+        top: -5%;
+    }
+    .x{
+        font-size: 1.3rem;
+        position: relative;
+        margin-bottom: 0rem;
+        right: 0.5rem;
+    }
+    .unsebackground{
+        position: absolute;
+        width: 100%;
+        height: 17.5rem;
+        /* top: 11rem */
+    }
+    .unseimgdiv{
+        top: 8%;
+    }
+    .buzeok{
+        width: 8rem;
+    }
+    .unseonep{
+        font-size: 1.2rem;
+    }
+    .unsetwop{
+        font-size: 1.2rem;
+        padding-bottom: 0.5rem;
+    }
+    .tarocard{
+        width: 6.5rem;
+    }
+    .lotterycontainer{
+        position: absolute;
+        align-items: flex-start;
+        height: fit-content;
+        touch-action: none;
+    }
+    .fortuneresult{
+        width: 229px;
+        height: 229px;
+    }
+    .fortunewrapper{
+        top : 8.5rem;
+        width: 350px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: rgb(13, 13, 76);
+    }
+    .fortuneresult{
+        font-size: 1.5rem;
+    }
+    .gasabox{
+        top: 6rem;
+        height: 25rem;
+        width: 100%;
+    }
+    .mgaraoke{
+        font-size: 1.3rem;
+    }
+    .paper{
+        width: 2.3rem;
+    }
+    .hadan{
+        position: fixed;
+        height: 2.3rem;
+    }
+}
+@media screen and (max-width:430px) and (orientation:portrait){
+    .gasabox{
+        top: 12rem;
+        height: 30rem;
+        width: 100%;
+    }
+}
+/* vanko님 휴대폰 ipone12 */
+@media screen and (max-width:390px) and (orientation:portrait){
+    .gasabox{
+        top: 12rem;
+        height: 30rem;
+        width: 100%;
+    }
+}
+@media screen and (max-width:375px) and (orientation:portrait){
+    /* .mseonangpage{
+        min-height: calc(100vh - 2.3rem);
+    } */
+    .torchborder{
+        height: 6rem;
+        padding: 1rem 0 0.5rem 0;
+        box-sizing: border-box;
+    }
+    .torch{
+        width: 2.3rem;
+    }
+    .mtreebox{
+        height: 15rem;
+    }
+    .mungubox{
+        width: 98%;
+    }
+    .mungu{
+        padding-top: 1rem;
+    }
+    .water{
+        width: 7rem;
+    }
+    .sampleversion{
+        width: 101%;
+        height: 15.3rem;
+        top: 6rem;
+    }
+    .magiceffect{
+        width: 7rem;
+    }
+    .unsebackground{
+        height: 15rem;
+        top: -1rem;
+    }
+    .unseimgdiv{
+        top: 0%;
+    }
+    .tarocard{
+        width: 6rem;
+    }
+    .fortunewrapper{
+        top: 7rem;
+    }
+    .buzeok{
+        width: 7rem;
+        padding-top: 1rem;
+    }
+    .fortuneresult{
+        width: 205px;
+        height: 205px;
+    }
+    .gasabox{
+        top: 6rem;
+        height: 26rem;
+        width: 100%;
+    }
+}
+
+/****** 미디어쿼리 landscape ******/
+/* 231201 vanko님 노트북 1440 * 760 */
+@media screen and (max-width:1440px) and (orientation:landscape){
+    .seonangbox{
+        margin: 6rem auto 0;
+    }
+}
+@media screen and (max-width:1366px) and (orientation:landscape){
+    .seonangbox{
+        margin: 15rem auto 0;
+    }
+}
+@media screen and (max-width:1290px) and (orientation:landscape){
+    .seonangbox{
+        margin: 8rem auto 0;
+    }
+}
+@media screen and (max-width:1024px) and (orientation:landscape){
+    .seonangbox{
+        margin: 6rem auto 0;
+    }
+}
+@media screen and (max-width:940px) and (orientation:landscape){
+    .seonangpage{
+        overflow: scroll;
+    }
+    .seonangbox{
+        margin: 4rem auto 0;
+    }
+}

@@ -1,0 +1,378 @@
+/* 로그인 전 페이지 */
+.loginpage{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    font-family: 'DungGeunMo';
+    gap: 1rem;
+    font-size: 1.2rem;
+}
+.loginbtn{
+    background-color: #9e9c9c;
+    border: 2px outset #dddada;
+    width: fit-content;
+    height: fit-content;
+    font-size: 1.2rem;
+    padding: 0 0.3rem;
+    box-sizing: border-box;
+    color: blue;
+}
+/* 로그인 후 페이지 */
+.adminpage{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: 'DungGeunMo';
+}
+.logoutbtn{
+    background-color: #9e9c9c;
+    border: 2px outset #dddada;
+    width: fit-content;
+    height: fit-content;
+    font-size: 1.2rem;
+    font-family: 'DungGeunMo';
+    padding: 0 0.3rem;
+    box-sizing: border-box;
+    color: blue;
+}
+.admintitle{
+    font-size: 3rem;
+    color: white;
+    background-color: blue;
+    width: 100%;
+    text-align: center;
+    padding-bottom: 1rem;
+    box-sizing: border-box;
+}
+.adminnav{
+    position: relative;
+    display: flex;
+    gap: 3rem;
+    font-size: 1rem;
+    padding-top: 1rem;
+    box-sizing: border-box;
+}
+.navbtn{
+    /* background-color: blue; */
+    color: white;
+    /* border: 2px outset #6666ff; */
+    padding-top: 1rem;
+    box-sizing: border-box;
+}
+.navflex{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 9rem;
+    cursor: pointer;
+}
+.iconbox{
+    height: 3.5rem;
+}
+/*메인어드민*/
+.mainadminleftbox{
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    align-items: center;
+}
+.vancircle{
+    width: 1rem;
+    height: 1rem;
+    border-radius: 100%;
+    background: radial-gradient(#c9ffff, #0080c0 ,darkblue);
+    box-shadow: 1px 0px 20px aqua, 0 1px 20px aqua /* margin-right: 2rem; */;
+}
+.musicmoklok{
+    border-top: 0px;
+    border: 2px ridge grey;
+    box-sizing: border-box;
+    padding: 0.3rem;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    width: 20rem;
+    font-size: 1rem;
+    overflow: scroll;
+    background-color: black;
+    background-image: url('/assets/img/starpixel.webp');
+    background-repeat: repeat;
+    background-size: 20rem;
+    margin-top: 0.3rem;
+    text-align: center;
+}
+
+.vanampp{
+    color: blue;
+    font-size: 1rem;
+    font-family: 'New Brush', cursive;
+    text-shadow: -1px 1px 0px lime, 0px 2px 0px lime;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(#65e3ff, #c9ffff ,#65e3ff);
+    width: 10rem;
+    height: 1rem;
+    border-radius: 10rem;
+    box-shadow: 0px 0px 20px blue;
+}
+.audiobox{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: grey;
+    margin: 2rem 0;
+    border: 10px outset grey;
+    width: 30rem;
+    --dotSize: 0.05rem;
+    --bgSize: 0.15rem;
+    --bgPosition: calc(var(--bgSize) / 2);
+    background-image: radial-gradient( circle at center, black var(--dotSize), transparent 0 );
+    background-size: var(--bgSize) var(--bgSize);
+}
+.audiocontents{
+    font-family: auto;
+    border-top: 0px;
+    border: 2px ridge grey;
+    box-sizing: border-box;
+    padding: 0.3rem;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    height: 20rem;
+    width: 20rem;
+    font-size: 1rem;
+    overflow: scroll;
+    background-color: black;
+    background-image: url(/assets/img/starpixel.webp);
+    background-repeat: repeat;
+    background-size: 20rem;
+}
+.mainfooter{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 20rem;
+}
+.mpthreebox{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: lightgrey;
+    margin: 2rem 0;
+    width: 20rem;
+    border: 2px outset grey;
+    gap: 1rem;
+}
+.mpthreetitle{
+    font-family: 'DungGeunMo';
+    background-color: navy;
+    color: white;
+    width: 100%;
+    padding: 0.2rem 0.5rem;
+    box-sizing: border-box;
+}
+.mpthreeselect{
+    background-color: white;
+    width: 96%;
+    height: 19rem;
+    border: 2px inset grey;
+}
+
+/* 아카이브어드민, 큐레이션어드민 */
+.leftboxs{
+    width: 38rem;
+    height: 16rem;
+    box-sizing: border-box;
+    padding: 1rem;
+    background-color: wheat;
+    font-family: 'DungGeunMo';
+}
+.leftboxstitle{
+    position: relative;
+    box-sizing: border-box;
+    padding-bottom: 1rem;
+    font-size: 1.2rem;
+}
+.thumbimgbox{
+    position: relative;
+    width: 10.5rem;
+    height: 10rem;
+    background-color: beige;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+.formbox{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 70%;
+    gap: 0.2rem;
+    font-size: 0.9rem;
+}
+.formbox input[type=text]{
+    border: 1px inset grey;
+}
+.formbox input:focus {
+    outline: 2px solid magenta;
+}
+.okbtn{
+    width: 5rem;
+    margin: 0.5rem auto 0;
+    background-color: grey;
+    border: 2px outset #a5a4a4;
+}
+.allbox::-webkit-scrollbar{
+    background: rgb(187, 187, 187);
+    width: 10px;
+    height: 0px;
+}
+.allbox::-webkit-scrollbar-thumb{
+    background-color: grey;
+}
+.listbox{
+    width: 20rem;
+    height: 35rem;
+    /* background-color: grey; */
+    background-image: url('/assets/img/starpixel.webp');
+    background-repeat: repeat;
+    background-size: 20rem;
+}
+.seleclistbox{
+    width: 40rem;
+    height: 25rem;
+    background-image: url('/assets/img/starpixel.webp');
+    background-repeat: repeat;
+    background-size: 20rem;
+}
+.line{
+    position: relative;
+    height: 1px;
+}
+.linetrans{
+    width: 30%;
+    background-image: linear-gradient(90deg,transparent,#ffffe0,transparent);
+}
+.listtile{
+    color: wheat;
+    font-family: 'DungGeunMo';
+    font-style: italic;
+    font-size: 1.5rem;
+    border-bottom: 5px double blue;
+    border-top: 5px double blue;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0.3rem;
+}
+.titleconbox{
+    height: 27rem;
+    padding-top: 1rem;
+    box-sizing: border-box;
+    font-size: 1.2rem;
+    font-family: 'DungGeunMo';
+}
+.selectitleconbox{
+    height: 16rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-y: scroll;
+    justify-content: center;
+    box-sizing: border-box;
+    padding: 2rem 1rem 1rem 1rem;
+}
+.titleboxall{
+    width: 100%;
+    height: 100%;
+    color: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 2rem;
+    background-color: #80808075;
+    border: 1px solid aqua;
+    color: aqua;
+}
+.titlebox{
+    color: black;
+    display: flex;
+    align-items: center;
+    height: 2rem;
+    background-color: white;
+}
+.titlebox:hover{
+    background-color: blue;
+    color: white;
+}
+.movebtn{
+    width: 100%;
+    background-color: grey;
+    border: 2px outset #a5a4a4;
+    text-align: center;
+    box-sizing: border-box;
+    color: wheat;
+    font-family: 'DungGeunMo';
+    padding-bottom: 0.2rem;
+    font-size: 1.2rem;
+}
+.fixbtn{
+    width: 10rem;
+    height: fit-content;
+    background-color: grey;
+    border: 2px outset #a5a4a4;
+    text-align: center;
+    color: wheat;
+    font-family: 'DungGeunMo';
+    height: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.footer{
+    border-top: 5px double blue;
+    border-bottom: 5px double blue;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.uploadname{
+    display: inline-block;
+    height: 40px;
+    padding: 0 10px;
+    vertical-align: middle;
+    border: 0px solid #dddddd;
+    width: 78%;
+    color: #999999;
+}
+
+.pdffilebox label{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* padding: 10px 20px; */
+    color: #fff;
+    vertical-align: middle;
+    background-color: #999999;
+    cursor: pointer;
+    height: 40px;
+    width: 8rem;
+    /* margin-left: 10px; */
+}
+
+.pdffilebox input[type="file"]{
+    position: absolute;
+    width: 0;
+    height: 0;
+    padding: 0;
+    overflow: hidden;
+    border: 0;
+}

@@ -1,0 +1,251 @@
+.contactpage{
+    width: 100%;
+    height: 100%;
+    /* height: calc(var(--vh, 1vh) * 100); */
+    min-height: calc((var(--vh, 1vh) * 100) - 2rem - 1px);
+    overflow: auto;
+}
+
+.contacttitle{
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    width: 98%;
+    /* font-family: 'Knewave', cursive; */
+    font-size: 3rem;
+    color: wheat;
+    border-top: 5px double purple;
+    border-bottom: 5px double purple;
+    margin-top: 1rem;
+}
+.contitleimg{
+    width: 3rem;
+    height: auto;
+}
+.contitleimgl{
+    margin-right: 1rem;
+}
+.contitleimgr{
+    margin-left: 1rem;
+}
+.contacttextbox{
+    position: relative;
+    margin: 0 auto;
+    padding: 2rem 0;
+    box-sizing: border-box;
+}
+
+.contacttext{
+    color: aliceblue;
+    font-size: 1.2rem;
+    font-family: 'DungGeunMo', 'Righteous', cursive;
+    text-align: center;
+}
+
+.contactpdf{
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    padding: 0 0 2rem;
+    color: aliceblue;
+    font-family: 'DungGeunMo';
+    font-size: 1rem;
+}
+.contactpdf p{
+    animation: textcolorchange 1s steps(1) infinite;
+}
+.convanko{
+    width: 3.5rem;
+    height: auto;
+    padding-bottom: 0.5rem;
+}
+/* .linkbox{
+    display: flex;
+    gap: 2rem;
+} */
+.link{
+    color: yellow;
+    text-shadow: 2px 0 blue;
+    /* background-color: gainsboro;
+    border: 3px outset gainsboro; */
+}
+.contactbox{
+    position: relative;
+    font-family: 'DungGeunMo';
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: aliceblue;
+    font-size: 1rem;
+    line-height: 2rem;
+}
+.contactbox p:nth-child(2){
+    white-space: pre-line;
+    padding-top: 1rem;
+    font-size: 0.9rem;
+}
+.contactform{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.contactform label {
+    padding-top: 0rem;
+}
+
+.contactform input{
+    width: 20rem;
+    font-family: 'DungGeunMo';
+}
+
+.contactform input[type=text] {
+    outline-offset: 0;
+    border-radius: 0;
+    -webkit-appearance: none;
+    appearance: none;
+}
+.contactform input[type=email] {
+    outline-offset: 0;
+    border-radius: 0;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.contactform input:focus {
+    outline: 0;
+}
+
+.contactform input:focus::-ms-clear,
+.contactform input:focus::-ms-reveal{
+	display: none;
+    width:0;
+    height:0;
+}
+.contactform input:focus::-webkit-search-decoration,
+.contactform input:focus::-webkit-search-cancel-button,
+.contactform input:focus::-webkit-search-results-button,
+.contactform input:focus::-webkit-search-results-decoration{
+	display:none;
+}
+.contactform input::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+    color: black;
+}
+.contactform input::-moz-placeholder{ /* Firefox 19+ */
+    color: black;
+}
+.contactform input:-ms-input-placeholder { /* IE 10+ */
+    color: black;
+}
+.contactform input:-webkit-autofill,
+.contactform input:-webkit-autofill:hover,
+.contactform input:-webkit-autofill:focus,
+.contactform input:-webkit-autofill:active {
+    transition: background-color 5000s ease-in-out 0s;
+    -webkit-transition: background-color 9999s ease-out;
+    -webkit-box-shadow: 0 0 0px 1000px rgba(255, 255, 255, 0) inset !important;
+    -webkit-text-fill-color: black !important;
+}
+
+.labelstar{
+    color: aqua;
+}
+
+.textarea{
+    height: 16rem;
+    font-family: 'DungGeunMo';
+    border-radius: 0;
+    border: 2px inset black;
+    color: black;
+    white-space: pre-line;
+    line-height: 1rem;
+    outline: none;
+    border-radius: 0;
+}
+.textarea::placeholder{
+    color: grey;
+}
+.consendbtn{
+    background-color: grey;
+    font-family: 'DungGeunMo';
+    font-size: 1rem;
+    color: aliceblue;
+    height: 1.5rem;
+    width: 5rem;
+    border: 3px outset #9d9d9d;
+    margin: 1rem;
+    border-radius: 0;
+}
+
+
+
+@keyframes textcolorchange {
+    0% { color: dodgerblue; }
+    20%{ color: red; }
+    50%{ color: aquamarine; }
+    75%{ color: orange; }
+    100% { color: deeppink; }
+}
+
+/****** 미디어쿼리 portrait ******/
+
+@media screen and (max-width:767px) and (orientation:portrait){
+    .contacttextbox{
+        padding: 2rem 0 2.5rem 0;
+    }
+    .contacttitle{
+        font-size: 2rem;
+    }
+    .contitleimg{
+        width: 2rem;
+    }
+    .contitleimgl{
+        margin-right: 0.7rem;
+    }
+    .contitleimgr{
+        margin-left: 0.7rem;
+    }
+
+    .contactform label{
+        padding-top: 0.5rem;
+    }
+    .convanko{
+        height: 3rem;
+        width: 3rem;
+    }
+}
+
+@media screen and (max-width:375px) and (orientation:portrait){
+    .contactbox p:nth-child(1){
+        font-size: 1rem;
+    }
+}
+@media screen and (max-width:320px) and (orientation:portrait){
+    .contactbox p:nth-child(2){
+        font-size: 0.85rem;
+    }
+    .contactform{
+        width: 95%;
+    }
+    .contactform input{
+        width: 18.5rem;
+    }
+    .textarea{
+        width: 18.5rem;
+    }
+}
+
+/****** 미디어쿼리 landscape ******/
+@media screen and (max-width:1290px) and (orientation:landscape){
+    .contacttextbox{
+        padding: 2rem 0;
+    }
+}

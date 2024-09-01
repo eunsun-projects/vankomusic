@@ -1,0 +1,407 @@
+@import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined");
+
+.vanradio{
+    /* margin: 2rem auto 1rem;
+    background: linear-gradient(#cd5700, #ffdc00, #0086df,#bd00b7,#017b3b,#5c009b);
+    box-shadow: 0 0 20px pink, 1px 1px 20px red; */
+
+    background-color: grey;
+    margin: 2rem auto 0;
+    width:38.7rem;
+    border: 10px outset grey;
+    --dotSize: 0.05rem;
+    --bgSize: 0.15rem;
+    --bgPosition: calc(var(--bgSize) / 2);
+    background-image: radial-gradient( circle at center, black var(--dotSize), transparent 0 );
+    background-size: var(--bgSize) var(--bgSize);
+}
+
+.vanampboxex{
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    /* align-items: center; */
+    box-sizing: border-box;
+    margin: 0 auto;
+    width: 18rem;
+    height: 1.4rem;
+    /* background-color: black; */
+    border: 2px ridge grey;
+    background-image: url('/assets/img/starpixel.webp');
+    background-repeat: repeat;
+    background-size: 20rem;
+}
+.vancircleleft{
+    width: 1rem;
+    height: 1rem;
+    border-radius: 100%;
+    background: radial-gradient(#c9ffff, #0080c0 ,darkblue);
+    box-shadow: 1px 0px 20px aqua, 0 1px 20px aqua
+    /* margin-right: 2rem; */
+}
+.vancircleright{
+    width: 1rem;
+    height: 1rem;
+    border-radius: 100%;
+    background: radial-gradient(#c9ffff, #0080c0 ,darkblue);
+    box-shadow: 1px 0px 20px aqua, 0 1px 20px aqua
+    /* margin-left: 2rem; */
+}
+.vanampbox{
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(#65e3ff, #c9ffff ,#65e3ff);
+    width: 9rem;
+    height: 1rem;
+    border-radius: 10rem;
+    box-shadow: 0px 0px 20px blue;
+}
+
+.vanampbtn{
+    color: blue;
+    font-size: 1rem;
+    font-family: 'New Brush', cursive;
+    text-shadow: -1px 1px 0px lime, 0px 2px 0px lime;
+}
+
+
+/* 플레이어 */
+.material_symbols_outlined {
+    font-family: 'Material Symbols Outlined';
+    font-weight: normal;
+    font-style: normal;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    font-feature-settings: "liga";
+    -webkit-font-feature-settings: 'liga';
+    -webkit-font-smoothing: antialiased;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* color: cadetblue; */
+    color: grey;
+    /* background-color: #2f7373; */
+    text-shadow: 0px 1px 2px black;
+    /* border: 5px ridge darkcyan; */
+    width: 30px;
+    height: 20px;
+    cursor : pointer;
+    font-size : 1rem;
+    position : relative;
+    font-variation-settings:
+    'FILL' 0,
+    'wght' 700,
+    'GRAD' 0,
+    'opsz' 48
+}
+
+
+.material_symbols_rounded:active {
+    color: aqua;
+} 
+@media (hover:hover){
+.material_symbols_rounded:hover {
+    color: aqua;
+}
+}
+.play_btn{
+    font-size: 1rem;
+}
+.pause_btn{
+    font-size: 1rem;
+}
+.replay_btn{
+font-size: 1rem;
+}
+
+@media (hover:hover){
+    .material_symbols_outlined:hover{
+        /* color: aqua; */
+        text-shadow: 0px 0px 5px aqua, 0px 0px 5px aqua, 0px 0px 5px aqua;
+    }
+}
+
+.music_container {
+    position: relative;
+    width: 18rem;
+    box-sizing: border-box;
+    margin: 0 auto;
+    font-weight: 500;
+}
+
+/* 이건 쓸모 없을지도 */
+.img_container {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 0%;
+    right: 0.8%;
+    z-index: 100;
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    border: 2px solid rgba(170, 170, 170, 0);
+    /* backdrop-filter: blur(50px);
+    -webkit-backdrop-filter: blur(50px); */
+}
+
+/* .nav_wrapper {
+    border : 1px solid rgba(255, 255, 255, 0.7);
+    background-color: rgba(170, 170, 170, 0.4);
+    backdrop-filter: blur(50px);
+    -webkit-backdrop-filter: blur(50px);
+} */
+
+.nav_upper_container{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0.3rem 0;
+    box-sizing: border-box;
+}
+
+.navigation_upper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: row;
+    align-self: flex-start;
+    width: 100%;
+}
+
+.progress_container {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom:5px;
+    width: 100%;
+    cursor: pointer;
+}
+
+.progress_container progress[value]{
+    width: 100%;
+    height: 2px;
+    background-color: teal;
+    appearance: none;
+    border: none;
+    border-radius: 0px;
+}
+
+.progress_container progress::-webkit-progress-bar{
+    background-color: rgba(247, 247, 247, .7) ;
+    width: 100%;
+    border-radius: 5px;
+}
+.progress_container progress::-webkit-progress-value{
+    background-color: aqua;
+    border-radius: 5px;
+}
+
+@media (hover:hover){
+    .volume:hover {
+        color: aqua;
+    }
+}
+
+.nav_lower_container{
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 0.5rem 0.2rem 0.2rem 0.2rem;
+    box-sizing: border-box;
+    border: 2px ridge grey;
+    background-color: black;
+    background-image: url('/assets/img/starpixel.webp');
+    background-repeat: repeat;
+    background-size: 20rem;
+    /* 도트 */
+    /* --dotSize: 0.05rem;
+    --bgSize: 0.15rem;
+    --bgPosition: calc(var(--bgSize) / 2);
+
+    background-image: radial-gradient(
+    circle at center,
+    black var(--dotSize),
+    transparent 0
+    );
+    background-size: var(--bgSize) var(--bgSize);
+    background-repeat: var(--bgPosition) var(--bgPosition); */
+}
+
+.music_title {
+    flex-basis: 50%;
+    font-size: 0.8rem;
+    /* font-family: 'Silkscreen', cursive; */
+    text-align: center;
+    position: relative;
+    /* color: lime; */
+    /* text-shadow: 0.8px 0 0px aqua, 0 0.5px 0px aqua; */
+    /* color: midnightblue;
+    text-shadow: 0.2px 0 aqua, 0 0.6px aqua; */
+    color: aqua;
+    text-shadow: 1px 0 black, 0 1px black, 0 0 10px aqua;
+}
+.music_container.play .music_title{
+    animation: showMusicInfo 3.5s infinite;
+    animation-play-state: running;
+}
+
+@keyframes showMusicInfo {
+    0%, 100% {
+        top: 0px;
+        left: -5%;
+    }
+    50% {
+        top: 0px;
+        left: 8%;
+    }
+}
+.music_time {
+    /* font-family: 'Silkscreen', cursive; */
+    font-size: 0.7rem;
+    text-align: center;
+    flex-basis: 40%;
+    color: lightblue;
+    text-shadow: 0.8px 0 black, 0 0.8px black;
+    /* color: darkturquoise;
+    text-shadow: 0.5px 0 5px blue, 0 0.5px 3px yellow; */
+}
+/* .list {
+    flex-basis: 10%;
+} */
+.music_info {
+    border-top: 0px;
+    border: 2px ridge grey;
+    box-sizing: border-box;
+    padding: 0.3rem;
+    display: flex;
+    flex-direction: column;
+    height: 5rem;
+    overflow: scroll;
+    background-color: black;
+    background-image: url('/assets/img/starpixel.webp');
+    background-repeat: repeat;
+    background-size: 20rem;
+    
+    /* 도트 */
+    /* --dotSize: 0.05rem;
+    --bgSize: 0.15rem;
+    --bgPosition: calc(var(--bgSize) / 2);
+
+    background-image: radial-gradient(
+    circle at center,
+    black var(--dotSize),
+    transparent 0
+    );
+    background-size: var(--bgSize) var(--bgSize);
+    background-repeat: var(--bgPosition) var(--bgPosition); */
+}
+
+.music_info p {
+    font-size: 0.75rem;
+    line-height: 1rem;
+    /* margin-top: 0.15rem; */
+    /* margin-bottom: 0.15rem; */
+    cursor: pointer;
+}
+.music_info p:hover {
+    color: #88fd93;
+}
+.music_info p:active {
+    color: #88fd93;
+}
+.music_info p:focus {
+    color: #88fd93;
+}
+
+.music_info::-webkit-scrollbar{
+    width: 3px;
+    height: 3px;
+    background-color: transparent;
+}
+
+.music_info::-webkit-scrollbar-corner{
+    background-color: transparent;
+}
+
+/******** 볼륨노브 *******/
+.volume_nob{
+    opacity: 0;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    z-index: 100;
+    margin-left: -0.5rem;
+    width: 5rem;
+    /* right: 1.1rem; */
+}
+.volume_nob input{
+    width: 4rem;
+}
+
+
+/****** 미디어쿼리 landscape ******/
+
+@media screen and (max-width:1366px){
+    .volume_nob{
+        width: 6rem;
+    }
+}
+@media screen and (max-width:1023px) and (orientation:portrait){
+    .vanradio{
+        width: 36.3rem;
+    }
+}
+@media screen and (max-width:767px){
+    .vanradio{
+        width: 87.5%;
+        border: 5px outset grey;
+    }
+    .volume_nob{
+        /* backdrop-filter: blur(0px);
+        -webkit-backdrop-filter: blur(0px); */
+        height: 1.2rem;
+        width: 4rem;
+    }
+    .volume_nob input{
+        width: 2.5rem;
+    }
+}
+@media screen and (min-width:711px) and (max-width:712px) and (orientation:portrait){
+    .vanradio{
+        width: 29.4rem;
+    }
+}
+
+@media screen and (max-width:375px) {
+    .vanradio{
+        width: 87%;
+        border: 5px outset grey;
+    }
+    .volume_nob{
+        top: 0.3rem;
+        right: 0.8rem;
+    }
+}
+@media screen and (max-width:320px) {
+    .vanradio{
+        width: 91%;
+    }
+}
+/****** 미디어쿼리 landscape ******/
+@media screen and (max-width:768px) and (orientation:landscape){
+    .vanradio{
+        width: 85%;
+        border: 10px outset grey;
+    }
+}

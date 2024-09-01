@@ -1,0 +1,167 @@
+.archivepage{
+    width: 100%;
+    height: 100%;
+    min-height: calc((var(--vh, 1vh) * 100) - 2rem - 1px);
+    overflow: auto;
+}
+
+.archivetitle{
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    width: 98%;
+    /* font-family: 'Knewave', cursive; */
+    font-size: 3rem;
+    color: wheat;
+    border-top: 5px double blue;
+    border-bottom: 5px double blue;
+    margin-top: 1rem;
+}
+.titleimg{
+    width: 2.5rem;
+    height: auto;
+}
+.titleimgleft{
+    margin-right: 1rem;
+}
+.titleimgright{
+    margin-left: 1rem;
+}
+
+.archivegrid{
+    position: relative;
+    display: grid;
+    place-items: center;
+    grid-template-columns: repeat(5, 1fr);
+    margin: 0rem auto;
+    padding: 2rem 0;
+    box-sizing: border-box;
+    width: 54rem;
+    height: auto;
+    font-size: 1rem;
+    grid-column-gap: 2rem;
+    grid-row-gap: 2rem;
+}
+.archivebox{
+    width: 9rem;
+    height: auto;
+}
+.archiveimg{
+    position: relative;
+    margin: 0 auto;
+    width: 8rem;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center center;
+    height: 8rem;
+}
+.archivebox p{
+    /* font-family: 'Righteous', 'DungGeunMo', sans-serif, cursive; */
+    width: 9rem;
+    color: aqua;
+    font-size: 1rem;
+    min-height: 1rem;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    text-align: center;
+}
+
+/****** 미디어쿼리 portrait ******/
+@media screen and (max-width:1023px) and (orientation:portrait){
+    .archivegrid{
+        grid-column-gap: 0rem;
+    }
+}
+@media screen and (max-width:1023px) and (orientation:portrait){
+    .archivegrid{
+        grid-template-columns: repeat(4, 1fr);
+        width: 70%;
+        grid-column-gap: 0rem;
+    }
+    .archivebox{
+        width: 7rem;
+    }
+    .archiveimg{
+        height: 7rem;
+    }
+}
+@media screen and (max-width:820px) and (orientation:portrait){
+    .archivegrid{
+        width: 80%;
+        grid-column-gap: 1rem;
+    }
+    .archiveimg{
+        height: 7rem;
+        width: 7rem;
+    }
+    .archivebox p{
+        width: 7rem;
+    }
+}
+@media screen and (max-width:767px) and (orientation:portrait){
+    .archivetitle{
+        font-size: 2rem;
+    }
+    .titleimg{
+        width: 2rem;
+    }
+    .titleimgleft{
+        margin-right: 0.5rem;
+    }
+    .titleimgright{
+        margin-left: 0.5rem;
+    }
+    
+    .archivegrid{
+        grid-template-columns: repeat(3, 1fr);
+        width: 98%;
+        grid-column-gap: 0rem;
+    }
+    .archivebox{
+        width: 6rem;
+    }
+    .archiveimg{
+        width: 6rem;
+        height: 6rem;
+    }
+    .archivebox p{
+        font-size: 0.9rem;
+        width: 6rem;
+    }
+}
+@media screen and (min-width:711px) and (max-width:712px) and (orientation:portrait){
+    .archivegrid{
+        grid-template-columns: repeat(4, 1fr);
+        width: 70%;
+        grid-column-gap: 2rem;
+    }
+}
+
+/****** 미디어쿼리 landscape ******/
+@media screen and (max-width:1023px) and (orientation:landscape){
+    .archivegrid{
+        grid-template-columns: repeat(5, 1fr);
+        width: 90%;
+        grid-column-gap: 0rem;
+    }
+    .archivebox{
+        width: 8rem;
+    }
+    .archiveimg{
+        height: 7rem;
+        width: 7rem;
+    }
+    .archivebox p{
+        width: 8rem;
+    }
+}
+@media screen and (max-width:768px) and (orientation:landscape){
+    .archivegrid{
+        grid-template-columns: repeat(4, 1fr);
+        grid-column-gap: 0rem;
+    }
+}
+
