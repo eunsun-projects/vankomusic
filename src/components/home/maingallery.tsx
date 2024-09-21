@@ -19,9 +19,11 @@ export default function MainGallery({ selectedVideos }: MainGalleryProps) {
     setShowModal(true);
   };
 
+  const closeModal = () => setShowModal(false);
+
   return (
     <>
-      {selected && showModal && <Modal setShowModal={setShowModal} modalPack={selected} />}
+      {selected && showModal && <Modal closeModal={closeModal} selected={selected} />}
 
       <div className={styles.maingallery}>
         {selectedVideos.map((videos, i) => {
