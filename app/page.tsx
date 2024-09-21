@@ -1,15 +1,11 @@
-import { getAudios } from '@/apis/audios/get.api';
-import BorderLine from '@/components/home/borderline';
-import Floatings from '@/components/home/floatings';
-import Hadan from '@/components/home/hadan';
-import MainGallery from '@/components/home/maingallery';
-import VankoMainLogo from '@/components/home/vankomainlogo';
+import { getAudios, getVideos } from '@/apis/audios/get.api';
+import { BorderLine, Floatings, Hadan, MainGallery, VankoMainLogo } from '@/components/home';
 import VanPlayer from '@/components/vanplayer/vanplayer';
-import { QUERY_KEY_AUDIOS } from '@/constants/query.constant';
+import { QUERY_KEY_AUDIOS, QUERY_KEY_VIDEOS } from '@/constants/query.constant';
 import { lobster, silkscreen, vastshadow } from '@/fonts';
 import { basicMeta, basicViewport } from '@/meta/basicmeta';
 import styles from '@/styles/home.module.css';
-import { Audios } from '@/types/vanko.type';
+import { Audios, Videos } from '@/types/vanko.type';
 import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -61,12 +57,22 @@ export default async function Home() {
     queryKey: [QUERY_KEY_AUDIOS],
     queryFn: () => getAudios(),
   });
+  await queryClient.prefetchQuery({
+    queryKey: [QUERY_KEY_VIDEOS],
+    queryFn: () => getVideos(),
+  });
   const audios = await queryClient.ensureQueryData<Audios[]>({
     queryKey: [QUERY_KEY_AUDIOS],
     queryFn: () => getAudios(),
   });
+  const videos = await queryClient.ensureQueryData<Videos[]>({
+    queryKey: [QUERY_KEY_VIDEOS],
+    queryFn: () => getVideos(),
+  });
 
+  const selectedVideos = videos.filter((video) => video.isSelected);
   const dehydratedState = dehydrate(queryClient);
+
   return (
     <Suspense fallback={<Loading />}>
       <HydrationBoundary state={dehydratedState}>
@@ -185,7 +191,7 @@ export default async function Home() {
 
             <BorderLine />
 
-            <MainGallery />
+            <MainGallery selectedVideos={selectedVideos} />
 
             <div className={styles.arcbtnbox}>
               <Link href="/archive" prefetch={false}>
