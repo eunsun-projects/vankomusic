@@ -27,7 +27,7 @@ export default function VankoMainLogo() {
           cancelAnimationFrame(rafRef.current);
         }
         window.onresize = null;
-        vankologo._destroy(); //반코로고클래스 리소스해제
+        vankologo.destroy(); //반코로고클래스 리소스해제
       };
     }
   }, [vankologoRef]);
