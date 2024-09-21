@@ -1,6 +1,5 @@
 @font-face {
     font-family: 'DungGeunMo';
-    /* src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/DungGeunMo.woff') format('woff'); */
     src: url('/font/DungGeunMo.woff') format('woff'), url('/font/DungGeunMo.woff2') format('woff2');
     font-weight: normal;
     font-style: normal;
@@ -14,21 +13,18 @@
 }
 @font-face {
     font-family: 'HakgyoansimWoojuR';
-    /* src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2307-2@1.0/HakgyoansimWoojuR.woff2') format('woff2'); */
     src: url('/font/HakgyoansimWoojuR_1.woff') format('woff'), url('/font/HakgyoansimWoojuR.woff') format('woff');
     font-weight: normal;
     font-style: normal;
 }
 @font-face {
     font-family: 'Jeongnimsaji-R';
-    /* src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_231029@1.1/Jeongnimsaji-R.woff2') format('woff2'); */
     src: url('/font/Jeongnimsaji-B.woff') format('woff'), url('/font/Jeongnimsaji-R.woff') format('woff');
     font-weight: 400;
     font-style: normal;
 }
 @font-face {
     font-family: 'DOSGothic';
-    /* src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_eight@1.0/DOSGothic.woff') format('woff'); */
     src: url('/font/DOSGothic.woff') format('woff');
     font-weight: normal;
     font-style: normal;

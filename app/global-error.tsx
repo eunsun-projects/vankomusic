@@ -1,6 +1,5 @@
 "use client";
-import styles from "@/app/page.module.css";
-// import Link from 'next/link'
+import styles from "@/styles/main.module.css";
 import { useEffect } from "react";
 
 export const metadata = {

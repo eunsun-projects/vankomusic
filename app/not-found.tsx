@@ -1,4 +1,4 @@
-import styles from "@/app/page.module.css";
+import styles from "@/styles/main.module.css";
 import Link from "next/link";
 
 export const metadata = {

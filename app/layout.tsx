@@ -2,8 +2,8 @@ import { orbitron } from '@/fonts';
 import { Analytics } from '@vercel/analytics/react';
 import './globals.css';
 
+import GoogleAnalytics from '@/analytics/googleAnalytics';
 import QueryProvider from '@/providers/query.provider';
-import GoogleAnalytics from './googleAnalytics';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

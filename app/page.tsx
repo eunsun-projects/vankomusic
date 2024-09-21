@@ -1,5 +1,4 @@
 import { getAudios } from '@/apis/audios/get.api';
-import styles from '@/app/home.module.css';
 import BorderLine from '@/components/home/borderline';
 import Floatings from '@/components/home/floatings';
 import Hadan from '@/components/home/hadan';
@@ -8,12 +7,13 @@ import VankoMainLogo from '@/components/home/vankomainlogo';
 import VanPlayer from '@/components/vanplayer/vanplayer';
 import { QUERY_KEY_AUDIOS } from '@/constants/query.constant';
 import { lobster, silkscreen, vastshadow } from '@/fonts';
+import { basicMeta, basicViewport } from '@/meta/basicmeta';
+import styles from '@/styles/home.module.css';
 import { Audios } from '@/types/vanko.type';
 import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Suspense } from 'react';
-import { basicMeta, basicViewport } from './basicmeta';
 import Loading from './loading';
 
 export const metadata = basicMeta;
