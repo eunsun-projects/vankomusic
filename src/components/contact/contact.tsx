@@ -3,7 +3,7 @@ import styles from '@/styles/contact.module.css';
 import Image from 'next/image';
 import EmailForm from './emailform';
 
-export default function Contact() {
+export default function ContactTemplate() {
   return (
     <>
       <div className={styles.contactpage}>
