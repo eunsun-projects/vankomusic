@@ -10,7 +10,7 @@ import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query
 import Image from 'next/image';
 import Link from 'next/link';
 import { Suspense } from 'react';
-import Loading from './loading';
+import Loading from '../loading';
 
 export const metadata = basicMeta;
 export const viewport = basicViewport;
