@@ -1,6 +1,6 @@
 'use client';
 import styles from '@/app/home/page.module.css';
-import Modal from '@/components/elements/modal';
+import { Modal } from '@/components/common';
 import { righteous } from '@/fonts';
 import { Videos } from '@/types/vanko.type';
 import Image from 'next/image';

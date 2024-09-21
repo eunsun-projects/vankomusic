@@ -1,6 +1,6 @@
 'use client';
 import dynamic from 'next/dynamic';
-const Floating = dynamic(() => import('@/components/elements/floating'), { ssr: false });
+const Floating = dynamic(() => import('@/components/home/floating'), { ssr: false });
 
 export default function Floatings() {
   return (

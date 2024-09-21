@@ -4,8 +4,8 @@ import { fetchVisits } from '@/utils/fetchVisits';
 import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
 
-const VankoProfile = dynamic(() => import('@/components/elements/vankoprofile.js'), { ssr: false });
-const Timer = dynamic(() => import('@/components/elements/timer.js'), { ssr: false });
+const VankoProfile = dynamic(() => import('@/components/common/vankoprofile'), { ssr: false });
+const Timer = dynamic(() => import('@/components/common/timer'), { ssr: false });
 
 export default function Hadan() {
   const [currentVisits, setCurrentVisits] = useState('000000');
