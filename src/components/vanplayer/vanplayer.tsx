@@ -14,7 +14,7 @@ export default function VanPlayer({ bgmsList }: VanPlayerProps) {
   const audioRef = useRef<HTMLAudioElement>(null); // 오디오 객체 ref 생성
   const [play, setPlay] = useState(false);
   const [load, setLoad] = useState(false); // 기본 로딩 완료되면 true
-  const [src, setSrc] = useState(bgmsList[0]); // src 초기값 bgmsList 의 0번으로 설정 < 하면 안되고 걍 빈 객체로 했더니 된다... ㅜ뭐지 < 였는데 또 된다...
+  const [src, setSrc] = useState(bgmsList[0]); // src 초기값 bgmsList 의 0번으로 설정
   const [full, setFull] = useState(0); //플레이타임 전체 백분율 측정용
   const [maxM, setMaxM] = useState(0); //곡 전체 재생시간
   const [current, setCurrent] = useState(0); //플레이타임 현재 백분율
@@ -23,7 +23,7 @@ export default function VanPlayer({ bgmsList }: VanPlayerProps) {
   const [volume, setVolume] = useState(0.5); //기본 볼륨값
   const [nob, setNob] = useState(false); //볼륨노브
   const [mute, setMute] = useState(false); //음소거 컨트롤
-  const [fullyLoad, setFullyLoad] = useState(false);
+  const [fullyLoad, setFullyLoad] = useState(false); // oncanplaythrough 완료 여부
   const [mobile, setMobile] = useState<boolean | null>(null); // 모바일 체커
 
   const volume_mute = 'volume_mute';
