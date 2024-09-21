@@ -34,6 +34,7 @@
     "react-dom": "^18.3.1",
     "react-spring": "^9.7.4",
     "sharp": "^0.33.1",
+    "styled-components": "^6.1.13",
     "supabase": "^1.192.5",
     "tailwind-merge": "^2.5.2",
     "three": "^0.168.0",
