@@ -2,12 +2,11 @@
 
 import { righteous } from '@/fonts';
 import { useCurationMutation } from '@/hooks/mutations/curations.mutation';
-import { useCurationsQuery, useVideosQuery } from '@/hooks/queries';
 import styles from '@/styles/admin.module.css';
 import { Videos } from '@/types/vanko.type';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 interface CurationAdminProps {
   videos: Videos[];
@@ -16,24 +15,22 @@ interface CurationAdminProps {
 
 export default function CurationAdmin({ videos, curations }: CurationAdminProps) {
   const [curatedVideo, setCuratedVideo] = useState(curations);
-  const [selectedCuratedItem, setSelectedCuratedItem] = useState<number | null>(null); // 선택된 큐레이션 아이템 인덱스
+  const [selectedItemIndex, setSelectedItemIndex] = useState<number | null>(null); // 선택된 큐레이션 아이템 인덱스
   const [selectedAllItemIndex, setSelectedAllItemIndex] = useState<number | null>(null); // 선택된 전체 아이템 인덱스
   const [selectedItem, setSelectedItem] = useState<Videos | null>(null); // 전체목록에서 선택된 아이템 객체
-  const { mutateAsync: postCuration } = useCurationMutation();
   const router = useRouter();
 
-  const { data: curationsFromQuery } = useCurationsQuery();
-  const { data: videosFromQuery } = useVideosQuery();
+  const { mutateAsync: postCuration } = useCurationMutation();
 
   // 큐레이션 목록에서 클릭시
   const clickCuratedTitle = (index: number) => () => {
-    setSelectedCuratedItem(index);
+    setSelectedItemIndex(index);
   };
 
   // 휴지통 클릭시
   const clickTrash = () => {
-    if (selectedCuratedItem !== null) {
-      setCuratedVideo((prev) => prev.splice(selectedCuratedItem, 1));
+    if (selectedItemIndex !== null) {
+      setCuratedVideo((prev) => prev.splice(selectedItemIndex, 1));
     } else {
       alert('먼저 삭제할 아이템을 선택해주세요');
     }
@@ -46,13 +43,13 @@ export default function CurationAdmin({ videos, curations }: CurationAdminProps)
   };
 
   const moveUp = () => {
-    if (selectedCuratedItem === null) return;
-    if (selectedCuratedItem <= 0) return; // 첫 번째 항목은 더 이상 위로 올라갈 수 없음
-    setSelectedCuratedItem(selectedCuratedItem - 1);
+    if (selectedItemIndex === null) return;
+    if (selectedItemIndex <= 0) return; // 첫 번째 항목은 더 이상 위로 올라갈 수 없음
+    setSelectedItemIndex(selectedItemIndex - 1);
     const newList = [...curatedVideo];
-    [newList[selectedCuratedItem], newList[selectedCuratedItem - 1]] = [
-      newList[selectedCuratedItem - 1],
-      newList[selectedCuratedItem],
+    [newList[selectedItemIndex], newList[selectedItemIndex - 1]] = [
+      newList[selectedItemIndex - 1],
+      newList[selectedItemIndex],
     ]; // 현재 항목과 위 항목을 서로 바꿈
     newList.forEach((e, i) => {
       e.curated_number = i;
@@ -61,13 +58,13 @@ export default function CurationAdmin({ videos, curations }: CurationAdminProps)
   };
 
   const moveDown = () => {
-    if (selectedCuratedItem === null) return;
-    if (selectedCuratedItem >= curatedVideo.length - 1) return;
-    setSelectedCuratedItem(selectedCuratedItem + 1);
+    if (selectedItemIndex === null) return;
+    if (selectedItemIndex >= curatedVideo.length - 1) return;
+    setSelectedItemIndex(selectedItemIndex + 1);
     const newList = [...curatedVideo];
-    [newList[selectedCuratedItem], newList[selectedCuratedItem + 1]] = [
-      newList[selectedCuratedItem + 1],
-      newList[selectedCuratedItem],
+    [newList[selectedItemIndex], newList[selectedItemIndex + 1]] = [
+      newList[selectedItemIndex + 1],
+      newList[selectedItemIndex],
     ]; // 현재 항목과 위 항목을 서로 바꿈
     newList.forEach((e, i) => {
       e.curated_number = i;
@@ -106,12 +103,6 @@ export default function CurationAdmin({ videos, curations }: CurationAdminProps)
       }
     }
   };
-
-  useEffect(() => {
-    if (curationsFromQuery) {
-      setCuratedVideo(curationsFromQuery);
-    }
-  }, [curationsFromQuery]);
 
   return (
     <div
@@ -166,8 +157,8 @@ export default function CurationAdmin({ videos, curations }: CurationAdminProps)
                 <div
                   className={`${styles.titleboxall} ${righteous.className}`}
                   style={{
-                    color: selectedCuratedItem === i ? 'black' : undefined,
-                    backgroundColor: selectedCuratedItem === i ? 'aqua' : undefined,
+                    color: selectedItemIndex === i ? 'black' : undefined,
+                    backgroundColor: selectedItemIndex === i ? 'aqua' : undefined,
                     width: '100%',
                     height: '100%',
                     cursor: 'pointer',
@@ -301,7 +292,7 @@ export default function CurationAdmin({ videos, curations }: CurationAdminProps)
         <div style={{ height: '30rem', width: '90%', margin: '0 auto' }}>
           <div className={styles.titleconbox}>
             <div className={styles.allbox} style={{ height: '30rem', overflowY: 'scroll' }}>
-              {videosFromQuery?.map((e, i) => (
+              {videos.map((e, i) => (
                 <div
                   onClick={clickAllTitle(e, i)}
                   className={styles.titlebox}
