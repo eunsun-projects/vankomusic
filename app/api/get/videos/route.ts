@@ -7,10 +7,14 @@ export async function GET() {
   const supabase = createClient();
 
   const { data: videos, error }: { data: Videos[] | null; error: PostgrestError | null } =
-    await supabase.from('videos').select('*');
+    await supabase
+      .from('videos')
+      .select('*')
+      .eq('isPublic', true)
+      .order('number', { ascending: false });
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json(error.message, { status: 500 });
   }
 
   return NextResponse.json(videos, { status: 200 });

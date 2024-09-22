@@ -1,10 +1,11 @@
 'use client';
 
 import styles from '@/components/admin/page.module.css';
-import { Videos } from '@/types/vanko.type';
+import { useVideosMutation } from '@/hooks/mutations';
+import { PartialVideos, Videos } from '@/types/vanko.type';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
 interface ArchiveAdminProps {
   videos: Videos[];
@@ -16,6 +17,8 @@ export default function ArchiveAdmin({ videos }: ArchiveAdminProps) {
   const [selectedItem, setSelectedItem] = useState<Videos | null>(null);
   const [videoId, setVideoId] = useState<string | null>(null);
   const [oldTitle, setOldTitle] = useState<string | null>(null);
+
+  const { mutateAsync: postVideos } = useVideosMutation();
 
   const updateFormRef = useRef<HTMLFormElement | null>(null);
   const createFormRef = useRef<HTMLFormElement | null>(null);
@@ -40,62 +43,37 @@ export default function ArchiveAdmin({ videos }: ArchiveAdminProps) {
     }
   };
 
-  const setRequestInit = (ref: HTMLFormElement) => {
-    const title = ref.title01.value;
-    const embed = ref.embed.value;
+  const setRequestInit = useCallback(
+    (ref: HTMLFormElement) => {
+      const title = ref.title01.value;
+      const embed = ref.embed.value;
+      const keyword_1 =
+        ref.keyword1.value.length > 0 ? ref.keyword1.value : selectedItem?.keywords?.[0];
+      const keyword_2 =
+        ref.keyword2.value.length > 0 ? ref.keyword2.value : selectedItem?.keywords?.[1];
+      const keyword_3 =
+        ref.keyword3.value.length > 0 ? ref.keyword3.value : selectedItem?.keywords?.[2];
+      const keywords = [keyword_1, keyword_2, keyword_3];
+      const desc = ref.desc.value;
 
-    const keyword_1 =
-      ref.keyword1.value.length > 0 ? ref.keyword1.value : selectedItem?.keywords?.[0];
-    const keyword_2 =
-      ref.keyword2.value.length > 0 ? ref.keyword2.value : selectedItem?.keywords?.[1];
-    const keyword_3 =
-      ref.keyword3.value.length > 0 ? ref.keyword3.value : selectedItem?.keywords?.[2];
+      // 기존 배열 (videoall) 에서 새로 입력된 타이틀과 일치하는 아이템 있는지 검색
+      const existNumber = videos.find((e) => {
+        if (e.title?.toLowerCase().replaceAll(' ', '') === title.toLowerCase().replaceAll(' ', ''))
+          return e.number;
+      });
 
-    const keywords = [keyword_1, keyword_2, keyword_3];
-    const desc = ref.desc.value;
-
-    // 기존 배열 (videoall) 에서 새로 입력된 타이틀과 일치하는 아이템 있는지 검색
-    const existNumber = videos.find((e) => {
-      if (e.title?.toLowerCase().replaceAll(' ', '') === title.toLowerCase().replaceAll(' ', ''))
-        return e.number;
-    });
-
-    const data = {
-      title: title.length > 0 ? title : oldTitle,
-      description: desc.length > 0 ? desc : selectedItem?.description,
-      keywords: keywords,
-      embed: embed.length > 0 ? embed : selectedItem?.embed,
-      number: existNumber ? existNumber.number : selectedItem?.number,
-      thumb: videoId ? `https://img.youtube.com/vi/${videoId}/0.jpg` : selectedItem?.thumb,
-    };
-
-    return data;
-  };
-
-  const handleCreateSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (!createFormRef.current) return;
-    if (confirm('이 정보로 새로운 아이템을 추가하시겠습니까?')) {
-      const data = setRequestInit(createFormRef.current);
-      // 여기 뮤테이트 작성 요망
-      router.refresh();
-    } else {
-      alert('다시 진행해 주세요.');
-      createFormRef.current.reset();
-    }
-  };
-
-  const handleUpdateSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (!updateFormRef.current) return;
-    if (confirm('이 정보로 아이템을 수정하시겠습니까?')) {
-      const data = setRequestInit(updateFormRef.current);
-      // 여기 뮤테이트 작성 요망
-      router.refresh();
-    } else {
-      alert('다시 진행해 주세요.');
-    }
-  };
+      const data = {
+        title: title.length > 0 ? title : oldTitle,
+        description: desc.length > 0 ? desc : selectedItem?.description,
+        keywords: keywords,
+        embed: embed.length > 0 ? embed : selectedItem?.embed,
+        number: existNumber ? existNumber.number : selectedItem?.number,
+        thumb: videoId ? `https://img.youtube.com/vi/${videoId}/0.jpg` : selectedItem?.thumb,
+      };
+      return data;
+    },
+    [videos, selectedItem, oldTitle, videoId],
+  );
 
   const moveUp = () => {
     if (selectedNum === null) return;
@@ -127,22 +105,47 @@ export default function ArchiveAdmin({ videos }: ArchiveAdminProps) {
     setVideoState(newList);
   };
 
-  const itemFix = async () => {
-    if (videos === videoState) {
-      alert('변경점이 없습니다!');
-    } else if (confirm('이대로 순서를 수정하시겠습니까?')) {
-      // 여기 순서수정 뮤테이트 작성 요망
+  const handleCreateSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!createFormRef.current) return;
+    if (confirm('이 정보로 새로운 아이템을 추가하시겠습니까?')) {
+      const data = setRequestInit(createFormRef.current) as PartialVideos;
+      await postVideos({ video: data, mode: 'create' });
+      router.refresh();
+    } else {
+      alert('다시 진행해 주세요.');
+      createFormRef.current.reset();
+    }
+  };
+
+  const handleUpdateSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!updateFormRef.current) return;
+    if (confirm('이 정보로 아이템을 수정하시겠습니까?')) {
+      const data = setRequestInit(updateFormRef.current) as PartialVideos;
+      await postVideos({ video: data, mode: 'update' });
       router.refresh();
     } else {
       alert('다시 진행해 주세요.');
     }
   };
 
-  const clickTrash = async () => {
+  const handleOrderClick = async () => {
+    if (videos === videoState) {
+      alert('변경점이 없습니다!');
+    } else if (confirm('이대로 순서를 수정하시겠습니까?')) {
+      await postVideos({ video: videoState, mode: 'updateAll' });
+      router.refresh();
+    } else {
+      alert('다시 진행해 주세요.');
+    }
+  };
+
+  const handleDeleteClick = async () => {
     if (!selectedItem) {
       alert('먼저 지울 아이템을 선택해 주세요!');
     } else if (confirm('해당 아이템을 삭제하시겠습니까?')) {
-      // 여기 삭제 뮤테이트 작성 요망
+      await postVideos({ video: selectedItem, mode: 'delete' });
       router.refresh();
     } else {
       alert('다시 진행해 주세요.');
@@ -234,7 +237,7 @@ export default function ArchiveAdmin({ videos }: ArchiveAdminProps) {
                   ></input>
                 </div>
 
-                <input type="submit" value="update" className={styles.okbtn}></input>
+                <button type="submit" value="update" className={styles.okbtn}></button>
               </form>
             </div>
           </div>
@@ -309,7 +312,7 @@ export default function ArchiveAdmin({ videos }: ArchiveAdminProps) {
                   ></input>
                 </div>
 
-                <input type="submit" value="create" className={styles.okbtn}></input>
+                <button type="submit" value="create" className={styles.okbtn}></button>
               </form>
             </div>
           </div>
@@ -337,22 +340,21 @@ export default function ArchiveAdmin({ videos }: ArchiveAdminProps) {
         <div style={{ height: '28rem', width: '90%', margin: '0 auto' }}>
           <div className={styles.titleconbox}>
             <div className={styles.allbox} style={{ height: '26rem', overflowY: 'scroll' }}>
-              {videoState &&
-                videoState.map((e, i) => {
-                  return (
-                    <div
-                      onClick={clickTitle(i)}
-                      className={styles.titlebox}
-                      style={{
-                        color: selectedNum === i ? 'white' : undefined,
-                        backgroundColor: selectedNum === i ? 'blue' : undefined,
-                      }}
-                      key={i}
-                    >
-                      <p>{e.title}</p>
-                    </div>
-                  );
-                })}
+              {videoState.map((e, i) => {
+                return (
+                  <div
+                    onClick={clickTitle(i)}
+                    className={styles.titlebox}
+                    style={{
+                      color: selectedNum === i ? 'white' : undefined,
+                      backgroundColor: selectedNum === i ? 'blue' : undefined,
+                    }}
+                    key={i}
+                  >
+                    <p>{e.title}</p>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
@@ -393,7 +395,7 @@ export default function ArchiveAdmin({ videos }: ArchiveAdminProps) {
                 boxSizing: 'border-box',
               }}
             >
-              <div className={styles.fixbtn} onClick={itemFix}>
+              <div className={styles.fixbtn} onClick={handleOrderClick}>
                 순서변경적용
               </div>
             </div>
@@ -401,7 +403,7 @@ export default function ArchiveAdmin({ videos }: ArchiveAdminProps) {
             <div>
               <Image
                 src="/assets/img/trashicon.webp"
-                onClick={clickTrash}
+                onClick={handleDeleteClick}
                 alt="trashicon"
                 unoptimized
               />

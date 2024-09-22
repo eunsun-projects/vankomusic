@@ -13,6 +13,13 @@ export async function getVideos() {
   return data;
 }
 
+export async function getCurations() {
+  const url = '/api/get/curations';
+  const data = await fetchWrapper<Videos[]>(url, { method: 'GET' });
+  const curations = data.filter((video) => video.isSelected);
+  return curations;
+}
+
 export async function getWishs() {
   const url = '/api/get/wishs';
   const data = await fetchWrapper<Wishs[]>(url, { method: 'GET' });

@@ -1,12 +1,11 @@
-import { getVideos } from '@/apis/media/get.api';
-import { QUERY_KEY_VIDEOS } from '@/constants/query.constant';
+import { getCurations } from '@/apis/media/get.api';
+import { QUERY_KEY_CURATIONS } from '@/constants/query.constant';
 import { Videos } from '@/types/vanko.type';
 import { useQuery } from '@tanstack/react-query';
 
-export const useCurationsQuery = () => {
+export function useCurationsQuery() {
   return useQuery<Videos[]>({
-    queryKey: [QUERY_KEY_VIDEOS],
-    queryFn: getVideos,
-    select: (data) => data.filter((video) => video.isSelected),
+    queryKey: [QUERY_KEY_CURATIONS],
+    queryFn: getCurations,
   });
-};
+}

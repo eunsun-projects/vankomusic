@@ -1,8 +1,8 @@
 'use client';
 
 import useAuth from '@/hooks/auth/auth.hook';
+import { useAudiosQuery, useCurationsQuery, useVideosQuery } from '@/hooks/queries';
 import styles from '@/styles/admin.module.css';
-import { Audios, Videos } from '@/types/vanko.type';
 import Image from 'next/image';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useState } from 'react';
@@ -10,13 +10,10 @@ import ArchiveAdmin from './archiveadmin';
 import CurationAdmin from './curationadmin';
 import MainAdmin from './mainadmin';
 
-interface AdminTemplateProps {
-  videos: Videos[];
-  curations: Videos[];
-  audios: Audios[];
-}
-
-export default function AdminTemplate({ videos, curations, audios }: AdminTemplateProps) {
+export default function AdminTemplate() {
+  const { data: videos } = useVideosQuery();
+  const { data: curations } = useCurationsQuery();
+  const { data: audios } = useAudiosQuery();
   const { logOut } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
@@ -97,15 +94,15 @@ export default function AdminTemplate({ videos, curations, audios }: AdminTempla
       </div>
       {/** 메인 */}
       <div className="main" style={{ display: view === 0 ? 'block' : 'none', height: '100%' }}>
-        <MainAdmin audios={audios} />
+        {audios && <MainAdmin audios={audios} />}
       </div>
       {/** 아카이브관리 */}
       <div className="archive" style={{ display: view === 1 ? 'block' : 'none', height: '100%' }}>
-        <ArchiveAdmin videos={videos} />
+        {videos && <ArchiveAdmin videos={videos} />}
       </div>
       {/** 큐레이션관리 */}
       <div className="curation" style={{ display: view === 2 ? 'block' : 'none', height: '100%' }}>
-        <CurationAdmin videos={videos} curations={curations} />
+        {curations && videos && <CurationAdmin videos={videos} curations={curations} />}
       </div>
     </>
   );

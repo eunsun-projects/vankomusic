@@ -1,10 +1,15 @@
 import { postUserServer } from '@/apis/auth/post.api';
-import { getAudios, getVideos } from '@/apis/media/get.api';
+import { getAudios, getCurations, getVideos } from '@/apis/media/get.api';
 import Loading from '@/app/loading';
 import { AdminTemplate, IfMobile, LoginButton } from '@/components/admin';
-import { QUERY_KEY_AUDIOS, QUERY_KEY_USER, QUERY_KEY_VIDEOS } from '@/constants/query.constant';
+import {
+  QUERY_KEY_AUDIOS,
+  QUERY_KEY_CURATIONS,
+  QUERY_KEY_USER,
+  QUERY_KEY_VIDEOS,
+} from '@/constants/query.constant';
 import { basicMeta, basicViewport } from '@/meta/basicmeta';
-import { Audios, Users, Videos } from '@/types/vanko.type';
+import { Users } from '@/types/vanko.type';
 import { getUserFromHeaders } from '@/utils/common/getUserByHeaders';
 import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query';
 import { Suspense } from 'react';
@@ -28,15 +33,11 @@ export default async function Vankoadmin() {
     queryKey: [QUERY_KEY_AUDIOS],
     queryFn: () => getAudios(),
   });
-  const audios = await queryClient.ensureQueryData<Audios[]>({
-    queryKey: [QUERY_KEY_AUDIOS],
-    queryFn: () => getAudios(),
+  await queryClient.prefetchQuery({
+    queryKey: [QUERY_KEY_CURATIONS],
+    queryFn: () => getCurations(),
   });
-  const videos = await queryClient.ensureQueryData<Videos[]>({
-    queryKey: [QUERY_KEY_VIDEOS],
-    queryFn: () => getVideos(),
-  });
-  const curations = videos.filter((video) => video.isSelected);
+
   const user = queryClient.getQueryData<Users>([QUERY_KEY_USER]);
   let isAdmin = null;
   if (
@@ -51,11 +52,7 @@ export default async function Vankoadmin() {
     <Suspense fallback={<Loading />}>
       <HydrationBoundary state={dehydratedState}>
         <IfMobile />
-        {isAdmin ? (
-          <AdminTemplate audios={audios} videos={videos} curations={curations} />
-        ) : (
-          <LoginButton />
-        )}
+        {isAdmin ? <AdminTemplate /> : <LoginButton />}
       </HydrationBoundary>
     </Suspense>
   );
