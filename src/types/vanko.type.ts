@@ -1,6 +1,7 @@
 import { Tables } from './supabase';
 
 export type Audios = Tables<'audios'>;
+export type PartialAudios = Partial<Audios>;
 export type Users = Tables<'users'>;
 export type Videos = Tables<'videos'>;
 export type PartialVideos = Partial<Videos>;

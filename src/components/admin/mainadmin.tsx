@@ -1,8 +1,10 @@
 'use client';
 
+import { useAudiosMutation } from '@/hooks/mutations';
 import styles from '@/styles/admin.module.css';
 import { Audios } from '@/types/vanko.type';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { useRef, useState } from 'react';
 
 interface MainAdminProps {
@@ -13,11 +15,11 @@ export default function MainAdmin({ audios }: MainAdminProps) {
   const [audioAll, setAudioAll] = useState(audios);
   const [selectedAudio, setSelectedAudio] = useState<number | null>(null); // 인덱스저장용
   const [mp3files, setMp3Files] = useState<string[] | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [urls, setUrls] = useState(null);
-  const [upLoad, setUpLoad] = useState(false);
 
   const mp3FilesInputRef = useRef<HTMLInputElement | null>(null);
+
+  const { mutateAsync: postAudios, isPending } = useAudiosMutation();
+  const router = useRouter();
 
   const handleClickSonglist = (i: number) => () => {
     setSelectedAudio(i);
@@ -59,153 +61,49 @@ export default function MainAdmin({ audios }: MainAdminProps) {
     }
   };
 
-  const audioSetFetch = async () => {
-    // try {
-    //   const pack = {
-    //     action: 'audioset',
-    //     audios: list,
-    //   };
-    //   const req = {
-    //     method: 'POST',
-    //     cache: 'no-store',
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //       Authorization: `Bearer ${process.env.NEXT_PUBLIC_POST_TOKEN}`,
-    //     },
-    //     body: JSON.stringify(pack),
-    //   };
-    //   const response = await fetch('/api/archiveset', req);
-    //   if (response.ok) {
-    //     const result = await response.json();
-    //     return result;
-    //   } else {
-    //     console.log('vanaudio set 서버에서 실패', await response.json());
-    //     alert('실패하였습니다');
-    //   }
-    // } catch (error) {
-    //   console.error('곡 업로드 후 db 셋팅 중 에러 발생', error);
-    // }
-  };
-
-  const mp3Submit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleMp3Submit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setIsLoading(true); // 로딩 시작
     if (!mp3FilesInputRef.current?.files) {
       alert('파일 업로드 참조가 없습니다.');
       return;
     }
-    try {
-      // FormData 인스턴스를 생성합니다.
-      const formData = new FormData();
+    // FormData 인스턴스를 생성합니다.
+    const formData = new FormData();
+    // input 타입 file의 파일들을 가져옵니다.
+    const files = mp3FilesInputRef.current.files;
+    if (files.length === 0) alert('업로드할 파일을 선택해주세요.');
 
-      // input 타입 file의 파일들을 가져옵니다.
-      const files = mp3FilesInputRef.current.files;
-
-      if (files.length === 0) {
-        alert('업로드할 파일을 선택해주세요.');
-      } else {
-        setUpLoad(true);
-        // 각 파일을 FormData에 추가합니다.
-        for (let i = 0; i < files.length; i++) {
-          formData.append('file', files[i]);
-        }
-        // FormData를 사용하여 서버에 POST 요청을 보냅니다.
-        try {
-          // 파일이 있는지 확인하고 FormData에 추가합니다.
-          const response = await fetch('/api/storageset', {
-            method: 'POST',
-            cache: 'no-store',
-            // 'Content-Type' 헤더를 설정하지 않음으로써 브라우저가 자동으로 필요한 헤더를 설정하도록 합니다.
-            headers: {
-              Authorization: `Bearer ${process.env.NEXT_PUBLIC_POST_TOKEN}`,
-            },
-            body: formData,
-          });
-
-          if (response.ok) {
-            const result = await response.json();
-            setUrls(result.list);
-            setUpLoad(false);
-            console.log('파일 업로드 성공', result);
-          } else {
-            console.error('파일 업로드 실패');
-          }
-        } catch (error) {
-          console.error('파일 업로드 중 에러 발생', error);
-        }
+    if (confirm('업로드하시겠습니까?')) {
+      // 각 파일을 FormData에 추가합니다.
+      for (let i = 0; i < files.length; i++) {
+        formData.append('files', files[i]);
       }
-    } catch (error) {
-      console.error('업로드 중 에러 발생', error);
+      // FormData를 사용하여 서버에 POST 요청을 보냅니다.
+      await postAudios({ files: formData, audios: null, mode: 'add' });
+      router.refresh();
+    } else {
+      alert('업로드를 취소하였습니다.');
     }
-    setIsLoading(false); // 로딩 종료
   };
 
-  const audioNumSubmit = async () => {
-    // if (confirm('순서를 확인하셨습니까?')) {
-    //   try {
-    //     const pack = {
-    //       action: 'audionum',
-    //       audioall: audioAll,
-    //     };
-    //     const req = {
-    //       method: 'POST',
-    //       cache: 'no-store',
-    //       headers: {
-    //         'Content-Type': 'application/json',
-    //         Authorization: `Bearer ${process.env.NEXT_PUBLIC_POST_TOKEN}`,
-    //       },
-    //       body: JSON.stringify(pack),
-    //     };
-    //     const response = await fetch('/api/archiveset', req);
-    //     if (response.ok) {
-    //       console.log('오디오 순서 업데이트 성공');
-    //       alert('곡 순서 업데이트 성공했습니다');
-    //       window.location.href = '/vankoadmin?id=0';
-    //     } else {
-    //       console.log('오디오 순서 업데이트 서버에서 실패', await response.json());
-    //       alert('곡 순서 업데이트에 실패하였습니다');
-    //     }
-    //   } catch (error) {
-    //     console.log(error);
-    //     alert('알수없는 에러가 발생했습니다. 다시 시도해 주세요.');
-    //   }
-    // } else {
-    //   alert('다시 검토해 주세요.');
-    // }
+  const handleOrderClick = async () => {
+    if (confirm('순서를 확인하셨습니까?')) {
+      await postAudios({ files: null, audios: audioAll, mode: 'order' });
+      router.refresh();
+    } else {
+      alert('순서변경을 취소하였습니다.');
+    }
   };
 
-  const clickTrash = async () => {
-    // const newList = [...audioAll];
-    // const selectedItem = newList[selectedAudio];
-    // if (!selectedItem) {
-    //   alert('먼저 지울 아이템을 선택해 주세요!');
-    // } else if (confirm('해당 아이템을 삭제하시겠습니까?')) {
-    //   const pack = {
-    //     action: 'audiodel',
-    //     item: selectedItem,
-    //   };
-    //   const req = {
-    //     method: 'POST',
-    //     cache: 'no-store',
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //       Authorization: `Bearer ${process.env.NEXT_PUBLIC_POST_TOKEN}`,
-    //     },
-    //     body: JSON.stringify(pack),
-    //   };
-    //   const response = await fetch('/api/archiveset', req);
-    //   if (response.ok) {
-    //     console.log('삭제 성공');
-    //     alert('아이템 삭제에 성공했습니다.');
-    //     window.location.href = '/vankoadmin?id=0';
-    //   } else {
-    //     console.log('삭제 서버에서 실패');
-    //     alert('아이템 삭제에 실패하였습니다');
-    //     window.location.href = '/vankoadmin?id=0';
-    //   }
-    // } else {
-    //   alert('다시 진행해 주세요.');
-    // }
+  const hanldeDeleteClick = async () => {
+    const filteredAudios = audioAll.filter((_, i) => i !== selectedAudio);
+
+    if (confirm('삭제하시겠습니까?')) {
+      await postAudios({ files: null, audios: filteredAudios, mode: 'delete' });
+      router.refresh();
+    } else {
+      alert('삭제를 취소하였습니다.');
+    }
   };
 
   return (
@@ -226,7 +124,7 @@ export default function MainAdmin({ audios }: MainAdminProps) {
           position: 'fixed',
           top: '23%',
           zIndex: '5',
-          display: upLoad ? 'flex' : 'none',
+          display: isPending ? 'flex' : 'none',
           flexDirection: 'column',
           gap: '1rem',
           justifyContent: 'center',
@@ -282,13 +180,13 @@ export default function MainAdmin({ audios }: MainAdminProps) {
               </div>
             </div>
 
-            <div className={styles.logoutbtn} onClick={audioNumSubmit} style={{ color: 'white' }}>
+            <div className={styles.logoutbtn} onClick={handleOrderClick} style={{ color: 'white' }}>
               순서변경적용
             </div>
             <div>
               <Image
                 src="/assets/img/trashicon.webp"
-                onClick={clickTrash}
+                onClick={hanldeDeleteClick}
                 alt="휴지통"
                 unoptimized
               />
@@ -298,7 +196,7 @@ export default function MainAdmin({ audios }: MainAdminProps) {
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           <form
-            onSubmit={mp3Submit}
+            onSubmit={handleMp3Submit}
             encType="multipart/form-data"
             style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}
           >
