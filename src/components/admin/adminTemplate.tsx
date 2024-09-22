@@ -2,7 +2,7 @@
 
 import useAuth from '@/hooks/auth/auth.hook';
 import styles from '@/styles/admin.module.css';
-import { Videos } from '@/types/vanko.type';
+import { Audios, Videos } from '@/types/vanko.type';
 import Image from 'next/image';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useState } from 'react';
@@ -12,10 +12,11 @@ import MainAdmin from './mainadmin';
 
 interface AdminTemplateProps {
   videos: Videos[];
-  curation: Videos[];
+  curations: Videos[];
+  audios: Audios[];
 }
 
-export default function AdminTemplate({ videos, curation }: AdminTemplateProps) {
+export default function AdminTemplate({ videos, curations, audios }: AdminTemplateProps) {
   const { logOut } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
@@ -96,15 +97,15 @@ export default function AdminTemplate({ videos, curation }: AdminTemplateProps) 
       </div>
       {/** 메인 */}
       <div className="main" style={{ display: view === 0 ? 'block' : 'none', height: '100%' }}>
-        <MainAdmin />
+        <MainAdmin audios={audios} />
       </div>
       {/** 아카이브관리 */}
       <div className="archive" style={{ display: view === 1 ? 'block' : 'none', height: '100%' }}>
-        <ArchiveAdmin videoall={videoall.videos} />
+        <ArchiveAdmin videos={videos} />
       </div>
       {/** 큐레이션관리 */}
       <div className="curation" style={{ display: view === 2 ? 'block' : 'none', height: '100%' }}>
-        <CurationAdmin videoall={videoall.videos} curation={curation.videos} />
+        <CurationAdmin videos={videos} curations={curations} />
       </div>
     </>
   );

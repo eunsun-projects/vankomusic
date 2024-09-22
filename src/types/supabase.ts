@@ -63,6 +63,7 @@ export type Database = {
       videos: {
         Row: {
           created_at: string
+          curated_number: number | null
           description: string | null
           embed: string | null
           id: string
@@ -75,6 +76,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          curated_number?: number | null
           description?: string | null
           embed?: string | null
           id?: string
@@ -87,6 +89,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          curated_number?: number | null
           description?: string | null
           embed?: string | null
           id?: string

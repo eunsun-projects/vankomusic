@@ -1,21 +1,29 @@
 'use client';
 
-import styles from '@/components/admin/page.module.css';
 import { righteous } from '@/fonts';
+import { useCurationMutation } from '@/hooks/mutations/curations.mutation';
+import { useCurationsQuery, useVideosQuery } from '@/hooks/queries';
+import styles from '@/styles/admin.module.css';
 import { Videos } from '@/types/vanko.type';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 interface CurationAdminProps {
   videos: Videos[];
-  curation: Videos[];
+  curations: Videos[];
 }
 
-export default function CurationAdmin({ videos, curation }: CurationAdminProps) {
-  const [curatedVideo, setCuratedVideo] = useState(curation);
+export default function CurationAdmin({ videos, curations }: CurationAdminProps) {
+  const [curatedVideo, setCuratedVideo] = useState(curations);
   const [selectedCuratedItem, setSelectedCuratedItem] = useState<number | null>(null); // 선택된 큐레이션 아이템 인덱스
   const [selectedAllItemIndex, setSelectedAllItemIndex] = useState<number | null>(null); // 선택된 전체 아이템 인덱스
   const [selectedItem, setSelectedItem] = useState<Videos | null>(null); // 전체목록에서 선택된 아이템 객체
+  const { mutateAsync: postCuration } = useCurationMutation();
+  const router = useRouter();
+
+  const { data: curationsFromQuery } = useCurationsQuery();
+  const { data: videosFromQuery } = useVideosQuery();
 
   // 큐레이션 목록에서 클릭시
   const clickCuratedTitle = (index: number) => () => {
@@ -47,7 +55,7 @@ export default function CurationAdmin({ videos, curation }: CurationAdminProps) 
       newList[selectedCuratedItem],
     ]; // 현재 항목과 위 항목을 서로 바꿈
     newList.forEach((e, i) => {
-      e.number = i;
+      e.curated_number = i;
     }); // 넘버 순서 재정의
     setCuratedVideo(newList);
   };
@@ -62,7 +70,7 @@ export default function CurationAdmin({ videos, curation }: CurationAdminProps) 
       newList[selectedCuratedItem],
     ]; // 현재 항목과 위 항목을 서로 바꿈
     newList.forEach((e, i) => {
-      e.number = i;
+      e.curated_number = i;
     }); // 넘버 순서 재정의
     setCuratedVideo(newList);
   };
@@ -76,56 +84,34 @@ export default function CurationAdmin({ videos, curation }: CurationAdminProps) 
       const newList = [...curatedVideo]; // 배열 복사
       newList.push(selectedItem); // 배열의 마지막에 선택된 아이템 추가
       newList.forEach((e, i) => {
-        e.number = i;
+        e.curated_number = i;
       }); // 배열 넘버 프로퍼티 재정렬
       setCuratedVideo(newList);
     }
   };
 
   const finalSubmit = async () => {
-    if (curation === curatedVideo) {
+    if (curations === curatedVideo) {
       alert('변경점이 없습니다!');
+      return;
     } else if (curatedVideo.length !== 8) {
       alert('8개 항목을 채워주세요!');
-      window.location.href = '/vankoadmin?id=2';
+      return;
     } else {
-      console.log(curatedVideo);
       if (confirm('큐레이션 리스트를 이대로 수정하시겠습니까?')) {
-        try {
-          const pack = {
-            action: 'updatecuration',
-            curationList: curatedVideo,
-          };
-
-          const req = {
-            method: 'POST',
-            cache: 'no-store',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${process.env.NEXT_PUBLIC_POST_TOKEN}`,
-            },
-            body: JSON.stringify(pack),
-          };
-          const response = await fetch('/api/archiveset', req);
-
-          if (response.ok) {
-            console.log('큐레이션 업데이트 성공');
-            alert('curated 리스트 업데이트 성공했습니다');
-            window.location.href = '/vankoadmin?id=2';
-          } else {
-            console.log('큐레이션 업데이트 서버에서 실패', await response.json());
-            alert('curated 리스트 업데이트에 실패하였습니다');
-            window.location.href = '/vankoadmin?id=2';
-          }
-        } catch (error) {
-          console.log(error);
-          alert('알수없는 에러가 발생했습니다. 다시 시도해 주세요.');
-        }
+        await postCuration(curatedVideo);
+        router.refresh();
       } else {
-        alert('다시 진행해 주세요.');
+        return;
       }
     }
   };
+
+  useEffect(() => {
+    if (curationsFromQuery) {
+      setCuratedVideo(curationsFromQuery);
+    }
+  }, [curationsFromQuery]);
 
   return (
     <div
@@ -184,6 +170,7 @@ export default function CurationAdmin({ videos, curation }: CurationAdminProps) 
                     backgroundColor: selectedCuratedItem === i ? 'aqua' : undefined,
                     width: '100%',
                     height: '100%',
+                    cursor: 'pointer',
                   }}
                   key={i}
                 >
@@ -314,7 +301,7 @@ export default function CurationAdmin({ videos, curation }: CurationAdminProps) 
         <div style={{ height: '30rem', width: '90%', margin: '0 auto' }}>
           <div className={styles.titleconbox}>
             <div className={styles.allbox} style={{ height: '30rem', overflowY: 'scroll' }}>
-              {videos.map((e, i) => (
+              {videosFromQuery?.map((e, i) => (
                 <div
                   onClick={clickAllTitle(e, i)}
                   className={styles.titlebox}

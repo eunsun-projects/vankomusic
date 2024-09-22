@@ -1,10 +1,10 @@
 import { postUserServer } from '@/apis/auth/post.api';
-import { getVideos } from '@/apis/media/get.api';
+import { getAudios, getVideos } from '@/apis/media/get.api';
 import Loading from '@/app/loading';
-import IfMobile from '@/components/admin/ifMobile';
-import { QUERY_KEY_USER, QUERY_KEY_VIDEOS } from '@/constants/query.constant';
+import { AdminTemplate, IfMobile, LoginButton } from '@/components/admin';
+import { QUERY_KEY_AUDIOS, QUERY_KEY_USER, QUERY_KEY_VIDEOS } from '@/constants/query.constant';
 import { basicMeta, basicViewport } from '@/meta/basicmeta';
-import { Users, Videos } from '@/types/vanko.type';
+import { Audios, Users, Videos } from '@/types/vanko.type';
 import { getUserFromHeaders } from '@/utils/common/getUserByHeaders';
 import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query';
 import { Suspense } from 'react';
@@ -24,11 +24,19 @@ export default async function Vankoadmin() {
     queryKey: [QUERY_KEY_VIDEOS],
     queryFn: () => getVideos(),
   });
+  await queryClient.prefetchQuery({
+    queryKey: [QUERY_KEY_AUDIOS],
+    queryFn: () => getAudios(),
+  });
+  const audios = await queryClient.ensureQueryData<Audios[]>({
+    queryKey: [QUERY_KEY_AUDIOS],
+    queryFn: () => getAudios(),
+  });
   const videos = await queryClient.ensureQueryData<Videos[]>({
     queryKey: [QUERY_KEY_VIDEOS],
     queryFn: () => getVideos(),
   });
-  const curation = videos.filter((video) => video.isSelected);
+  const curations = videos.filter((video) => video.isSelected);
   const user = queryClient.getQueryData<Users>([QUERY_KEY_USER]);
   let isAdmin = null;
   if (
@@ -43,7 +51,11 @@ export default async function Vankoadmin() {
     <Suspense fallback={<Loading />}>
       <HydrationBoundary state={dehydratedState}>
         <IfMobile />
-        {isAdmin ? <AdminTemplate videos={videos} curation={curation} /> : <LoginButton />}
+        {isAdmin ? (
+          <AdminTemplate audios={audios} videos={videos} curations={curations} />
+        ) : (
+          <LoginButton />
+        )}
       </HydrationBoundary>
     </Suspense>
   );
