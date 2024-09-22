@@ -1,9 +1,10 @@
 'use client';
+
 import { silkscreen } from '@/fonts';
+import styles from '@/styles/vanplayer.module.css';
 import { Audios } from '@/types/vanko.type';
 import dayjs from 'dayjs';
 import { useEffect, useRef, useState } from 'react';
-import styles from './page.module.css';
 import VolumeNob from './volumeNob.js';
 
 interface VanPlayerProps {

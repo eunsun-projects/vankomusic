@@ -1,7 +1,8 @@
 'use client';
+
+import styles from '@/styles/vanplayer.module.css';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import styles from './page.module.css';
 
 const VolumeControl = styled.div<{ $mobile: boolean; $volume: number; $speaker: boolean }>`
   display: none;
