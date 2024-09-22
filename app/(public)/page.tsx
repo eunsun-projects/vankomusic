@@ -1,4 +1,4 @@
-import { getAudios, getVideos } from '@/apis/audios/get.api';
+import { getAudios, getVideos } from '@/apis/media/get.api';
 import { BorderLine, Floatings, Hadan, MainGallery, VankoMainLogo } from '@/components/home';
 import VanPlayer from '@/components/vanplayer/vanplayer';
 import { QUERY_KEY_AUDIOS, QUERY_KEY_VIDEOS } from '@/constants/query.constant';

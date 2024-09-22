@@ -1,4 +1,4 @@
-import { getVideos } from '@/apis/audios/get.api';
+import { getVideos } from '@/apis/media/get.api';
 import { QUERY_KEY_VIDEOS } from '@/constants/query.constant';
 import { Videos } from '@/types/vanko.type';
 import { useQuery } from '@tanstack/react-query';

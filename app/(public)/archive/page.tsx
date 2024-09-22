@@ -1,4 +1,4 @@
-import { getVideos } from '@/apis/audios/get.api';
+import { getVideos } from '@/apis/media/get.api';
 import Archive from '@/components/archive/archive';
 import { QUERY_KEY_VIDEOS } from '@/constants/query.constant';
 import { basicMeta, basicViewport } from '@/meta/basicmeta';
