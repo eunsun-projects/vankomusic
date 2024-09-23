@@ -10,7 +10,7 @@ interface ArchiveProps {
   videos: Videos[];
 }
 
-export default function Archive({ videos }: ArchiveProps) {
+export default function ArchiveTemplate({ videos }: ArchiveProps) {
   const [showModal, setShowModal] = useState(false);
   const [selected, setSelected] = useState<Videos | null>(null);
 

@@ -1,5 +1,5 @@
 import { getVideos } from '@/apis/media/get.api';
-import Archive from '@/components/archive/archive';
+import ArchiveTemplate from '@/components/archive/archiveTemplate';
 import { QUERY_KEY_VIDEOS } from '@/constants/query.constant';
 import { basicMeta, basicViewport } from '@/meta/basicmeta';
 import { Videos } from '@/types/vanko.type';
@@ -20,5 +20,5 @@ export default async function ArchivePage() {
     queryFn: () => getVideos(),
   });
 
-  return <Archive videos={videos} />;
+  return <ArchiveTemplate videos={videos} />;
 }
