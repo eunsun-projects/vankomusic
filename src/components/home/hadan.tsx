@@ -1,6 +1,7 @@
 'use client';
+
 import styles from '@/styles/home.module.css';
-import { fetchVisits } from '@/utils/fetchVisits';
+import supabase from '@/utils/supabase/client';
 import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
 
@@ -11,13 +12,18 @@ export default function Hadan() {
   const [currentVisits, setCurrentVisits] = useState('000000');
 
   useEffect(() => {
-    // 방문자 수를 갱신하는 함수 수정 요망
-    fetchVisits()
-      .then((visitcounts) => {
-        console.log(visitcounts);
-        setCurrentVisits(visitcounts.toString());
-      })
-      .catch((err) => console.log(err));
+    supabase
+      .from('visits')
+      .update(({ visits }: { visits: number }) => ({ visits: visits + 1 }))
+      .select('visits')
+      .single()
+      .then(({ data, error }) => {
+        if (error) {
+          console.error('Error fetching visitors:', error);
+        } else {
+          setCurrentVisits(data.visits.toString());
+        }
+      });
   }, []); // 페이지에 접속할 때마다 실행됩니다.
 
   return (
