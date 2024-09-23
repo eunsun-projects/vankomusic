@@ -1,0 +1,10 @@
+import styles from '@/app/modernmove/page.module.css';
+import { Html } from '@react-three/drei';
+
+export default function MoonLoaderDrei() {
+  return (
+    <Html center>
+      <span className={styles.moonloader}></span>
+    </Html>
+  );
+}
