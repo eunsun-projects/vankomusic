@@ -12,7 +12,7 @@ export async function setWishs(wish: Wishs) {
 }
 
 export async function setCuration(curations: Videos[]) {
-  const url = '/api/set/curation';
+  const url = '/api/set/curations';
   const data = await fetchWrapper<Videos[]>(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

@@ -149,47 +149,35 @@ export default function Saju({ closeUnse, mobile, android }: SajuProps) {
   const isSubmittingRef = useRef(false);
   const sowonRef = useRef<HTMLFormElement | null>(null);
 
-  const { mutate: postWish } = useWishsMutation();
+  const { mutateAsync: postWish } = useWishsMutation();
 
-  const sowonClick = async (e: React.FormEvent<HTMLFormElement>) => {
+  const openTaroBig = () => setTaroBig(true);
+  const closeTaroBig = () => setTaroBig(false);
+
+  const handleSowonSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!sowonRef.current) return;
-    const final = () => {
-      const loadtimer = setTimeout(() => {
-        setLoad(true);
-        clearTimeout(loadtimer);
-      }, 500);
-      const picturetimer = setTimeout(() => {
-        setLoad(false);
-        setNewyear(true);
-        clearTimeout(picturetimer);
-      }, 5100);
-    };
     if (isSubmittingRef.current === false) {
       try {
         isSubmittingRef.current = true;
-        if (sowonRef.current.sowoncontents.value.length === 0) {
-          final(); // 최종 시퀀스
-          return;
-        }
-        final(); // 240106 최종 시퀀스 진행 위치를 response.ok 에서 여기로 옮김 - response에 관계없이 다음 시퀀스로 넘어가도록
-
         const sowon: Wishs = {
           contents: sanitizeInput(sowonRef.current.sowoncontents.value),
           created_at: new Date().toISOString(),
           id: nanoid(20),
         };
-        postWish(sowon);
+        setLoad(true);
+        await postWish(sowon);
+        const picturetimer = setTimeout(() => {
+          setLoad(false);
+          setNewyear(true);
+          clearTimeout(picturetimer);
+        }, 5100);
+        isSubmittingRef.current = false;
       } catch (error) {
         console.error('소원 제출 중 오류 발생:', error);
-      } finally {
-        isSubmittingRef.current = false;
       }
     }
   };
-
-  const openTaroBig = () => setTaroBig(true);
-  const closeTaroBig = () => setTaroBig(false);
 
   const handleTaro =
     (item: (typeof taropicture)[number]) => (e: React.MouseEvent<HTMLDivElement>) => {
@@ -252,7 +240,7 @@ export default function Saju({ closeUnse, mobile, android }: SajuProps) {
           {sowonForm && (
             <div className={styles.marqueeinput}>
               <p>소원을 단정히 적어서 서낭신께 제출하세요...</p>
-              <form className={styles.sowonform} ref={sowonRef} onSubmit={sowonClick}>
+              <form className={styles.sowonform} ref={sowonRef} onSubmit={handleSowonSubmit}>
                 <input
                   className={styles.sowonp}
                   type="text"
@@ -260,13 +248,13 @@ export default function Saju({ closeUnse, mobile, android }: SajuProps) {
                   placeholder="진실된 마음으로... "
                   disabled={isSubmittingRef.current}
                 ></input>
-                <input
+                <button
                   className={styles.click}
                   type="submit"
                   value="제출하기"
                   disabled={isSubmittingRef.current}
                   style={{ pointerEvents: isSubmittingRef.current ? 'none' : 'all' }}
-                ></input>
+                ></button>
               </form>
             </div>
           )}

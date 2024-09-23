@@ -2,7 +2,6 @@
 import styles from '@/app/seonang/page.module.css';
 import { GasaModal, MvModal, Saju, lyrics } from '@/components/project/seonang';
 import { useWishsQuery } from '@/hooks/queries/wishs.query';
-import { fetchVisits } from '@/utils/fetchVisits';
 import { animated, useSpring } from '@react-spring/web';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -290,7 +289,6 @@ export default function SeonangTemplate() {
   }, [currentLyricsIndex]);
 
   useEffect(() => {
-    // 니플은 콘솔 찍어보니까 한번만 바뀌는 것 확인함 === 즉 아래 코드는 시작시 한번만 실행됨
     if (nipplejs) {
       const options = {
         zone: bingleContainerRef.current as HTMLElement,
@@ -336,9 +334,6 @@ export default function SeonangTemplate() {
       raq = requestAnimationFrame(rotateImage);
     };
     raq = requestAnimationFrame(rotateImage);
-
-    // 방문자수 체크 함수
-    fetchVisits();
 
     return () => {
       cancelAnimationFrame(raq);
