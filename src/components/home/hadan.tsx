@@ -12,18 +12,22 @@ export default function Hadan() {
   const [currentVisits, setCurrentVisits] = useState('000000');
 
   useEffect(() => {
-    supabase
-      .from('visits')
-      .update(({ visits }: { visits: number }) => ({ visits: visits + 1 }))
-      .select('visits')
-      .single()
-      .then(({ data, error }) => {
-        if (error) {
-          console.error('Error fetching visitors:', error);
-        } else {
-          setCurrentVisits(data.visits.toString());
-        }
-      });
+    const visits = localStorage.getItem('visits');
+    if (!visits) {
+      supabase
+        .from('visits')
+        .update(({ visits }: { visits: number }) => ({ visits: visits + 1 }))
+        .select('visits')
+        .single()
+        .then(({ data, error }) => {
+          if (error) {
+            console.error('Error fetching visitors:', error);
+          } else {
+            setCurrentVisits(data.visits.toString());
+          }
+        });
+      sessionStorage.setItem('visits', 'old');
+    }
   }, []); // 페이지에 접속할 때마다 실행됩니다.
 
   return (
