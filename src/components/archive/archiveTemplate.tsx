@@ -28,26 +28,34 @@ export default function ArchiveTemplate({ videos }: ArchiveProps) {
       <div className={styles.archivepage}>
         <div className={styles.archivetitle}>
           <Image
-            className={`${styles.titleImage} ${styles.titleImageleft}`}
-            src="/assets/Image/cd.webp"
+            className={`${styles.titleimg} ${styles.titleimgleft}`}
+            src="/assets/img/cd.webp"
             alt="cd"
+            width={40}
+            height={40}
             unoptimized
-          ></Image>
+          />
           <p>ARCHIVE</p>
           <Image
-            className={`${styles.titleImage} ${styles.titleImageright}`}
-            src="/assets/Image/cd.webp"
+            className={`${styles.titleimg} ${styles.titleimgright}`}
+            src="/assets/img/cd.webp"
             alt="cd"
+            width={40}
+            height={40}
             unoptimized
-          ></Image>
+          />
         </div>
 
         <div className={styles.archivegrid}>
           {videos.map((video, i) => {
             return (
-              <div className={`${styles.archivebox} ${righteous.className}`} key={i}>
+              <div
+                className={`${styles.archivebox} ${righteous.className}`}
+                style={{ fontFamily: 'DungGeunMo' }}
+                key={i}
+              >
                 <div
-                  className={styles.archiveImage}
+                  className={styles.archiveimg}
                   onClick={openModal(video)}
                   style={{ backgroundImage: `url(${video.thumb})` }}
                 ></div>

@@ -1,6 +1,6 @@
 import { SetScreenSize } from '@/components/common';
 import { knewave } from '@/fonts';
-import '../globals.css';
+import '../../globals.css';
 
 export default function ArchiveLayout({ children }: { children: React.ReactNode }) {
   return (
