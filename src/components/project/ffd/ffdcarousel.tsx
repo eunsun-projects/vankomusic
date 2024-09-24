@@ -1,5 +1,7 @@
 'use client';
+
 import styles from '@/styles/ffd.module.css';
+import '@/styles/react-carousel.es.css';
 import Link from 'next/link';
 import {
   ButtonFirst,
@@ -15,7 +17,7 @@ import FfdLoader from './ffdloader';
 
 interface FfdCarouselProps {
   setShowCarousel: React.Dispatch<React.SetStateAction<boolean>>;
-  mobile: boolean;
+  mobile: boolean | null;
   imgs: string[];
 }
 
@@ -34,7 +36,7 @@ export default function FfdCarousel({ setShowCarousel, mobile, imgs }: FfdCarous
       ref={carouselRef}
       onClick={handleX}
       className={styles.modalcontain}
-      style={{ zIndex: '555', backgroundColor: '#000000ba' }}
+      style={{ zIndex: '1100', backgroundColor: '#000000ba' }}
     >
       <div
         style={{
@@ -74,7 +76,12 @@ export default function FfdCarousel({ setShowCarousel, mobile, imgs }: FfdCarous
                 {imgs.map((e, i) => {
                   return (
                     <Slide key={i} index={i}>
-                      <Image src={e} hasMasterSpinner alt="ffd-img"></Image>
+                      <Image
+                        src={e}
+                        hasMasterSpinner
+                        alt="ffd-img"
+                        style={{ width: '100%', height: '100%' }}
+                      ></Image>
                     </Slide>
                   );
                 })}

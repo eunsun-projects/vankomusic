@@ -1,4 +1,5 @@
 'use client';
+
 import styles from '@/styles/ffd.module.css';
 import { useRef } from 'react';
 
@@ -23,7 +24,13 @@ function FfdModal({ setShowModal, currTime, setRelayPlay }: FfdModalProps) {
     <div className={styles.modalcontainer} onClick={closeModal}>
       <div
         ref={frameRef}
-        style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}
+        style={{
+          position: 'fixed',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          zIndex: 1000,
+        }}
       >
         <iframe
           className={styles.iframe}

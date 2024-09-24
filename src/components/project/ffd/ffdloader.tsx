@@ -9,6 +9,8 @@ export default function FfdLoader() {
         className={styles.loaderimg}
         src="/assets/img/ffd_vanko.webp"
         alt="vankologo"
+        width={160}
+        height={160}
         unoptimized
       ></Image>
     </div>

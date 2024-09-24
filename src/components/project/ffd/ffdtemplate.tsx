@@ -81,6 +81,7 @@ export default function FfdTemplate({ imgs }: FfdTemplateProps) {
         });
     }
   };
+
   const songStartTouch = (e: React.TouchEvent<HTMLDivElement>) => {
     e.preventDefault();
     document.body.style.overflowY = 'auto';
@@ -105,12 +106,13 @@ export default function FfdTemplate({ imgs }: FfdTemplateProps) {
   };
 
   const handleTvClick = () => {
-    if (!audioRef.current) return;
     setShowModal(true);
+    if (!audioRef.current) return;
     audioRef.current.pause();
   };
 
   const handleCarouselClick = () => {
+    console.log('클릭됨!');
     setShowCarousel(true);
   };
 
@@ -120,11 +122,11 @@ export default function FfdTemplate({ imgs }: FfdTemplateProps) {
     if (sum <= audioRef.current.duration) {
       audioRef.current.currentTime = sum;
     }
-    if (relayPlay === false && audioRef.current.ended === false) {
+    if (relayPlay === false && audioRef.current.ended === false && !showModal && !redBtn) {
       audioRef.current.play();
       setRelayPlay(true);
     }
-  }, [relayPlay]);
+  }, [relayPlay, showModal, redBtn]);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -165,7 +167,7 @@ export default function FfdTemplate({ imgs }: FfdTemplateProps) {
       {showModal && (
         <FfdModal setShowModal={setShowModal} currTime={currTime} setRelayPlay={setRelayPlay} />
       )}
-      {showCarousel && mobile && (
+      {showCarousel && (
         <FfdCarousel setShowCarousel={setShowCarousel} mobile={mobile} imgs={imgs} />
       )}
 
@@ -203,16 +205,20 @@ export default function FfdTemplate({ imgs }: FfdTemplateProps) {
             className={styles.ffdbtnimg}
             src="/assets/img/ffd_bottom.webp"
             alt="imgtobottom"
+            width={16}
+            height={16}
             unoptimized
-          ></Image>
+          />
           <div className={styles.ffdvankobox}>
             <Link href={'/'} prefetch={false}>
               <Image
                 className={styles.vankologo}
                 src="/assets/img/ffd_vanko.webp"
                 alt="vanko"
+                width={32}
+                height={32}
                 unoptimized
-              ></Image>
+              />
             </Link>
           </div>
         </div>
@@ -224,32 +230,36 @@ export default function FfdTemplate({ imgs }: FfdTemplateProps) {
         </div>
 
         <div className={styles.ffdbtntop}>
-          <div
-            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-            onClick={handleTvClick}
-          >
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <Image
               className={styles.ffdtv}
               src="/assets/img/legotv2.webp"
               alt="tv"
+              width={38}
+              height={32}
               unoptimized
-            ></Image>
+              onClick={handleTvClick}
+            />
           </div>
           <Image
             onClick={scrollTop}
             className={styles.ffdbtnimg}
             src="/assets/img/ffd_top.webp"
             alt="imgtotop"
+            width={16}
+            height={16}
             unoptimized
-          ></Image>
+          />
           <div className={styles.ffdvankobox}>
             <Image
               className={styles.lock}
               src="/assets/img/lock.webp"
               onClick={handleCarouselClick}
               alt="lock"
+              width={32}
+              height={32}
               unoptimized
-            ></Image>
+            />
           </div>
         </div>
       </div>
