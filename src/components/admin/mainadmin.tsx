@@ -3,7 +3,6 @@
 import { useAudiosMutation } from '@/hooks/mutations';
 import styles from '@/styles/admin.module.css';
 import { Audios } from '@/types/vanko.type';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useRef, useState } from 'react';
 
@@ -96,8 +95,8 @@ export default function MainAdmin({ audios }: MainAdminProps) {
   };
 
   const hanldeDeleteClick = async () => {
-    const filteredAudios = audioAll.filter((_, i) => i !== selectedAudio);
-
+    const filteredAudios = audioAll.find((_, i) => i === selectedAudio);
+    if (!filteredAudios) return;
     if (confirm('삭제하시겠습니까?')) {
       await postAudios({ files: null, audios: filteredAudios, mode: 'delete' });
       router.refresh();
@@ -184,12 +183,7 @@ export default function MainAdmin({ audios }: MainAdminProps) {
               순서변경적용
             </div>
             <div>
-              <Image
-                src="/assets/img/trashicon.webp"
-                onClick={hanldeDeleteClick}
-                alt="휴지통"
-                unoptimized
-              />
+              <img src="/assets/img/trashicon.webp" onClick={hanldeDeleteClick} alt="휴지통" />
             </div>
           </div>
         </div>

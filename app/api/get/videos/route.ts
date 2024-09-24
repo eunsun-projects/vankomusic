@@ -11,7 +11,7 @@ export async function GET() {
       .from('videos')
       .select('*')
       .eq('isPublic', true)
-      .order('number', { ascending: false });
+      .order('number', { ascending: true });
 
   if (error) {
     return NextResponse.json(error.message, { status: 500 });

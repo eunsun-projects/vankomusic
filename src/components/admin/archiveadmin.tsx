@@ -1,11 +1,13 @@
 'use client';
 
-import styles from '@/components/admin/page.module.css';
+import { QUERY_KEY_VIDEOS } from '@/constants/query.constant';
 import { useVideosMutation } from '@/hooks/mutations';
+import styles from '@/styles/admin.module.css';
 import { PartialVideos, Videos } from '@/types/vanko.type';
-import Image from 'next/image';
+import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useCallback, useRef, useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 
 interface ArchiveAdminProps {
   videos: Videos[];
@@ -24,6 +26,7 @@ export default function ArchiveAdmin({ videos }: ArchiveAdminProps) {
   const createFormRef = useRef<HTMLFormElement | null>(null);
 
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const clickTitle = (i: number) => () => {
     setSelectedNum(i);
@@ -63,6 +66,7 @@ export default function ArchiveAdmin({ videos }: ArchiveAdminProps) {
       });
 
       const data = {
+        id: selectedItem ? selectedItem.id : uuidv4(),
         title: title.length > 0 ? title : oldTitle,
         description: desc.length > 0 ? desc : selectedItem?.description,
         keywords: keywords,
@@ -84,10 +88,11 @@ export default function ArchiveAdmin({ videos }: ArchiveAdminProps) {
       newList[selectedNum - 1],
       newList[selectedNum],
     ]; // 현재 항목과 위 항목을 서로 바꿈
-    newList.forEach((e, i) => {
+    const reOrdered = newList.map((e, i) => {
       e.number = i;
-    }); // 넘버 순서 재정의
-    setVideoState(newList);
+      return e;
+    });
+    setVideoState(reOrdered);
   };
 
   const moveDown = () => {
@@ -99,10 +104,11 @@ export default function ArchiveAdmin({ videos }: ArchiveAdminProps) {
       newList[selectedNum + 1],
       newList[selectedNum],
     ]; // 현재 항목과 위 항목을 서로 바꿈
-    newList.forEach((e, i) => {
-      e.number = i; // 리스트 길이에서 현재 인덱스를 뺀 값을 할당
-    }); // 넘버 순서 재정의
-    setVideoState(newList);
+    const reOrdered = newList.map((e, i) => {
+      e.number = i;
+      return e;
+    });
+    setVideoState(reOrdered);
   };
 
   const handleCreateSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -111,6 +117,8 @@ export default function ArchiveAdmin({ videos }: ArchiveAdminProps) {
     if (confirm('이 정보로 새로운 아이템을 추가하시겠습니까?')) {
       const data = setRequestInit(createFormRef.current) as PartialVideos;
       await postVideos({ video: data, mode: 'create' });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEY_VIDEOS] });
+      createFormRef.current.reset();
       router.refresh();
     } else {
       alert('다시 진행해 주세요.');
@@ -124,6 +132,8 @@ export default function ArchiveAdmin({ videos }: ArchiveAdminProps) {
     if (confirm('이 정보로 아이템을 수정하시겠습니까?')) {
       const data = setRequestInit(updateFormRef.current) as PartialVideos;
       await postVideos({ video: data, mode: 'update' });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEY_VIDEOS] });
+      updateFormRef.current.reset();
       router.refresh();
     } else {
       alert('다시 진행해 주세요.');
@@ -134,10 +144,16 @@ export default function ArchiveAdmin({ videos }: ArchiveAdminProps) {
     if (videos === videoState) {
       alert('변경점이 없습니다!');
     } else if (confirm('이대로 순서를 수정하시겠습니까?')) {
+      console.log(videoState);
       await postVideos({ video: videoState, mode: 'updateAll' });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEY_VIDEOS] });
+      updateFormRef.current?.reset();
+      createFormRef.current?.reset();
       router.refresh();
     } else {
       alert('다시 진행해 주세요.');
+      updateFormRef.current?.reset();
+      createFormRef.current?.reset();
     }
   };
 
@@ -146,9 +162,14 @@ export default function ArchiveAdmin({ videos }: ArchiveAdminProps) {
       alert('먼저 지울 아이템을 선택해 주세요!');
     } else if (confirm('해당 아이템을 삭제하시겠습니까?')) {
       await postVideos({ video: selectedItem, mode: 'delete' });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEY_VIDEOS] });
+      updateFormRef.current?.reset();
+      createFormRef.current?.reset();
       router.refresh();
     } else {
       alert('다시 진행해 주세요.');
+      updateFormRef.current?.reset();
+      createFormRef.current?.reset();
     }
   };
 
@@ -326,18 +347,16 @@ export default function ArchiveAdmin({ videos }: ArchiveAdminProps) {
       {/* 오른쪽 리스트 박스 */}
       <div className={styles.listbox}>
         <div className={styles.listtile}>
-          <Image
+          <img
             style={{ width: '1rem', height: '1rem', marginRight: '0.5rem' }}
             src="/assets/img/cd.webp"
             alt="cd"
-            unoptimized
           />
           <p>Archive All List</p>
-          <Image
+          <img
             style={{ width: '1rem', height: '1rem', marginLeft: '0.5rem' }}
             src="/assets/img/cd.webp"
             alt="cd"
-            unoptimized
           />
         </div>
 
@@ -405,12 +424,7 @@ export default function ArchiveAdmin({ videos }: ArchiveAdminProps) {
             </div>
 
             <div>
-              <Image
-                src="/assets/img/trashicon.webp"
-                onClick={handleDeleteClick}
-                alt="trashicon"
-                unoptimized
-              />
+              <img src="/assets/img/trashicon.webp" onClick={handleDeleteClick} alt="trashicon" />
             </div>
           </div>
         </div>

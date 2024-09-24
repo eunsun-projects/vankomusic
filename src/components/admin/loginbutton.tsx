@@ -9,7 +9,7 @@ export default function LoginButton() {
   return (
     <div className={styles.loginpage}>
       <span>구글로 로그인 해 주세요.</span>
-      <div className={styles.loginbtn} onClick={() => loginWithProvider('google')}>
+      <div className={styles.loginbtn} onClick={loginWithProvider}>
         로그인
       </div>
     </div>

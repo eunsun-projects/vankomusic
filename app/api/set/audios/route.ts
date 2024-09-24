@@ -3,8 +3,9 @@ import { createClient } from '@/utils/supabase/server';
 import { PostgrestError, PostgrestResponse } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function POST(request: NextRequest, { params }: { params: { mode: string } }) {
-  const { mode } = params;
+export async function POST(request: NextRequest) {
+  const { searchParams } = new URL(request.url);
+  const mode = searchParams.get('mode');
   const supabase = createClient();
 
   if (mode === 'add') {
@@ -39,7 +40,7 @@ export async function POST(request: NextRequest, { params }: { params: { mode: s
         const { data: url } = supabase.storage.from('audio').getPublicUrl(data.path);
 
         const newAudioData: PartialAudios = {
-          title: file.name.replace(/[^\p{L}\s]/gu, ''), // 특수문자와 숫자 제거
+          title: file.name.replace(/^\d+\.|\.mp3$/g, ''),
           url: url.publicUrl,
           number: audioNumbers.length + 1,
         };
@@ -85,56 +86,53 @@ export async function POST(request: NextRequest, { params }: { params: { mode: s
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: { mode: string } }) {
-  const { mode } = params;
+export async function DELETE(request: NextRequest) {
   const supabase = createClient();
+  const audioData: Audios = await request.json();
 
-  if (mode === 'delete') {
-    const audioData = await request.json();
-    const {
-      data,
-      error,
-    }: {
-      data: PostgrestResponse<{ status: number; statusText: string }> | null;
-      error: PostgrestError | null;
-    } = await supabase.from('audios').delete().eq('id', audioData.id);
+  const {
+    data,
+    error,
+  }: {
+    data: PostgrestResponse<{ status: number; statusText: string }> | null;
+    error: PostgrestError | null;
+  } = await supabase.from('audios').delete().eq('id', audioData.id);
 
-    if (error) {
-      console.error(`Error deleting audio data:`, error.message);
-      return NextResponse.json(error.message, { status: 500 });
-    }
-
-    const {
-      data: audios,
-      error: audioError,
-    }: { data: Audios[] | null; error: PostgrestError | null } = await supabase
-      .from('audios')
-      .select();
-
-    if (audioError) {
-      console.error(`Error deleting audio data:`, audioError.message);
-      return NextResponse.json(audioError.message, { status: 500 });
-    }
-
-    const sortedAudios = audios?.sort((a, b) => (a.number as number) - (b.number as number));
-    const reorderedAudios = sortedAudios?.map((audio, index) => ({
-      ...audio,
-      number: index + 1,
-    }));
-
-    const {
-      data: finalData,
-      error: finalError,
-    }: { data: Audios[] | null; error: PostgrestError | null } = await supabase
-      .from('audios')
-      .update(reorderedAudios)
-      .select();
-
-    if (finalError) {
-      console.error(`Error reordering audio data:`, finalError.message);
-      return NextResponse.json(finalError.message, { status: 500 });
-    }
-
-    return NextResponse.json(finalData, { status: 200 });
+  if (error) {
+    console.error(`Error deleting audio data:`, error.message);
+    return NextResponse.json(error.message, { status: 500 });
   }
+
+  const {
+    data: audios,
+    error: audioError,
+  }: { data: Audios[] | null; error: PostgrestError | null } = await supabase
+    .from('audios')
+    .select();
+
+  if (audioError) {
+    console.error(`Error selecting audio data:`, audioError.message);
+    return NextResponse.json(audioError.message, { status: 500 });
+  }
+
+  const sortedAudios = audios?.sort((a, b) => (a.number as number) - (b.number as number));
+  const reorderedAudios = sortedAudios?.map((audio, index) => ({
+    ...audio,
+    number: index,
+  }));
+
+  const {
+    data: finalData,
+    error: finalError,
+  }: { data: Audios[] | null; error: PostgrestError | null } = await supabase
+    .from('audios')
+    .upsert(reorderedAudios)
+    .select();
+
+  if (finalError) {
+    console.error(`Error reordering audio data:`, finalError.message);
+    return NextResponse.json(finalError.message, { status: 500 });
+  }
+
+  return NextResponse.json(finalData, { status: 200 });
 }

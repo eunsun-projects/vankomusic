@@ -33,17 +33,17 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (
-    !user &&
-    request.nextUrl.pathname !== '/' &&
-    !request.nextUrl.pathname.startsWith('/vankoadmin') &&
-    !request.nextUrl.pathname.startsWith('/api')
-  ) {
-    // no user, potentially respond by redirecting the user to the login page
-    const url = request.nextUrl.clone();
-    url.pathname = '/admin';
-    return NextResponse.redirect(url);
-  }
+  // if (
+  //   !user &&
+  //   request.nextUrl.pathname !== '/' &&
+  //   !request.nextUrl.pathname.startsWith('/vankoadmin') &&
+  //   !request.nextUrl.pathname.startsWith('/api')
+  // ) {
+  //   // no user, potentially respond by redirecting the user to the login page
+  //   const url = request.nextUrl.clone();
+  //   url.pathname = '/vankoadmin';
+  //   return NextResponse.redirect(url);
+  // }
 
   if (user) {
     requestHeaders.set('x-user', user.id);

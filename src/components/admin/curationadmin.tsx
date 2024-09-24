@@ -250,12 +250,7 @@ export default function CurationAdmin({ videos, curations }: CurationAdminProps)
             </div>
           </div>
           <div>
-            <Image
-              src="/assets/img/trashicon.webp"
-              onClick={clickTrash}
-              alt="trashicon"
-              unoptimized
-            ></Image>
+            <img src="/assets/img/trashicon.webp" onClick={clickTrash} alt="trashicon" />
           </div>
         </div>
       </div>
@@ -278,19 +273,17 @@ export default function CurationAdmin({ videos, curations }: CurationAdminProps)
       {/** 오른쪽 전체 박스 */}
       <div className={styles.listbox}>
         <div className={styles.listtile}>
-          <Image
+          <img
             style={{ width: '1rem', height: '1rem', marginRight: '0.5rem' }}
             src="/assets/img/cd.webp"
             alt="cd"
-            unoptimized
-          ></Image>
+          />
           <p>Archive All List</p>
-          <Image
+          <img
             style={{ width: '1rem', height: '1rem', marginLeft: '0.5rem' }}
             src="/assets/img/cd.webp"
             alt="cd"
-            unoptimized
-          ></Image>
+          />
         </div>
 
         <div style={{ height: '30rem', width: '90%', margin: '0 auto' }}>

@@ -53,7 +53,7 @@ export async function setAudios({
   mode,
 }: {
   files: FormData | null;
-  audios: Audios[] | null;
+  audios: Audios[] | Audios | null;
   mode: string;
 }) {
   if (mode === 'add') {

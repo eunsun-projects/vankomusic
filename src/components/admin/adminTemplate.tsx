@@ -3,7 +3,6 @@
 import useAuth from '@/hooks/auth/auth.hook';
 import { useAudiosQuery, useCurationsQuery, useVideosQuery } from '@/hooks/queries';
 import styles from '@/styles/admin.module.css';
-import Image from 'next/image';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useState } from 'react';
 import ArchiveAdmin from './archiveadmin';
@@ -57,11 +56,10 @@ export default function AdminTemplate() {
         <div className={styles.adminnav}>
           <div className={styles.navflex} onClick={handleMain}>
             <div className={styles.iconbox}>
-              <Image
+              <img
                 src="/assets/img/adminicon0.webp"
                 style={{ width: '3rem', height: 'auto' }}
                 alt="adminicon0"
-                unoptimized
               />
             </div>
             <p className={styles.navbtn}>admin 메인</p>
@@ -69,11 +67,10 @@ export default function AdminTemplate() {
 
           <div className={styles.navflex} onClick={handleArchive}>
             <div className={styles.iconbox}>
-              <Image
+              <img
                 src="/assets/img/adminicon4.webp"
                 style={{ width: '3.5rem', height: 'auto' }}
                 alt="adminicon4"
-                unoptimized
               />
             </div>
             <p className={styles.navbtn}>아카이브 관리</p>
@@ -81,11 +78,10 @@ export default function AdminTemplate() {
 
           <div className={styles.navflex} onClick={handleCuration}>
             <div className={styles.iconbox}>
-              <Image
+              <img
                 src="/assets/img/adminicon2.webp"
                 style={{ width: '3.5rem', height: 'auto' }}
                 alt="adminicon2"
-                unoptimized
               />
             </div>
             <p className={styles.navbtn}>큐레이션 관리</p>

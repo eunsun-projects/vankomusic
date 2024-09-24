@@ -35,8 +35,6 @@ export async function GET() {
     return NextResponse.json(userError?.message, { status: 401 });
   }
 
-  console.log('userData', userData);
-
   return NextResponse.json(userData, { status: 200 });
 }
 
