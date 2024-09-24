@@ -1,7 +1,7 @@
 'use client';
 import VankoLogo from '@/class/vankoLogoClass';
+import styles from '@/styles/home.module.css';
 import { useEffect, useRef } from 'react';
-import styles from '../page.module.css';
 
 export default function VankoMainLogo() {
   const vankologoRef = useRef<HTMLDivElement>(null);

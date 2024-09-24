@@ -1,5 +1,5 @@
 'use client';
-import styles from '@/app/page.module.css';
+import styles from '@/styles/main.module.css';
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 
@@ -59,6 +59,8 @@ export default function Floating({ zindex, scalex, src }: FloatingProps) {
       src={src}
       alt="Floating Fish"
       className={styles.floating}
+      width={40}
+      height={120}
       style={{ top: position.top, left: position.left, zIndex: zindex, transform: scalex }}
       unoptimized
     />

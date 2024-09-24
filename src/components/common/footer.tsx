@@ -1,5 +1,5 @@
-import styles from '@/app/page.module.css';
 import { orbitron } from '@/fonts';
+import styles from '@/styles/main.module.css';
 import Image from 'next/image';
 import Link from 'next/link';
 

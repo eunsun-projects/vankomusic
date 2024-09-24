@@ -86,6 +86,8 @@ export default async function Home() {
                   alt="dragon"
                   src="/assets/gifs/dragon.gif"
                   style={{ width: '2.5rem', height: '2.5rem' }}
+                  width={40}
+                  height={40}
                   unoptimized
                 ></Image>
                 <p>{"Welcome to Vanko's Home! Relax with computer music, art and etc..."}</p>
@@ -93,6 +95,8 @@ export default async function Home() {
                   alt="dragon"
                   src="/assets/gifs/dragon.gif"
                   style={{ width: '2.5rem', height: '2.5rem' }}
+                  width={40}
+                  height={40}
                   unoptimized
                 ></Image>
               </div>

@@ -1,7 +1,9 @@
 'use client';
 
 import styles from '@/styles/home.module.css';
+import { Visits } from '@/types/vanko.type';
 import supabase from '@/utils/supabase/client';
+import { PostgrestError } from '@supabase/supabase-js';
 import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
 
@@ -13,19 +15,33 @@ export default function Hadan() {
 
   useEffect(() => {
     const visits = localStorage.getItem('visits');
-    if (!visits) {
-      supabase
+
+    const fetchVisits = async () => {
+      const { data, error }: { data: Visits | null; error: PostgrestError | null } = await supabase
         .from('visits')
-        .update(({ visits }: { visits: number }) => ({ visits: visits + 1 }))
-        .select('visits')
-        .single()
-        .then(({ data, error }) => {
-          if (error) {
-            console.error('Error fetching visitors:', error);
-          } else {
-            setCurrentVisits(data.visits.toString());
-          }
-        });
+        .select()
+        .single();
+      if (error) {
+        console.error('Error fetching visitors:', error);
+      }
+      if (data && data.visits) {
+        supabase
+          .from('visits')
+          .update({ ...data, visits: data?.visits + 1 })
+          .eq('id', data.id)
+          .select('visits')
+          .single()
+          .then(({ data, error }) => {
+            if (error) {
+              console.error('Error fetching visitors:', error);
+            } else {
+              setCurrentVisits(data.visits.toString());
+            }
+          });
+      }
+    };
+    if (!visits) {
+      fetchVisits();
       sessionStorage.setItem('visits', 'old');
     }
   }, []); // 페이지에 접속할 때마다 실행됩니다.

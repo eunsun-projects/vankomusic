@@ -5,7 +5,7 @@ import styles from '@/styles/vanplayer.module.css';
 import { Audios } from '@/types/vanko.type';
 import dayjs from 'dayjs';
 import { useEffect, useRef, useState } from 'react';
-import VolumeNob from './volumeNob.js';
+import VolumeNob from './volumeNob';
 
 interface VanPlayerProps {
   bgmsList: Audios[];
@@ -17,9 +17,9 @@ export default function VanPlayer({ bgmsList }: VanPlayerProps) {
   const [load, setLoad] = useState(false); // 기본 로딩 완료되면 true
   const [src, setSrc] = useState(bgmsList[0]); // src 초기값 bgmsList 의 0번으로 설정
   const [full, setFull] = useState(0); //플레이타임 전체 백분율 측정용
-  const [maxM, setMaxM] = useState(0); //곡 전체 재생시간
+  const [nowM, setNowM] = useState('00:00'); //현재재생시간
+  const [maxM, setMaxM] = useState('00:00'); //곡 전체 재생시간
   const [current, setCurrent] = useState(0); //플레이타임 현재 백분율
-  const [nowM, setNowM] = useState(0); //현재재생시간
   const [listOpen, setListOpen] = useState(false); //목록 열렸냐 닫혔냐
   const [volume, setVolume] = useState(0.5); //기본 볼륨값
   const [nob, setNob] = useState(false); //볼륨노브
@@ -80,7 +80,7 @@ export default function VanPlayer({ bgmsList }: VanPlayerProps) {
   const handleDuration = () => {
     if (!audioRef.current) return;
     const max = dayjs(audioRef.current.duration * 1000).format('mm:ss');
-    setMaxM(Number(max));
+    setMaxM(max);
     setFull(audioRef.current.duration);
   };
 
@@ -88,15 +88,13 @@ export default function VanPlayer({ bgmsList }: VanPlayerProps) {
   const handleCurrent = () => {
     if (!audioRef.current) return;
     const now = dayjs(audioRef.current.currentTime * 1000).format('mm:ss');
-    setNowM(Number(now));
+    setNowM(now);
     setCurrent(audioRef.current.currentTime);
   };
 
   // 음원 로딩 완료시(onCanPlayThrough) 호출
   const handleFullyloaded = () => {
     console.log('fully loaded !');
-    // audioRef.current.play(); 자동 재생 금지 !!
-    // setPlay(true);
     setFullyLoad(true);
   };
 
@@ -199,16 +197,16 @@ export default function VanPlayer({ bgmsList }: VanPlayerProps) {
   useEffect(() => {
     if (src && audioRef.current) {
       if (src.number === 0) {
-        console.log('반오디오 최초');
+        // console.log('반오디오 최초');
         // if(!play) audioRef.current.load(); // 여기서 했더니 0번 곡일 때 일시정지해도 다시 첨부터 로드되서 onmount useEffect 로 옮겨버림
         // setLoad(true);
       } else if (audioRef.current.src === src.url) {
         // 이전 곡src 와 src 스테이트가 일치하면 === 잘 넘어갔으면
-        console.log('반오디오 다음곡');
+        // console.log('반오디오 다음곡');
         if (play) audioRef.current.play();
         setLoad(true); // 다음 곡 (선택된 곡) 로딩이 완료되었다는 뜻
       } else {
-        console.log('반오디오 똑같음');
+        // console.log('반오디오 똑같음');
         setLoad(false);
       }
     }

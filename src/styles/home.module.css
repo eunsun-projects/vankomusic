@@ -198,17 +198,20 @@
   align-items: center;
 }
 .imgbox {
+  position: relative;
   width: 8rem;
   height: 8rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  aspect-ratio: auto;
 }
 .galleryimg {
   transition: all 0.1s;
   width: 7rem;
   height: auto;
+  object-fit: cover;
 }
 
 .galleryimg:hover {

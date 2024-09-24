@@ -128,18 +128,22 @@ export default function CurationAdmin({ videos, curations }: CurationAdminProps)
           }}
         >
           <Image
-            style={{ width: '3rem', height: '3rem', marginRight: '0.5rem' }}
+            style={{ width: '3rem', height: 'auto', marginRight: '0.5rem' }}
             src="/assets/img/pizza.webp"
             alt="pizza"
+            width={48}
+            height={48}
             unoptimized
-          ></Image>
+          />
           <div className={`${styles.line} ${styles.linetrans}`}></div>
           <Image
-            style={{ width: '3rem', height: '3rem', marginLeft: '0.5rem' }}
+            style={{ width: '3rem', height: 'auto', marginLeft: '0.5rem' }}
             src="/assets/img/pizza.webp"
             alt="pizza"
+            width={48}
+            height={48}
             unoptimized
-          ></Image>
+          />
         </div>
 
         <div className={styles.selectitleconbox}>

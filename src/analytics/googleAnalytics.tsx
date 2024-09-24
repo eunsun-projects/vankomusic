@@ -1,4 +1,4 @@
-import Script from "next/script";
+import Script from 'next/script';
 
 export default function GoogleAnalytics() {
   return (
@@ -8,12 +8,11 @@ export default function GoogleAnalytics() {
       />
       <Script id="google-analytics">
         {`
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                gtag('js', new Date());
-        
-                gtag('config', '${process.env.NEXT_PUBLIC_MEASUREMENT_ID}');
-            `}
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', '${process.env.NEXT_PUBLIC_MEASUREMENT_ID}');
+        `}
       </Script>
     </>
   );

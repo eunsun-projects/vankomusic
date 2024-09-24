@@ -8,8 +8,10 @@ export default function BorderLine() {
         <Image
           src="/assets/img/pizza.webp"
           className={styles.borderimg}
-          style={{ transform: 'scaleX(-1)' }}
+          style={{ width: '3rem', height: 'auto', transform: 'scaleX(-1)' }}
           alt="pizza"
+          width={48}
+          height={48}
           unoptimized
         ></Image>
       </div>
@@ -18,7 +20,10 @@ export default function BorderLine() {
         <Image
           src="/assets/img/pizza.webp"
           className={styles.borderimg}
+          style={{ width: '3rem', height: 'auto' }}
           alt="pizza"
+          width={40}
+          height={48}
           unoptimized
         ></Image>
       </div>

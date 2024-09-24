@@ -1,7 +1,7 @@
 'use client';
-import styles from '@/app/home/page.module.css';
 import { Modal } from '@/components/common';
 import { righteous } from '@/fonts';
+import styles from '@/styles/home.module.css';
 import { Videos } from '@/types/vanko.type';
 import Image from 'next/image';
 import { useState } from 'react';
@@ -35,8 +35,9 @@ export default function MainGallery({ selectedVideos }: MainGalleryProps) {
                   onClick={openModal(videos)}
                   src={videos.thumb as string}
                   alt={videos.title as string}
+                  fill
                   unoptimized
-                ></Image>
+                />
               </div>
               <p className={`${styles.gallerytext} ${righteous.className}`}>{videos.title}</p>
             </div>
