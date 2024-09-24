@@ -1,5 +1,6 @@
 'use client';
-import styles from '@/app/eclipse/page.module.css';
+
+import styles from '@/styles/eclipse.module.css';
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import SelectComp from './selectcomp';
@@ -58,8 +59,9 @@ export default function SinopVideo() {
               className={styles.videocontents}
               src="/assets/img/eclipse/seq0.jpeg"
               alt="seq0"
+              fill
               unoptimized
-            ></Image>
+            />
           ) : (
             <video
               ref={videoRef}

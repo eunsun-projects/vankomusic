@@ -1,5 +1,6 @@
 'use client';
-import styles from '@/app/eclipse/page.module.css';
+
+import styles from '@/styles/eclipse.module.css';
 import { useState } from 'react';
 import { eclipseNodes } from './eclipsenodes';
 
