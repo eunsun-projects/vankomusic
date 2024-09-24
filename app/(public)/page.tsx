@@ -1,11 +1,11 @@
-import { getAudios, getVideos } from '@/apis/media/get.api';
+import { getAudios, getCurations } from '@/apis/media/get.api';
 import { BorderLine, Floatings, Hadan, MainGallery, VankoMainLogo } from '@/components/home';
 import VanPlayer from '@/components/vanplayer/vanplayer';
-import { QUERY_KEY_AUDIOS, QUERY_KEY_VIDEOS } from '@/constants/query.constant';
+import { QUERY_KEY_AUDIOS, QUERY_KEY_CURATIONS } from '@/constants/query.constant';
 import { lobster, silkscreen, vastshadow } from '@/fonts';
 import { basicMeta, basicViewport } from '@/meta/basicmeta';
 import styles from '@/styles/home.module.css';
-import { Audios, Videos } from '@/types/vanko.type';
+import { Audios } from '@/types/vanko.type';
 import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -58,19 +58,14 @@ export default async function Home() {
     queryFn: () => getAudios(),
   });
   await queryClient.prefetchQuery({
-    queryKey: [QUERY_KEY_VIDEOS],
-    queryFn: () => getVideos(),
+    queryKey: [QUERY_KEY_CURATIONS],
+    queryFn: () => getCurations(),
   });
   const audios = await queryClient.ensureQueryData<Audios[]>({
     queryKey: [QUERY_KEY_AUDIOS],
     queryFn: () => getAudios(),
   });
-  const videos = await queryClient.ensureQueryData<Videos[]>({
-    queryKey: [QUERY_KEY_VIDEOS],
-    queryFn: () => getVideos(),
-  });
 
-  const selectedVideos = videos.filter((video) => video.isSelected);
   const dehydratedState = dehydrate(queryClient);
 
   return (
@@ -195,7 +190,7 @@ export default async function Home() {
 
             <BorderLine />
 
-            <MainGallery selectedVideos={selectedVideos} />
+            <MainGallery />
 
             <div className={styles.arcbtnbox}>
               <Link href="/archive" prefetch={false}>

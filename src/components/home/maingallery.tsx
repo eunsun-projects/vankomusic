@@ -1,18 +1,18 @@
 'use client';
+
 import { Modal } from '@/components/common';
 import { righteous } from '@/fonts';
+import { useCurationsQuery } from '@/hooks/queries';
 import styles from '@/styles/home.module.css';
 import { Videos } from '@/types/vanko.type';
 import Image from 'next/image';
 import { useState } from 'react';
 
-interface MainGalleryProps {
-  selectedVideos: Videos[];
-}
-
-export default function MainGallery({ selectedVideos }: MainGalleryProps) {
+export default function MainGallery() {
   const [showModal, setShowModal] = useState(false);
   const [selected, setSelected] = useState<Videos | null>(null);
+
+  const { data: curations } = useCurationsQuery();
 
   const openModal = (videos: Videos) => () => {
     setSelected(videos);
@@ -26,7 +26,7 @@ export default function MainGallery({ selectedVideos }: MainGalleryProps) {
       {selected && showModal && <Modal closeModal={closeModal} selected={selected} />}
 
       <div className={styles.maingallery}>
-        {selectedVideos.map((videos, i) => {
+        {curations?.map((videos, i) => {
           return (
             <div className={styles.gallerybox} key={i}>
               <div className={styles.imgbox}>

@@ -1,12 +1,14 @@
 'use client';
 
+import { QUERY_KEY_CURATIONS } from '@/constants/query.constant';
 import { righteous } from '@/fonts';
 import { useCurationMutation } from '@/hooks/mutations/curations.mutation';
 import styles from '@/styles/admin.module.css';
 import { Videos } from '@/types/vanko.type';
+import { useQueryClient } from '@tanstack/react-query';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 interface CurationAdminProps {
   videos: Videos[];
@@ -14,23 +16,37 @@ interface CurationAdminProps {
 }
 
 export default function CurationAdmin({ videos, curations }: CurationAdminProps) {
-  const [curatedVideo, setCuratedVideo] = useState(curations);
-  const [selectedItemIndex, setSelectedItemIndex] = useState<number | null>(null); // 선택된 큐레이션 아이템 인덱스
+  const [curatedVideo, setCuratedVideo] = useState(
+    curations.sort((a, b) => (a.curated_number ?? 0) - (b.curated_number ?? 0)),
+  );
+  const [selectedItemIndex, setSelectedItemIndex] = useState<number | null>(null);
+  const [selectedCuratedItem, setSelectedCuratedItem] = useState<Videos | null>(null); // 선택된 큐레이션 아이템 인덱스
   const [selectedAllItemIndex, setSelectedAllItemIndex] = useState<number | null>(null); // 선택된 전체 아이템 인덱스
   const [selectedItem, setSelectedItem] = useState<Videos | null>(null); // 전체목록에서 선택된 아이템 객체
   const router = useRouter();
-
+  const queryClient = useQueryClient();
   const { mutateAsync: postCuration } = useCurationMutation();
 
+  const deletedCuratedVideoRef = useRef<Videos[]>([]);
+
   // 큐레이션 목록에서 클릭시
-  const clickCuratedTitle = (index: number) => () => {
+  const clickCuratedTitle = (item: Videos, index: number) => () => {
+    setSelectedCuratedItem(item);
     setSelectedItemIndex(index);
   };
 
   // 휴지통 클릭시
-  const clickTrash = () => {
-    if (selectedItemIndex !== null) {
-      setCuratedVideo((prev) => prev.splice(selectedItemIndex, 1));
+  const handleClickTrash = () => {
+    if (selectedCuratedItem !== null) {
+      setCuratedVideo((prev) => {
+        const newList = prev.filter((item) => selectedCuratedItem !== item);
+        newList.sort((a, b) => (a.curated_number ?? 0) - (b.curated_number ?? 0));
+        return newList;
+      });
+      const selected = { ...selectedCuratedItem };
+      selected.curated_number = null;
+      selected.isSelected = false;
+      deletedCuratedVideoRef.current.push(selected);
     } else {
       alert('먼저 삭제할 아이템을 선택해주세요');
     }
@@ -51,10 +67,11 @@ export default function CurationAdmin({ videos, curations }: CurationAdminProps)
       newList[selectedItemIndex - 1],
       newList[selectedItemIndex],
     ]; // 현재 항목과 위 항목을 서로 바꿈
-    newList.forEach((e, i) => {
+    const reOrdered = newList.map((e, i) => {
       e.curated_number = i;
+      return e;
     }); // 넘버 순서 재정의
-    setCuratedVideo(newList);
+    setCuratedVideo(reOrdered);
   };
 
   const moveDown = () => {
@@ -66,10 +83,11 @@ export default function CurationAdmin({ videos, curations }: CurationAdminProps)
       newList[selectedItemIndex + 1],
       newList[selectedItemIndex],
     ]; // 현재 항목과 위 항목을 서로 바꿈
-    newList.forEach((e, i) => {
+    const reOrdered = newList.map((e, i) => {
       e.curated_number = i;
+      return e;
     }); // 넘버 순서 재정의
-    setCuratedVideo(newList);
+    setCuratedVideo(reOrdered);
   };
 
   const addToCurated = () => {
@@ -78,12 +96,14 @@ export default function CurationAdmin({ videos, curations }: CurationAdminProps)
     } else if (selectedItem === null) {
       alert('먼저 옮길 아이템을 선택해주세요');
     } else {
+      selectedItem.isSelected = true;
       const newList = [...curatedVideo]; // 배열 복사
       newList.push(selectedItem); // 배열의 마지막에 선택된 아이템 추가
-      newList.forEach((e, i) => {
+      const reOrdered = newList.map((e, i) => {
         e.curated_number = i;
-      }); // 배열 넘버 프로퍼티 재정렬
-      setCuratedVideo(newList);
+        return e;
+      }); // 넘버 순서 재정의// 배열 넘버 프로퍼티 재정렬
+      setCuratedVideo(reOrdered);
     }
   };
 
@@ -96,7 +116,9 @@ export default function CurationAdmin({ videos, curations }: CurationAdminProps)
       return;
     } else {
       if (confirm('큐레이션 리스트를 이대로 수정하시겠습니까?')) {
-        await postCuration(curatedVideo);
+        const finalCuratedVideo = [...curatedVideo, ...deletedCuratedVideoRef.current];
+        await postCuration(finalCuratedVideo);
+        queryClient.invalidateQueries({ queryKey: [QUERY_KEY_CURATIONS] });
         router.refresh();
       } else {
         return;
@@ -169,7 +191,7 @@ export default function CurationAdmin({ videos, curations }: CurationAdminProps)
                   }}
                   key={i}
                 >
-                  <p onClick={clickCuratedTitle(i)}>{e.title}</p>
+                  <p onClick={clickCuratedTitle(e, i)}>{e.title}</p>
                 </div>
               );
             })}
@@ -250,7 +272,7 @@ export default function CurationAdmin({ videos, curations }: CurationAdminProps)
             </div>
           </div>
           <div>
-            <img src="/assets/img/trashicon.webp" onClick={clickTrash} alt="trashicon" />
+            <img src="/assets/img/trashicon.webp" onClick={handleClickTrash} alt="trashicon" />
           </div>
         </div>
       </div>
