@@ -1,4 +1,5 @@
 'use client';
+
 import { useLoader } from '@react-three/fiber';
 import { ForwardedRef, forwardRef } from 'react';
 import { Mesh, TextureLoader } from 'three';

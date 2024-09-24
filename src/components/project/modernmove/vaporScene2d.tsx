@@ -1,7 +1,6 @@
 'use client';
-import styles from '@/app/modernmove/page.module.css';
+import styles from '@/styles/modern-move.module.css';
 import { animated, useSpring } from '@react-spring/web';
-import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 
 interface VaporwaveScene2dProps {
@@ -91,7 +90,7 @@ export default function VaporwaveScene2d({ threeD, ready, audio, play }: Vaporwa
       className={styles.canvas2d}
       style={{ opacity: opacity, position: 'absolute', zIndex: '1' }}
     >
-      <Image
+      <img
         ref={earthRef}
         src="/assets/gifs/earth3.gif"
         style={{
@@ -102,15 +101,13 @@ export default function VaporwaveScene2d({ threeD, ready, audio, play }: Vaporwa
           transition: 'transform 7s',
         }}
         alt="earth"
-        unoptimized
       />
-      <Image
+      <img
         className={styles.canvas2dback}
         style={{ zIndex: '1' }}
         src="/assets/gifs/momoback_sq.gif"
         alt="modernmove_2d"
         onLoad={handleImageLoad}
-        unoptimized
       />
     </animated.div>
   );

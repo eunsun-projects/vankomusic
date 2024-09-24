@@ -1,4 +1,4 @@
-import styles from '@/app/modernmove/page.module.css';
+import styles from '@/styles/modern-move.module.css';
 import { Html } from '@react-three/drei';
 
 export default function MoonLoaderDrei() {

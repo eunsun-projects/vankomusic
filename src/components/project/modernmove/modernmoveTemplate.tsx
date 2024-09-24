@@ -170,26 +170,23 @@ export default function ModernMoveTemplate() {
               <div className={styles.monitorhomebox}>
                 <div id="voidhomebtn" className={styles.monitorhomeboxinner}>
                   {!objet ? (
-                    <Image
+                    <img
                       className={styles.homebtnvankoimg}
                       src="/assets/img/gamegi_vanko.webp"
                       alt="vanko01"
                       onClick={handleObjetClick}
-                      unoptimized
                     />
                   ) : (
-                    <Image
+                    <img
                       className={styles.homebtnvankoimg}
                       src="/assets/img/gamegi_vankowow.webp"
                       alt="vanko02"
-                      unoptimized
                     />
                   )}
-                  <Image
+                  <img
                     className={styles.homebtnbackimg}
                     src="/assets/img/gamegibtn-big.webp"
                     alt="gamegi_home_box"
-                    unoptimized
                   />
                 </div>
               </div>
@@ -197,7 +194,7 @@ export default function ModernMoveTemplate() {
               <div className={styles.monitorbottombtngrid}>
                 <div style={{ display: 'grid' }}>
                   {!play ? (
-                    <Image
+                    <img
                       id="play"
                       className={styles.gamegibtn}
                       style={{
@@ -211,10 +208,9 @@ export default function ModernMoveTemplate() {
                       src="/assets/img/gamegi-playbtn.webp"
                       alt="gamegi_play"
                       onClick={handlePlayClick}
-                      unoptimized
                     />
                   ) : (
-                    <Image
+                    <img
                       id="pause"
                       className={styles.gamegibtn}
                       style={{
@@ -227,13 +223,12 @@ export default function ModernMoveTemplate() {
                       src="/assets/img/gamegi-pausebtn.webp"
                       alt="gamegi_pause"
                       onClick={handlePauseClick}
-                      unoptimized
                     />
                   )}
                 </div>
                 <div style={{ display: 'grid' }}>
                   {!meteor ? (
-                    <Image
+                    <img
                       id="star"
                       className={styles.gamegibtntop}
                       style={{
@@ -246,10 +241,9 @@ export default function ModernMoveTemplate() {
                       src="/assets/img/gamegi-starbtn.webp"
                       alt="gamegi_star"
                       onClick={handleMeteorClick}
-                      unoptimized
                     />
                   ) : (
-                    <Image
+                    <img
                       className={styles.gamegibtntop}
                       style={{
                         position: 'relative',
@@ -259,12 +253,11 @@ export default function ModernMoveTemplate() {
                       }}
                       src="/assets/img/gamegi-transstarbtn.webp"
                       alt="gamegi_star"
-                      unoptimized
                     />
                   )}
                 </div>
                 <div style={{ display: 'grid' }}>
-                  <Image
+                  <img
                     id="threed"
                     className={styles.gamegibtn}
                     style={{
@@ -277,12 +270,11 @@ export default function ModernMoveTemplate() {
                     src="/assets/img/gamegi-homebtn.webp"
                     alt="gamegi_home"
                     onClick={handleHomeClick}
-                    unoptimized
                   />
                 </div>
                 <div style={{ display: 'grid' }}>
                   {threeD ? (
-                    <Image
+                    <img
                       id="threed"
                       className={styles.gamegibtntop}
                       style={{
@@ -295,10 +287,9 @@ export default function ModernMoveTemplate() {
                       src="/assets/img/gamegi-3dbtn.webp"
                       alt="gamegi_3d"
                       onClick={handleThreeDClick}
-                      unoptimized
                     />
                   ) : (
-                    <Image
+                    <img
                       className={styles.gamegibtntop}
                       style={{
                         position: 'relative',
@@ -309,7 +300,6 @@ export default function ModernMoveTemplate() {
                       src="/assets/img/gamegi-2dbtn.webp"
                       alt="gamegi_2d"
                       onClick={handleThreeDClick}
-                      unoptimized
                     />
                   )}
                 </div>

@@ -1,10 +1,12 @@
+'use client';
+
 import { Circle, Trail } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
-import React from 'react';
+import { useRef } from 'react';
 import { Mesh } from 'three';
 
 export default function StarTrail({ position }: { position: [number, number, number] }) {
-  const starRef = React.useRef<Mesh>(null);
+  const starRef = useRef<Mesh>(null);
 
   useFrame((state, delta) => {
     if (starRef.current) {

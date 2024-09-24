@@ -1,5 +1,6 @@
 'use client';
-import styles from '@/app/modernmove/page.module.css';
+
+import styles from '@/styles/modern-move.module.css';
 import { useEffect, useRef } from 'react';
 
 interface CustomAudioProps {

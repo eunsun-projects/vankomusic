@@ -1,6 +1,5 @@
 'use client';
 
-import styles from '@/app/modernmove/page.module.css';
 import {
   CrackRandom,
   CustomAudio,
@@ -15,6 +14,7 @@ import {
 import generateBuildings from '@/components/project/modernmove/hooks/generateBuildings';
 import MoonLoaderBlack from '@/components/project/modernmove/loaders/moonloaderblack';
 import MoonLoaderDrei from '@/components/project/modernmove/loaders/moonloaderDrei';
+import styles from '@/styles/modern-move.module.css';
 import { Cloud, PerspectiveCamera, Stars, useAnimations } from '@react-three/drei';
 import { Canvas, useFrame, useLoader, useThree } from '@react-three/fiber';
 import { Bloom, EffectComposer, Vignette } from '@react-three/postprocessing';
