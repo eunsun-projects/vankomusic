@@ -9,7 +9,6 @@ import {
   QUERY_KEY_VIDEOS,
 } from '@/constants/query.constant';
 import { basicMeta, basicViewport } from '@/meta/basicmeta';
-import { Users } from '@/types/vanko.type';
 import { getUserFromHeaders } from '@/utils/common/getUserByHeaders';
 import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query';
 import { Suspense } from 'react';
@@ -38,7 +37,11 @@ export default async function Vankoadmin() {
     queryFn: () => getCurations(),
   });
 
-  const user = queryClient.getQueryData<Users>([QUERY_KEY_USER]);
+  const user = await queryClient.fetchQuery({
+    queryKey: [QUERY_KEY_USER],
+    queryFn: () => postUserServer(userId),
+  });
+
   let isAdmin = null;
   if (
     user?.email === process.env.NEXT_PUBLIC_SCREEN_MAIL ||

@@ -1,4 +1,5 @@
 import { createClient } from '@/utils/supabase/server';
+import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET() {
@@ -10,8 +11,8 @@ export async function GET() {
   } = await supabase.auth.getUser();
 
   if (error) {
-    if (error.message === 'Auth session missing!')
-      return NextResponse.json('Auth session missing!', { status: 200 });
+    // if (error.message === 'Auth session missing!')
+    //   return NextResponse.json('Auth session missing!', { status: 200 });
 
     if (error.message === 'Unauthorized')
       return NextResponse.json(
@@ -58,8 +59,12 @@ export async function POST(req: NextRequest) {
 
 export async function DELETE() {
   const supabase = createClient();
+  const cookieStore = cookies();
 
   const { error } = await supabase.auth.signOut();
+
+  cookieStore.delete('sb-ogogxjchotsapmsgsqmz-auth-token.0');
+  cookieStore.delete('sb-ogogxjchotsapmsgsqmz-auth-token.1');
 
   if (error) {
     return NextResponse.json('Logout failed', { status: 500 });

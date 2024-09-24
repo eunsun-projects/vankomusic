@@ -51,9 +51,9 @@ export default function useAuth() {
     }
   }, [userError, logInError]);
 
-  // useEffect(() => {
-  //   console.log('user ======>', user);
-  // }, [user]);
+  useEffect(() => {
+    console.log('user ======>', user);
+  }, [user]);
 
   return {
     user,
