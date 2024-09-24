@@ -237,7 +237,9 @@ export default function ArchiveAdmin({ videos }: ArchiveAdminProps) {
                   ></input>
                 </div>
 
-                <button type="submit" value="update" className={styles.okbtn}></button>
+                <button type="submit" value="update" className={styles.okbtn}>
+                  update
+                </button>
               </form>
             </div>
           </div>
@@ -312,7 +314,9 @@ export default function ArchiveAdmin({ videos }: ArchiveAdminProps) {
                   ></input>
                 </div>
 
-                <button type="submit" value="create" className={styles.okbtn}></button>
+                <button type="submit" value="create" className={styles.okbtn}>
+                  create
+                </button>
               </form>
             </div>
           </div>

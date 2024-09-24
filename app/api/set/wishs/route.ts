@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
 
   const { data, error }: { data: Wishs[] | null; error: PostgrestError | null } = await supabase
     .from('wishs')
-    .upsert(wish)
+    .insert(wish)
     .select()
     .single();
 

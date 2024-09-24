@@ -1,5 +1,6 @@
+'use client';
+
 import styles from '@/styles/seonang.module.css';
-import Image from 'next/image';
 import { useRef } from 'react';
 
 async function fetchImageAsFile(imageUrl: string) {
@@ -63,13 +64,12 @@ export default function TaroBig({ closeTaroBig, pngWebp, mobile, android }: Taro
 
       <div className={styles.bigtarocenter}>
         <div className={styles.bigtarobox}>
-          <Image
+          <img
             ref={bigTaroImgRef}
             className={styles.bigtaroimg}
             src={`${pngWebp}.webp`}
-            unoptimized
             alt="bigtaro"
-          ></Image>
+          />
         </div>
         <div>
           {mobile && android === false ? (

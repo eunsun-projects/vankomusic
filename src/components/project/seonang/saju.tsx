@@ -1,9 +1,10 @@
+'use client';
+
 import { TaroBig } from '@/components/project/seonang';
 import { useWishsMutation } from '@/hooks/mutations/wishs.mutation';
 import styles from '@/styles/seonang.module.css';
 import { Wishs } from '@/types/vanko.type';
 import { nanoid } from 'nanoid';
-import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 
 const taropicture = [
@@ -159,6 +160,7 @@ export default function Saju({ closeUnse, mobile, android }: SajuProps) {
     if (!sowonRef.current) return;
     if (isSubmittingRef.current === false) {
       try {
+        console.log('제출');
         isSubmittingRef.current = true;
         const sowon: Wishs = {
           contents: sanitizeInput(sowonRef.current.sowoncontents.value),
@@ -172,9 +174,10 @@ export default function Saju({ closeUnse, mobile, android }: SajuProps) {
           setNewyear(true);
           clearTimeout(picturetimer);
         }, 5100);
-        isSubmittingRef.current = false;
       } catch (error) {
         console.error('소원 제출 중 오류 발생:', error);
+      } finally {
+        isSubmittingRef.current = false;
       }
     }
   };
@@ -222,13 +225,14 @@ export default function Saju({ closeUnse, mobile, android }: SajuProps) {
                 {taropicture.map((item, i) => {
                   return (
                     <div onClick={handleTaro(item)} className={styles.tarobox} key={i}>
-                      <Image
+                      <img
                         src="/assets/img/taro/taro_back.webp"
                         className={styles.tarocard}
-                        style={{ pointerEvents: select ? 'none' : 'all' }}
+                        style={{
+                          pointerEvents: select ? 'none' : 'all',
+                        }}
                         alt="taroback"
-                        unoptimized
-                      ></Image>
+                      />
                       <p>{item.con}</p>
                     </div>
                   );
@@ -251,10 +255,11 @@ export default function Saju({ closeUnse, mobile, android }: SajuProps) {
                 <button
                   className={styles.click}
                   type="submit"
-                  value="제출하기"
                   disabled={isSubmittingRef.current}
                   style={{ pointerEvents: isSubmittingRef.current ? 'none' : 'all' }}
-                ></button>
+                >
+                  제출하기
+                </button>
               </form>
             </div>
           )}
@@ -269,12 +274,7 @@ export default function Saju({ closeUnse, mobile, android }: SajuProps) {
                   alignItems: 'center',
                 }}
               >
-                <Image
-                  className={styles.loadimg}
-                  src="/assets/gifs/stone.gif"
-                  alt="stone"
-                  unoptimized
-                ></Image>
+                <img className={styles.loadimg} src="/assets/gifs/stone.gif" alt="stone" />
                 <div className={styles.loadbox}>
                   <div className={styles.load}></div>
                 </div>
@@ -293,13 +293,12 @@ export default function Saju({ closeUnse, mobile, android }: SajuProps) {
             </p>
             <div className={styles.newyearbox}>
               {pngWebp && (
-                <Image
+                <img
                   className={styles.newyearimg}
                   onClick={openTaroBig}
                   src={`${pngWebp}.webp`}
                   alt="taro"
-                  unoptimized
-                ></Image>
+                />
               )}
               <div className={styles.newyear}>
                 <p className={styles.movingtext}>{text}</p>

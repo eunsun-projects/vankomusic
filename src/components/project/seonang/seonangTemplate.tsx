@@ -1,11 +1,11 @@
 'use client';
-import styles from '@/app/seonang/page.module.css';
+
 import { GasaModal, MvModal, Saju, lyrics } from '@/components/project/seonang';
 import { useWishsQuery } from '@/hooks/queries/wishs.query';
+import styles from '@/styles/seonang.module.css';
 import { animated, useSpring } from '@react-spring/web';
-import Image from 'next/image';
 import Link from 'next/link';
-import nipplejs from 'nipplejs';
+import { JoystickManager } from 'nipplejs';
 import { useEffect, useRef, useState } from 'react';
 
 const mobiletorch = [
@@ -21,6 +21,8 @@ function randomTrueFalse() {
 }
 
 export default function SeonangTemplate() {
+  const { data: wishs } = useWishsQuery();
+
   const [bingle, setBingle] = useState(false);
   const [currentLyricsIndex, setCurrentLyricsIndex] = useState(0);
   const [gasaModal, setGasaModal] = useState(false);
@@ -39,8 +41,6 @@ export default function SeonangTemplate() {
   const [mobile, setMobile] = useState<boolean | null>(null);
   const [android, setAndroid] = useState<boolean | null>(null);
 
-  const { data: wishs } = useWishsQuery();
-
   const { opacity } = useSpring({ opacity: musicStart > 0 ? 1 : 0, config: { duration: 2000 } }); // 1번에서 그림 시작
   const crowOpacity = useSpring({
     opacity: crow || crowTwo ? 1 : 0,
@@ -56,7 +56,7 @@ export default function SeonangTemplate() {
   const marqueeRef = useRef<HTMLDivElement[]>([]);
   const cdRef = useRef<HTMLImageElement | null>(null);
   const mobileCdRef = useRef<HTMLImageElement | null>(null);
-  const manager = useRef<nipplejs.JoystickManager | null>(null);
+  const manager = useRef<JoystickManager | null>(null);
 
   const handleIcon = () => setMvModal(true);
 
@@ -153,7 +153,7 @@ export default function SeonangTemplate() {
   useEffect(() => {
     if (wishs) {
       let sum = 0;
-      if (marqueeRef.current) {
+      if (marqueeRef.current && marqueeTextRef.current) {
         sum = 0;
         marqueeRef.current.forEach((e) => {
           sum += e.clientWidth;
@@ -162,8 +162,16 @@ export default function SeonangTemplate() {
         const final = sum + gap;
         const animationDuration = final / 200;
 
-        if (final > 0 && marqueeTextRef.current) {
+        if (final > 0) {
           marqueeTextRef.current.style.width = `${final}px`;
+
+          // 애니메이션을 재시작하기 위해 먼저 애니메이션을 제거합니다.
+          marqueeTextRef.current.style.animation = 'none';
+
+          // 리플로우(reflow)를 강제하여 브라우저가 변경 사항을 인지하도록 합니다.
+          void marqueeTextRef.current.offsetWidth;
+
+          // 애니메이션을 다시 설정합니다.
           marqueeTextRef.current.style.animation = `${styles.marqueeslide} ${animationDuration}s linear infinite`;
         }
       }
@@ -289,23 +297,25 @@ export default function SeonangTemplate() {
   }, [currentLyricsIndex]);
 
   useEffect(() => {
-    if (nipplejs) {
-      const options = {
-        zone: bingleContainerRef.current as HTMLElement,
-        mode: 'static' as const,
-        position: { right: '50%', bottom: '50%' },
-        size: 400,
-        color: 'white',
-        restOpacity: 1,
-      };
-      manager.current = nipplejs.create(options);
-      const joystick = manager.current.get(0) as unknown as nipplejs.Joystick;
+    const nipplejs = require('nipplejs');
+    const options = {
+      zone: bingleContainerRef.current as HTMLElement,
+      mode: 'static' as const,
+      position: { right: '50%', bottom: '50%' },
+      size: 400,
+      color: 'white',
+      restOpacity: 1,
+    };
+    manager.current = nipplejs.create(options);
 
-      joystick.el.style.opacity = '0';
-      joystick.ui.front.style.opacity = '0';
-      joystick.ui.front.style.backgroundColor = 'yellow';
-      joystick.ui.back.style.opacity = '0';
-    }
+    setTimeout(() => {
+      const nipple = document.querySelector('#nipple_0_0') as HTMLElement;
+      nipple.style.opacity = '0';
+      const front = document.querySelector('.front') as HTMLElement;
+      front.style.opacity = '0';
+      const back = document.querySelector('.back') as HTMLElement;
+      back.style.opacity = '0';
+    }, 0);
 
     if (window.innerWidth < 500) {
       setEarphoneMessage(`이어폰이나 헤드폰을 사용하시면
@@ -342,13 +352,7 @@ export default function SeonangTemplate() {
 
   return (
     <>
-      <audio
-        ref={audioRef}
-        src="/assets/audio/seonang_final.mp3"
-        preload="metadata"
-        autoPlay
-        muted
-      />
+      <audio ref={audioRef} src="/assets/audio/seonang.mp3" preload="metadata" autoPlay muted />
       {gasaModal && <GasaModal setModal={setGasaModal} />}
       {mvModal && <MvModal setShowModal={setMvModal} />}
       {yes && (
@@ -380,41 +384,17 @@ export default function SeonangTemplate() {
               style={{ opacity: musicStart === 0 || musicStart === 1 ? '1' : '0' }}
             >
               {mobiletorch.map((e, i) => {
-                return (
-                  <Image
-                    src={mobiletorch[0]}
-                    key={i}
-                    className={styles.torch}
-                    alt="torch"
-                    unoptimized
-                  ></Image>
-                );
+                return <img src={mobiletorch[0]} key={i} className={styles.torch} alt="torch" />;
               })}
             </div>
             <div className={styles.torchbox} style={{ opacity: musicStart === 2 ? '1' : '0' }}>
               {mobiletorch.map((e, i) => {
-                return (
-                  <Image
-                    src={mobiletorch[1]}
-                    key={i}
-                    className={styles.torch}
-                    alt="torch"
-                    unoptimized
-                  ></Image>
-                );
+                return <img src={mobiletorch[1]} key={i} className={styles.torch} alt="torch" />;
               })}
             </div>
             <div className={styles.torchbox} style={{ opacity: musicStart === 3 ? '1' : '0' }}>
               {mobiletorch.map((e, i) => {
-                return (
-                  <Image
-                    src={mobiletorch[2]}
-                    key={i}
-                    className={styles.torch}
-                    alt="torch"
-                    unoptimized
-                  ></Image>
-                );
+                return <img src={mobiletorch[2]} key={i} className={styles.torch} alt="torch" />;
               })}
             </div>
           </div>
@@ -447,36 +427,44 @@ export default function SeonangTemplate() {
                 <Link className={styles.homebox} style={{ textDecoration: 'none' }} href={'/'}>
                   <p className={styles.home}>홈으로</p>
                 </Link>
-                <Image
+                <img
                   src="/assets/img/gasa.png"
                   className={styles.paper}
+                  style={{ cursor: 'pointer' }}
                   onClick={openModal}
                   alt="paper"
-                  style={{ cursor: 'pointer' }}
-                ></Image>
+                ></img>
               </animated.div>
-              <div style={{ position: 'relative', width: '5rem', height: '10.8rem' }}>
-                <Image
+              <div
+                style={{
+                  position: 'relative',
+                  width: '5rem',
+                  height: '10.8rem',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
+                <img
                   src="/assets/img/torch_none.webp"
-                  style={{ opacity: musicStart === 0 || musicStart === 1 ? '1' : '0' }}
+                  style={{
+                    opacity: musicStart === 0 || musicStart === 1 ? '1' : '0',
+                  }}
                   className={styles.torchimg}
                   alt="torch"
-                  unoptimized
-                ></Image>
-                <Image
+                />
+                <img
                   src="/assets/gifs/torchstart.gif"
                   style={{ opacity: musicStart === 2 ? '1' : '0' }}
                   className={styles.torchimg}
                   alt="torch"
-                  unoptimized
-                ></Image>
-                <Image
+                />
+                <img
                   src="/assets/gifs/torchmove.gif"
                   style={{ opacity: musicStart === 3 ? '1' : '0' }}
                   className={styles.torchimg}
                   alt="torch"
-                  unoptimized
-                ></Image>
+                />
               </div>
             </div>
 
@@ -493,47 +481,42 @@ export default function SeonangTemplate() {
                 alt="leftcrow"
                 style={{ opacity: crowOpacity }}
               ></animated.img>
-              <Image
+              <img
                 className={styles.dogsit}
                 src={dog || dogTwo ? '/assets/img/dog_standing.webp' : '/assets/img/dog_sit.webp'}
                 alt="dotsit"
-              ></Image>
+              />
 
-              <Image
+              <img
                 className={styles.tree}
                 style={{ opacity: high === 0 ? '1' : '0' }}
                 src="/assets/gifs/tree.gif"
                 alt="seonangtree"
-                unoptimized
-              ></Image>
-              <Image
+              />
+              <img
                 className={styles.tree}
                 style={{ opacity: high === 1 ? '1' : '0' }}
                 src="/assets/gifs/tree2.gif"
                 alt="seonangtree"
-                unoptimized
-              ></Image>
-              <Image
+              />
+              <img
                 className={styles.tree}
                 style={{ opacity: high === 2 ? '1' : '0' }}
                 src="/assets/gifs/tree3.gif"
                 alt="seonangtree"
-                unoptimized
-              ></Image>
-              <Image
+              />
+              <img
                 className={styles.tree}
                 style={{ opacity: high === 3 ? '1' : '0' }}
                 src="/assets/gifs/tree4.gif"
                 alt="seonangtree"
-                unoptimized
-              ></Image>
-              <Image
+              />
+              <img
                 className={styles.tree}
                 style={{ opacity: high === 4 ? '1' : '0' }}
                 src="/assets/gifs/tree5.gif"
                 alt="seonangtree"
-                unoptimized
-              ></Image>
+              />
               <div className={styles.garaoke}>
                 <p>{lyrics[currentLyricsIndex].text}</p>
               </div>
@@ -553,36 +536,39 @@ export default function SeonangTemplate() {
                   onClick={handleIcon}
                   style={{ opacity: opacity, cursor: 'pointer' }}
                 >
-                  <Image
-                    className={styles.cd}
-                    src="/assets/img/photo.webp"
-                    alt="cd"
-                    unoptimized
-                  ></Image>
+                  <img className={styles.cd} src="/assets/img/photo.webp" alt="cd" />
                 </animated.div>
               </div>
-              <div style={{ position: 'relative', width: '5rem', height: '10.8rem' }}>
-                <Image
+              <div
+                style={{
+                  position: 'relative',
+                  width: '5rem',
+                  height: '10.8rem',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
+                <img
                   src="/assets/img/torch_none.webp"
-                  style={{ opacity: musicStart === 0 || musicStart === 1 ? '1' : '0' }}
+                  style={{
+                    opacity: musicStart === 0 || musicStart === 1 ? '1' : '0',
+                  }}
                   className={styles.torchimg}
                   alt="torch"
-                  unoptimized
-                ></Image>
-                <Image
+                />
+                <img
                   src="/assets/gifs/torchstart.gif"
                   style={{ opacity: musicStart === 2 ? '1' : '0' }}
                   className={styles.torchimg}
                   alt="torch"
-                  unoptimized
-                ></Image>
-                <Image
+                />
+                <img
                   src="/assets/gifs/torchmove.gif"
                   style={{ opacity: musicStart === 3 ? '1' : '0' }}
                   className={styles.torchimg}
                   alt="torch"
-                  unoptimized
-                ></Image>
+                />
               </div>
             </div>
           </div>
@@ -605,12 +591,7 @@ export default function SeonangTemplate() {
 
         <div className={styles.waterbox}>
           {bingle && (
-            <Image
-              className={styles.magiceffect}
-              src="/assets/gifs/water.gif"
-              alt="watermove"
-              unoptimized
-            ></Image>
+            <img className={styles.magiceffect} src="/assets/gifs/water.gif" alt="watermove" />
           )}
           <animated.img
             src="/assets/img/water.webp"
@@ -626,33 +607,32 @@ export default function SeonangTemplate() {
         <animated.div className={styles.hadan} style={{ opacity: opacity }}>
           <div style={{ display: 'flex', flexDirection: 'column', width: '100%', gap: '0.5rem' }}>
             <div style={{ display: 'flex', justifyContent: 'flex-start' }} onClick={handleIcon}>
-              <Image
-                className={styles.cd}
-                src="/assets/img/photo.webp"
-                alt="cd"
-                unoptimized
-              ></Image>
+              <img className={styles.cd} src="/assets/img/photo.webp" alt="cd" />
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Image
+              <img
                 src="/assets/img/gasa.png"
                 style={{ position: 'relative', zIndex: '10000' }}
                 className={styles.paper}
                 onClick={openModal}
                 alt="paper"
-                unoptimized
-              ></Image>
-              <Image
+              />
+              <img
                 ref={mobileCdRef}
                 style={{ opacity: String(opacity) }}
                 src="/assets/img/cd.webp"
                 className={styles.cd}
                 alt="cd"
-                unoptimized
-              ></Image>
+              />
               <Link
                 className={styles.homebox}
-                style={{ textDecoration: 'none', position: 'relative', zIndex: '10000' }}
+                style={{
+                  textDecoration: 'none',
+                  position: 'relative',
+                  zIndex: '10000',
+                  width: 'auto',
+                  height: 'auto',
+                }}
                 href={'/'}
               >
                 <p className={styles.home}>홈으로</p>

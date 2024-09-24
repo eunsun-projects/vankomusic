@@ -22,6 +22,6 @@ export async function getCurations() {
 
 export async function getWishs() {
   const url = '/api/get/wishs';
-  const data = await fetchWrapper<Wishs[]>(url, { method: 'GET' });
+  const data = await fetchWrapper<Wishs[]>(url, { method: 'GET', cache: 'no-store' });
   return data;
 }

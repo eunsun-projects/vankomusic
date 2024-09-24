@@ -1,4 +1,6 @@
-import styles from '@/app/seonang/page.module.css';
+'use client';
+
+import styles from '@/styles/seonang.module.css';
 import { Dispatch, SetStateAction, useRef } from 'react';
 
 const gasa = [
