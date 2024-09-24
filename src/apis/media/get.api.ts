@@ -15,7 +15,7 @@ export async function getVideos() {
 
 export async function getCurations() {
   const url = '/api/get/videos';
-  const data = await fetchWrapper<Videos[]>(url, { method: 'GET', cache: 'no-store' });
+  const data = await fetchWrapper<Videos[]>(url, { method: 'GET' });
   const curations = data.filter((video) => video.isSelected);
   return curations;
 }

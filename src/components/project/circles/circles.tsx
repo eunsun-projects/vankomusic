@@ -257,8 +257,6 @@ function CircleScene({ audio, joysticRef }: CircleSceneProps) {
       <directionalLight color="#f2d9fa" position={[0, 40, 0]} intensity={3.2} />
       <hemisphereLight args={[0xffffff, 0xffffff, 0.5]} />
 
-      {/* <FirstPersonWalkingControls /> */}
-      {/* <CustomPointerLockControls /> */}
       <CustomCameraRotationControls />
 
       <Physics gravity={[0, -9.8, 0]}>
