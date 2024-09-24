@@ -1,19 +1,18 @@
 'use client';
 
-import useAuth from '@/hooks/auth/auth.hook';
 import { useAudiosQuery, useCurationsQuery, useVideosQuery } from '@/hooks/queries';
 import styles from '@/styles/admin.module.css';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useState } from 'react';
 import ArchiveAdmin from './archiveadmin';
 import CurationAdmin from './curationadmin';
+import LogOutButton from './logoutbutton';
 import MainAdmin from './mainadmin';
 
 export default function AdminTemplate() {
   const { data: videos } = useVideosQuery();
   const { data: curations } = useCurationsQuery();
   const { data: audios } = useAudiosQuery();
-  const { logOut } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams(); // useSearchParams 메서드로 클라이언트 사이드에서 쿼리파라미터 값 가져오기
@@ -47,9 +46,7 @@ export default function AdminTemplate() {
     <>
       <div className={styles.adminpage}>
         <div style={{ display: 'flex', width: '100%', backgroundColor: 'blue' }}>
-          <div className={styles.logoutbtn} onClick={logOut}>
-            Logout
-          </div>
+          <LogOutButton />
         </div>
         <span className={styles.admintitle}>Vanko Admin</span>
 
