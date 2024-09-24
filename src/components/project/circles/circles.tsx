@@ -5,11 +5,11 @@ import { Physics, usePlane } from '@react-three/cannon';
 import { PerspectiveCamera, Torus, useHelper } from '@react-three/drei';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Bloom, EffectComposer, Vignette } from '@react-three/postprocessing';
-import nipplejs, { Joystick } from 'nipplejs';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { Joystick } from 'nipplejs';
+import { forwardRef, useEffect, useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';
 
-const SmallTorus = React.forwardRef(
+const SmallTorus = forwardRef(
   (
     props: { position: [number, number, number]; color: string; emissive: string },
     ref: React.Ref<THREE.Mesh>,
@@ -29,7 +29,7 @@ const SmallTorus = React.forwardRef(
 
 SmallTorus.displayName = 'SmallTorus';
 
-const Player = React.forwardRef((props, ref: React.Ref<THREE.PerspectiveCamera>) => {
+const Player = forwardRef((props, ref: React.Ref<THREE.PerspectiveCamera>) => {
   return (
     <PerspectiveCamera ref={ref} fov={95} makeDefault position={[0, 100, 0]} near={1} far={10000} />
   );
@@ -172,7 +172,7 @@ function CircleScene({ audio, joysticRef }: CircleSceneProps) {
 
   useEffect(() => {
     if (!camera) return;
-
+    const nipplejs = require('nipplejs');
     const options = {
       zone: joysticRef.current as HTMLElement,
       mode: 'static' as const,
@@ -189,7 +189,7 @@ function CircleScene({ audio, joysticRef }: CircleSceneProps) {
       ((manager as unknown as Joystick).options?.zone as HTMLElement).style.opacity = '1';
     }
 
-    manager.on('move', (event, data) => {
+    manager.on('move', (event: any, data: any) => {
       // 조이스틱의 움직임에 따른 방향 벡터를 계산합니다.
       const moveDirection = new THREE.Vector3();
       if (data.direction && data.direction.angle) {
@@ -366,7 +366,7 @@ export default function Circles({ ready, audio }: CirclesProps) {
           <color attach="background" args={['#a293c9']} />
           <fog color="#a293c9" attach="fog" near={10} far={300} />
 
-          {nipplejs && ready && joysticRef && <CircleScene audio={audio} joysticRef={joysticRef} />}
+          {ready && joysticRef && <CircleScene audio={audio} joysticRef={joysticRef} />}
 
           <EffectComposer multisampling={0} enableNormalPass={false}>
             <Bloom

@@ -28,19 +28,18 @@ export default function CirclesTemplate() {
   }
 
   useEffect(() => {
-    if (!ready) return;
     let textIndex = texts.length - 1;
     let time = new Date().getTime();
     let morph = 0;
     let cooldown = cooldownTime;
-
+    if (!text1.current || !text2.current) return;
     const elts = {
       text1: text1.current,
       text2: text2.current,
     };
 
-    elts.text1!.innerText = texts[textIndex % texts.length];
-    elts.text2!.innerText = texts[(textIndex + 1) % texts.length];
+    elts.text1.innerText = texts[textIndex % texts.length];
+    elts.text2.innerText = texts[(textIndex + 1) % texts.length];
 
     function doMorph() {
       morph -= cooldown;
@@ -78,12 +77,13 @@ export default function CirclesTemplate() {
 
     function doCooldown() {
       morph = 0;
+      if (elts.text2 && elts.text1) {
+        elts.text2.style.filter = '';
+        elts.text2.style.opacity = '100%';
 
-      elts.text2!.style.filter = '';
-      elts.text2!.style.opacity = '100%';
-
-      elts.text1!.style.filter = '';
-      elts.text1!.style.opacity = '0%';
+        elts.text1.style.filter = '';
+        elts.text1.style.opacity = '0%';
+      }
     }
 
     function animate() {
@@ -127,7 +127,14 @@ export default function CirclesTemplate() {
     <>
       <audio ref={audioRef} src="/assets/audio/circles.mp3" preload="metadata" />
       {!ready && (
-        <div style={{ position: 'absolute', width: '100vw', height: 'calc(var(--vh, 1vh) * 100)' }}>
+        <div
+          style={{
+            position: 'absolute',
+            width: '100vw',
+            height: 'calc(var(--vh, 1vh) * 100)',
+            zIndex: '1000',
+          }}
+        >
           <div
             ref={circle}
             className={styles.circle}
