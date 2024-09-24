@@ -1,3 +1,5 @@
+'use client';
+
 import styles from '@/styles/home.module.css';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';

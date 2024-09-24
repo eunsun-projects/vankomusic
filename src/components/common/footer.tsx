@@ -20,6 +20,8 @@ export default function Footer({ color }: FooterProps) {
             src="/assets/img/footer_vanko.webp"
             alt="vanko"
             unoptimized
+            width={19}
+            height={19}
           ></Image>
           <p>home</p>
         </div>

@@ -13,14 +13,18 @@ export default function ContactTemplate() {
             src="/assets/img/email.webp"
             alt="email"
             unoptimized
-          ></Image>
+            width={48}
+            height={48}
+          />
           <p>CONTACT</p>
           <Image
             className={`${styles.contitleimg} ${styles.contitleimgr}`}
             src="/assets/img/email.webp"
             alt="email"
             unoptimized
-          ></Image>
+            width={48}
+            height={48}
+          />
         </div>
         <div className={styles.contacttextbox}>
           <div className={styles.contactpdf}>
@@ -32,7 +36,9 @@ export default function ContactTemplate() {
               className={styles.convanko}
               alt="contact_vanko"
               unoptimized
-            ></Image>
+              width={56}
+              height={56}
+            />
           </div>
           <EmailForm />
         </div>

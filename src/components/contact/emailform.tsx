@@ -50,6 +50,7 @@ const EmailForm = () => {
           console.log('SUCCESS!', response.status, response.text);
         });
     } catch (error) {
+      console.log(error);
       alert('메일 전송에 실패하였습니다.');
     }
   };
