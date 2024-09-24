@@ -1,6 +1,7 @@
 import SetScreenSize from '@/components/common/setScreensize';
 import '@/styles/react-carousel.es.css';
 import styles from '@/styles/seonang.module.css';
+import '../../globals.css';
 
 export default function SeonangLayout({ children }: { children: React.ReactNode }) {
   return (

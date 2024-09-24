@@ -1,5 +1,5 @@
 import SetScreenSize from '@/components/common/setScreensize';
-import '../globals.css';
+import '../../globals.css';
 
 export default function SeonangLayout({ children }: { children: React.ReactNode }) {
   return (
