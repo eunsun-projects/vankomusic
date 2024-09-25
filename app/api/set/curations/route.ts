@@ -25,6 +25,6 @@ export async function POST(request: NextRequest) {
   }
 
   queryClient.invalidateQueries({ queryKey: [QUERY_KEY_CURATIONS] });
-  revalidatePath('/', 'page');
+  revalidatePath('/', 'layout');
   return NextResponse.json(data, { status: 200 });
 }

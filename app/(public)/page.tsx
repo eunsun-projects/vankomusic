@@ -61,10 +61,8 @@ export default async function Home() {
     queryKey: [QUERY_KEY_CURATIONS],
     queryFn: () => getCurations(),
   });
-  const audios = await queryClient.ensureQueryData<Audios[]>({
-    queryKey: [QUERY_KEY_AUDIOS],
-    queryFn: () => getAudios(),
-  });
+
+  const audios = queryClient.getQueryData<Audios[]>([QUERY_KEY_AUDIOS]);
 
   const dehydratedState = dehydrate(queryClient);
 
@@ -105,7 +103,7 @@ export default async function Home() {
               <p>★Now Showing★</p>
             </div>
 
-            <VanPlayer bgmsList={audios} />
+            <VanPlayer bgmsList={audios || []} />
 
             <table className={`${styles.vantable} ${vastshadow.variable}`}>
               <thead></thead>
