@@ -11,14 +11,11 @@ export async function GET() {
   } = await supabase.auth.getUser();
 
   if (error) {
-    // if (error.message === 'Auth session missing!')
-    //   return NextResponse.json('Auth session missing!', { status: 200 });
+    if (error.message === 'Auth session missing!')
+      return NextResponse.json('Auth session missing!', { status: 200 });
 
     if (error.message === 'Unauthorized')
-      return NextResponse.json(
-        { user: null, error: '인증되지 않은 사용자입니다.' },
-        { status: 401 },
-      );
+      return NextResponse.json('인증되지 않은 사용자입니다.', { status: 401 });
     return NextResponse.json(error?.message, { status: 401 });
   }
   if (!user) {
@@ -63,8 +60,8 @@ export async function DELETE() {
 
   const { error } = await supabase.auth.signOut();
 
-  cookieStore.delete('sb-ogogxjchotsapmsgsqmz-auth-token.0');
-  cookieStore.delete('sb-ogogxjchotsapmsgsqmz-auth-token.1');
+  // cookieStore.delete('sb-ogogxjchotsapmsgsqmz-auth-token.0');
+  // cookieStore.delete('sb-ogogxjchotsapmsgsqmz-auth-token.1');
 
   if (error) {
     return NextResponse.json('Logout failed', { status: 500 });

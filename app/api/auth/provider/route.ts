@@ -37,9 +37,5 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: error?.message }, { status: 401 });
   }
 
-  // queryClient.invalidateQueries({
-  //   queryKey: [QUERY_KEY_USER],
-  // });
-
   return NextResponse.json(data, { status: 200 });
 }

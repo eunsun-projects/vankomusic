@@ -1,9 +1,7 @@
 'use client';
 
-import { QUERY_KEY_USER } from '@/constants/query.constant';
 import { useLogOutMutation } from '@/hooks/mutations';
 import { useLogInQuery, useUserQuery } from '@/hooks/queries';
-import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 
@@ -19,12 +17,10 @@ export default function useAuth() {
   } = useLogInQuery({ provider: 'google', isStart: isLogInStart });
   const { mutate: logOutMutate } = useLogOutMutation();
   const router = useRouter();
-  const queryClient = useQueryClient();
 
   const loginWithProvider = useCallback(() => {
     setIsLogInStart(true);
-    queryClient.invalidateQueries({ queryKey: [QUERY_KEY_USER] });
-  }, [queryClient]);
+  }, []);
 
   const logOut = useCallback(() => {
     if (!user) alert('로그인 상태가 아닙니다.');
@@ -51,9 +47,9 @@ export default function useAuth() {
     }
   }, [userError, logInError]);
 
-  useEffect(() => {
-    console.log('user ======>', user);
-  }, [user]);
+  // useEffect(() => {
+  //   console.log('user ======>', user);
+  // }, [user]);
 
   return {
     user,

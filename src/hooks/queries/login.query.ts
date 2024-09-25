@@ -10,7 +10,7 @@ interface LogInQueryProps {
 
 export function useLogInQuery({ provider, isStart }: LogInQueryProps) {
   return useQuery<OAuthResponse['data']>({
-    queryKey: [QUERY_KEY_USER],
+    queryKey: [QUERY_KEY_USER, provider],
     queryFn: () => getLogInWithProvider(provider),
     enabled: !!provider && isStart,
   });

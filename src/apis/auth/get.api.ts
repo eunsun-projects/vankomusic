@@ -13,9 +13,10 @@ export async function getLogInWithProvider(provider: string): Promise<OAuthRespo
 export async function getUserClient(): Promise<Users | null> {
   const url = `/api/auth/user`;
 
-  const data = await fetchWrapper<Users>(url, {
+  const data = await fetchWrapper<Users | string>(url, {
     method: 'GET',
   });
 
+  if (typeof data === 'string') return null;
   return data;
 }
