@@ -6,7 +6,6 @@ import styles from '@/styles/seonang.module.css';
 import { Wishs } from '@/types/vanko.type';
 import { nanoid } from 'nanoid';
 import { useEffect, useRef, useState } from 'react';
-
 const taropicture = [
   {
     src: '/assets/img/taro/taro_money',
@@ -160,23 +159,28 @@ export default function Saju({ closeUnse, mobile, android }: SajuProps) {
     if (!sowonRef.current) return;
     if (isSubmittingRef.current === false) {
       try {
-        console.log('제출');
         isSubmittingRef.current = true;
-        const sowon: Wishs = {
-          contents: sanitizeInput(sowonRef.current.sowoncontents.value),
-          created_at: new Date().toISOString(),
-          id: nanoid(20),
-        };
-        setLoad(true);
-        await postWish(sowon);
+        if (sowonRef.current.sowoncontents.value.length < 1) {
+          setLoad(true);
+          return;
+        } else {
+          const sowon: Wishs = {
+            contents: sanitizeInput(sowonRef.current.sowoncontents.value),
+            created_at: new Date().toISOString(),
+            id: nanoid(20),
+          };
+          setLoad(true);
+          await postWish(sowon);
+        }
+      } catch (error: any) {
+        console.error('소원 제출 중 오류 발생:', error);
+        alert(error);
+      } finally {
         const picturetimer = setTimeout(() => {
           setLoad(false);
           setNewyear(true);
           clearTimeout(picturetimer);
         }, 5100);
-      } catch (error) {
-        console.error('소원 제출 중 오류 발생:', error);
-      } finally {
         isSubmittingRef.current = false;
       }
     }

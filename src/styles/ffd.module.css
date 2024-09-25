@@ -283,7 +283,10 @@
   height: auto;
   margin: 0 auto;
 }
-
+.ffdiframe {
+  width: 1120px;
+  height: 630px;
+}
 .loader {
   position: relative;
   display: flex;
@@ -320,10 +323,18 @@
   .centerbox {
     width: 100%;
   }
+  .ffdiframe {
+    width: 100dvw;
+    height: 50dvh;
+  }
 }
 @media screen and (min-width: 714px) and (max-width: 820px) and (orientation: portrait) {
   .centerbox {
     width: 100%;
+  }
+  .ffdiframe {
+    width: 100dvw;
+    height: 50dvh;
   }
 }
 @media screen and (max-width: 767px) and (orientation: portrait) {
@@ -366,6 +377,10 @@
   .centerbox {
     width: 98%;
   }
+  .ffdiframe {
+    width: 100dvw;
+    height: 50dvh;
+  }
 }
 @media screen and (min-width: 712px) and (max-width: 713px) and (orientation: portrait) {
   .centerbox {
@@ -377,9 +392,17 @@
     height: auto;
     top: 50%;
   }
+  .ffdiframe {
+    width: 100dvw;
+    height: 50dvh;
+  }
 }
 @media screen and (max-width: 320px) and (orientation: portrait) {
   .modalp {
     font-size: 1rem;
+  }
+  .ffdiframe {
+    width: 100dvw;
+    height: 50dvh;
   }
 }

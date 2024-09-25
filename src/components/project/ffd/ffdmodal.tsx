@@ -33,9 +33,7 @@ function FfdModal({ setShowModal, currTime, setRelayPlay }: FfdModalProps) {
         }}
       >
         <iframe
-          className={styles.iframe}
-          width="1120"
-          height="630"
+          className={styles.ffdiframe}
           src={`https://www.youtube.com/embed/HV1Bg7adKto?start=${Math.floor(currTime)}&autoplay=1&mute=0`}
           title="YouTube video player"
           frameBorder="0"
