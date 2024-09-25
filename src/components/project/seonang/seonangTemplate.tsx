@@ -81,27 +81,17 @@ export default function SeonangTemplate() {
   // 가사 오픈
   const openModal = () => setGasaModal(true);
 
-  const yesClick = () => {
+  const handleYesClick = () => {
     setYes(false);
+    if (!audioRef.current) return;
+    audioRef.current.load();
+    audioRef.current.muted = false;
+    audioRef.current.volume = 0.5;
+    audioRef.current.play().then(() => {
+      console.log('기도를 드릴 수 있습니다.');
+    });
     const treetimer = setTimeout(() => {
-      if (!audioRef.current) return;
       setMusicStart(1);
-      audioRef.current.load();
-      audioRef.current.muted = false;
-      audioRef.current.volume = 0.5;
-      audioRef.current
-        .play()
-        .then(() => {
-          console.log('기도를 드릴 수 있습니다.');
-        })
-        .catch((error) => {
-          console.log(error);
-          if (confirm('네트워크 환경이 좋지 않습니다. 새로고침 하시겠습니까?')) {
-            window.location.reload();
-          } else {
-            alert('네트워크가 원활한 곳에서 다시 실행해주세요.');
-          }
-        });
       clearTimeout(treetimer);
     }, 1000);
     const starttimer = setTimeout(() => {
@@ -179,7 +169,8 @@ export default function SeonangTemplate() {
   }, [wishs]);
 
   useEffect(() => {
-    const audio = audioRef.current as HTMLAudioElement;
+    if (!audioRef.current) return;
+    const audio = audioRef.current;
     const crowSetTime = () => {
       setCrowTwo(true);
       const timer = setTimeout(() => {
@@ -365,7 +356,7 @@ export default function SeonangTemplate() {
           <div className={styles.yesbtnbox}>
             <div className={styles.yesbtnin}>
               <p className={styles.yesp}>기도를 시작 하시겠습니까?</p>
-              <p className={styles.yesy} onClick={yesClick}>
+              <p role="button" className={styles.yesy} onClick={handleYesClick}>
                 Y
               </p>
             </div>
