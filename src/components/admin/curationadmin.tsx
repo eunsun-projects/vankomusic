@@ -120,6 +120,9 @@ export default function CurationAdmin({ videos, curations }: CurationAdminProps)
         await postCuration(finalCuratedVideo);
         queryClient.invalidateQueries({ queryKey: [QUERY_KEY_CURATIONS] });
         router.refresh();
+        setSelectedCuratedItem(null);
+        setSelectedItemIndex(null);
+        deletedCuratedVideoRef.current = [];
       } else {
         return;
       }

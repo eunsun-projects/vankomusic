@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
     const audioData = await request.json();
     const { data, error }: { data: Audios[] | null; error: PostgrestError | null } = await supabase
       .from('audios')
-      .update(audioData)
+      .upsert(audioData)
       .select();
 
     if (error) {

@@ -10,7 +10,15 @@ export async function POST(request: NextRequest) {
   const supabase = createClient();
   const queryClient = new QueryClient();
 
-  const { data, error } = await supabase.from('videos').upsert(curationList).select();
+  // curationList에서 중복된 id를 가진 레코드 제거
+  const uniqueCurationList = Array.from(
+    new Map(curationList.map((item) => [item.id, item])).values(),
+  );
+
+  const { data, error } = await supabase
+    .from('videos')
+    .upsert(uniqueCurationList, { onConflict: 'id' })
+    .select();
 
   if (error) {
     return NextResponse.json(error.message, { status: 500 });
