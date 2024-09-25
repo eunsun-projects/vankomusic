@@ -64,7 +64,7 @@ export default function FfdCarousel({ setShowCarousel, mobile, imgs }: FfdCarous
             </Link>
           </p>
 
-          <div className={styles.carouselcontain} style={{ width: mobile ? '90%' : '80%' }}>
+          <div className={styles.carouselcontain} style={{ width: mobile ? '90%' : '70%' }}>
             <CarouselProvider
               naturalSlideHeight={8}
               naturalSlideWidth={8}
