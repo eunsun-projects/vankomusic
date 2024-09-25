@@ -112,7 +112,7 @@ function GasaModal({ setModal }: GasaModalProps) {
   };
 
   return (
-    <div className={styles.gasacontainer} onClick={closeModal}>
+    <div className={styles.gasacontainer} onClick={closeModal} tabIndex={0}>
       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
         <span className={styles.close} onClick={closeModal}>
           X

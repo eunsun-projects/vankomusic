@@ -303,7 +303,7 @@ export default function SeonangTemplate() {
       mode: 'static' as const,
       position: { right: '50%', bottom: '50%' },
       size: 400,
-      color: 'white',
+      color: 'transparent',
       restOpacity: 1,
     };
     manager.current = nipplejs.create(options);
@@ -315,6 +315,8 @@ export default function SeonangTemplate() {
       front.style.opacity = '0';
       const back = document.querySelector('.back') as HTMLElement;
       back.style.opacity = '0';
+      const nippleRepeated = document.querySelector('#nipple_1_1') as HTMLElement;
+      nippleRepeated.style.display = 'none';
     }, 0);
 
     if (window.innerWidth < 500) {

@@ -62,7 +62,7 @@
   border: 3px ridge silver;
   border-radius: 10px;
   transform: translate(-50%, -50%);
-  z-index: 20005;
+  z-index: 10000000;
   text-shadow: 0 0 5px wheat;
   background-color: #000000a3;
 }
@@ -708,7 +708,7 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 20005;
+  z-index: 1000000;
   background-color: #00000070;
 }
 .bigtarobox {
@@ -823,7 +823,7 @@
 /*카루셀*/
 .carouselcontain {
   position: relative;
-  width: 100%;
+  width: 90%;
   height: auto;
   margin: 0 auto;
 }
