@@ -1,0 +1,385 @@
+.loader {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+.loaderimg {
+  width: 10rem;
+  height: auto;
+}
+
+.modalcontainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+}
+
+.ffdpage {
+  position: relative;
+  width: 100%;
+  /* height: auto; */
+  /* height: calc(var(--vh, 1vh) * 100); */
+  height: 100vh;
+  overflow-y: auto;
+  /* min-height: 100vh; */
+}
+.ffdpage::-webkit-scrollbar {
+  background-color: rgb(0, 0, 0);
+  width: 0px;
+  height: 0px;
+}
+.ffdpage::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+.ffdpage::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+.ffdgrid {
+  position: relative;
+  display: grid;
+  place-items: center;
+  grid-template-columns: repeat(6, 1fr);
+  width: fit-content;
+  height: auto;
+  grid-column-gap: 0.4vw;
+  grid-row-gap: 0.4vw;
+  background-color: black;
+  margin: 0 auto;
+  padding: 0.4rem 0vw 0.4rem 0vw;
+  box-sizing: border-box;
+  /* cursor: grab; */
+}
+.ffdbtnbottom {
+  position: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  top: 0;
+  width: 100%;
+  height: 2rem;
+  /* 약간 반투명하게 */
+  background-color: #00000080;
+  color: aliceblue;
+  font-size: 2rem;
+  /* line-height: 1.5rem;
+    text-shadow: -2px 0 violet, 2px 0 dodgerblue, 0px 2px yellow;
+    text-align: center; */
+  font-family: 'DungGeunMo';
+  z-index: 2;
+}
+.ffdbtnimg {
+  width: 1rem;
+  height: auto;
+  cursor: pointer;
+}
+.ffdtv {
+  width: 2.4rem;
+  height: 2rem;
+  cursor: pointer;
+}
+.ffdbtntop {
+  position: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  bottom: 0;
+  width: 100%;
+  height: 2rem;
+  /* 약간 반투명하게 */
+  background-color: #00000080;
+  color: aliceblue;
+  font-size: 2rem;
+  /* line-height: 1.5rem;
+    text-shadow: -2px 0 violet, 2px 0 dodgerblue, 0px -2px yellow;
+    text-align: center; */
+  font-family: 'DungGeunMo';
+  z-index: 2;
+  cursor: pointer;
+  padding: 0 0.5rem;
+  box-sizing: border-box;
+}
+.ffdvankobox {
+  width: 2rem;
+  height: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0px;
+}
+.vankologo {
+  width: 2rem;
+  /* bottom: 0; */
+  height: auto;
+  position: relative;
+  z-index: 3;
+}
+.lock {
+  width: 1.7rem;
+  /* bottom: 0; */
+  height: 1.7rem;
+  position: relative;
+  z-index: 3;
+}
+
+.ffdbox {
+  width: 16.23vw;
+  height: 16.23vw;
+  overflow: scroll;
+  cursor: grab;
+  cursor: -webkit-grab;
+  cursor: -moz-grab;
+}
+
+.ffdbox:active {
+  cursor: grabbing;
+  cursor: -webkit-grabbing;
+  cursor: -moz-grabbing;
+}
+
+.ffdimg {
+  cursor: grab;
+  cursor: -webkit-grab;
+  cursor: -moz-grab;
+  white-space: nowrap;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+  height: 800px;
+  width: 800px;
+  min-height: 16.2vw;
+}
+
+.ffdimg:active {
+  cursor: grabbing;
+  cursor: -webkit-grabbing;
+  cursor: -moz-grabbing;
+}
+
+.ffdbox::-webkit-scrollbar {
+  background: white;
+  width: 0px;
+  height: 0px;
+}
+.ffdbox::-webkit-scrollbar-thumb {
+  background-color: white;
+}
+
+.redbuttonbox {
+  width: 10rem;
+  height: 10rem;
+  background-color: rgb(117, 117, 117);
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.redbuttoninner {
+  width: 9rem;
+  height: 9rem;
+  box-sizing: border-box;
+  border: 5px solid black;
+  background: linear-gradient(45deg, yellow 25%, black 0, black 50%, yellow 0, yellow 75%, black 0);
+  background-size: 42.4px 42.4px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.redbuttonglass {
+  width: 9rem;
+  height: 9rem;
+  background-color: #e8fafab5;
+  position: absolute;
+  backdrop-filter: blur(1px);
+  z-index: 10;
+  animation: up 1.7s forwards;
+  animation-iteration-count: 1;
+}
+@keyframes up {
+  0% {
+    transform: translateY(0%);
+  }
+  100% {
+    transform: translateY(-80%);
+  }
+}
+
+.redbuttonout {
+  width: 5rem;
+  height: 5rem;
+  border-radius: 100%;
+  background-color: black;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.redbutton {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 100%;
+  background-color: red;
+  box-shadow:
+    inset -2px -2px 4px rgb(104 0 0),
+    inset 3px 3px 4px #fff;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.redbutton:hover {
+  box-shadow:
+    1px 1px 1px rgb(104 0 0),
+    -1px -1px 3px #fff;
+}
+
+.redbutton:active {
+  box-shadow:
+    1px 1px 1px rgb(104 0 0),
+    -1px -1px 3px #fff;
+}
+.modalcontain {
+  width: 100%;
+  height: 100%;
+  background-color: #000000de;
+  position: absolute;
+  z-index: 1100;
+}
+.modalp {
+  position: relative;
+  color: white;
+  text-align: center;
+  font-size: 1.1rem;
+  white-space: pre-line;
+  font-family: DOSGothic;
+}
+.centerbox {
+  position: relative;
+  top: 50%;
+  left: 50%;
+  width: 50%;
+  transform: translate(-50%, -50%);
+}
+.centerdiv {
+  width: 100%;
+}
+
+/*카루셀*/
+.carouselcontain {
+  position: relative;
+  width: 65%;
+  height: auto;
+  margin: 0 auto;
+}
+
+.loader {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+.loaderimg {
+  width: 10rem;
+  height: auto;
+}
+.btns {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem;
+  box-sizing: border-box;
+  background-image: url('/assets/img/starpixel.webp');
+  background-repeat: repeat;
+  background-size: 30rem;
+}
+.btns button:disabled {
+  color: grey;
+}
+.btn {
+  background-color: transparent;
+  color: white;
+  border: 2px outset grey;
+}
+
+/****** 미디어쿼리 portrait ******/
+@media screen and (min-width: 1023px) and (max-width: 1024px) and (orientation: portrait) {
+  .centerbox {
+    width: 100%;
+  }
+}
+@media screen and (min-width: 714px) and (max-width: 820px) and (orientation: portrait) {
+  .centerbox {
+    width: 100%;
+  }
+}
+@media screen and (max-width: 767px) and (orientation: portrait) {
+  .ffdbtnbottom {
+    height: 2.5rem;
+  }
+  .ffdbtntop {
+    height: 2.5rem;
+  }
+  .ffdbtnimg {
+    width: 1.4rem;
+    height: auto;
+  }
+  .ffdtv {
+    width: 2.6rem;
+    height: 2.2rem;
+  }
+  .ffdvankobox {
+    width: 2.4rem;
+  }
+  .vankologo {
+    width: 2.4rem;
+  }
+  .ffdgrid {
+    /* margin: 3rem auto; */
+    grid-template-columns: repeat(3, 1fr);
+    grid-column-gap: 0.7vw;
+    grid-row-gap: 0.7vw;
+    padding: 0.7vw;
+  }
+  .ffdbox {
+    width: 32.4vw;
+    height: 32.4vw;
+  }
+  .ffdimg {
+    height: 300px;
+    width: 300px;
+    min-height: 32.4vw;
+  }
+  .centerbox {
+    width: 98%;
+  }
+}
+@media screen and (min-width: 712px) and (max-width: 713px) and (orientation: portrait) {
+  .centerbox {
+    top: 40%;
+    width: 100%;
+  }
+  .carouselcontain {
+    width: 100%;
+    height: auto;
+    top: 50%;
+  }
+}
+@media screen and (max-width: 320px) and (orientation: portrait) {
+  .modalp {
+    font-size: 1rem;
+  }
+}
