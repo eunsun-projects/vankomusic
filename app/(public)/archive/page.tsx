@@ -15,10 +15,7 @@ export default async function ArchivePage() {
     queryFn: () => getVideos(),
   });
 
-  const videos = await queryClient.ensureQueryData<Videos[]>({
-    queryKey: [QUERY_KEY_VIDEOS],
-    queryFn: () => getVideos(),
-  });
+  const videos = queryClient.getQueryData<Videos[]>([QUERY_KEY_VIDEOS]);
 
-  return <ArchiveTemplate videos={videos} />;
+  return <ArchiveTemplate videos={videos || []} />;
 }

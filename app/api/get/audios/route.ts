@@ -7,7 +7,7 @@ export async function GET() {
   const supabase = createClient();
 
   const { data: audios, error }: { data: Audios[] | null; error: PostgrestError | null } =
-    await supabase.from('audios').select('*');
+    await supabase.from('audios').select('*').order('number', { ascending: true });
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });

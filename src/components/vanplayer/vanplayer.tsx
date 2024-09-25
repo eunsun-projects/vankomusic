@@ -1,21 +1,19 @@
 'use client';
 
 import { silkscreen } from '@/fonts';
+import { useAudiosQuery } from '@/hooks/queries';
 import styles from '@/styles/vanplayer.module.css';
 import { Audios } from '@/types/vanko.type';
 import dayjs from 'dayjs';
 import { useEffect, useRef, useState } from 'react';
 import VolumeNob from './volumeNob';
 
-interface VanPlayerProps {
-  bgmsList: Audios[];
-}
-
-export default function VanPlayer({ bgmsList }: VanPlayerProps) {
+export default function VanPlayer() {
+  const { data: audios } = useAudiosQuery();
   const audioRef = useRef<HTMLAudioElement>(null); // 오디오 객체 ref 생성
   const [play, setPlay] = useState(false);
   const [load, setLoad] = useState(false); // 기본 로딩 완료되면 true
-  const [src, setSrc] = useState(bgmsList[0]); // src 초기값 bgmsList 의 0번으로 설정
+  const [src, setSrc] = useState<Audios | null>(audios?.[0] ?? null); // src 초기값 bgmsList 의 0번으로 설정
   const [full, setFull] = useState(0); //플레이타임 전체 백분율 측정용
   const [nowM, setNowM] = useState('00:00'); //현재재생시간
   const [maxM, setMaxM] = useState('00:00'); //곡 전체 재생시간
@@ -60,15 +58,16 @@ export default function VanPlayer({ bgmsList }: VanPlayerProps) {
 
   // 음원 종료시 호출
   const handleEnded = () => {
-    const result = bgmsList.filter((e, i) => {
+    const result = audios?.filter((e, i) => {
       if (!audioRef.current) return;
-      if (Number(audioRef.current.dataset.num) === bgmsList.length - 1) {
+      if (Number(audioRef.current.dataset.num) === audios?.length - 1) {
         // 재생종료시 마지막리스트이면
         return setPlay(false); // 플레이스테이트 false
       } else {
         return i === Number(audioRef.current.dataset.num) + 1; // 마지막리스트가 아니면 인덱스 +1 해서 객체 리턴
       }
     });
+    if (!result) return;
     result.length > 0 && setSrc(result[0]); // 리턴받은 값이 있으면, src 스테이트로 설정
   };
 
@@ -118,7 +117,7 @@ export default function VanPlayer({ bgmsList }: VanPlayerProps) {
 
   // 이전버튼 클릭시 호출
   const handleBefore = () => {
-    const result = bgmsList.filter((e, i) => {
+    const result = audios?.filter((e, i) => {
       if (!audioRef.current) return;
       if (Number(audioRef.current.dataset.num) === 0) {
         // 재생목록 인덱스 0 이면 그냥 리턴
@@ -127,20 +126,22 @@ export default function VanPlayer({ bgmsList }: VanPlayerProps) {
         return i === Number(audioRef.current.dataset.num) - 1; // 재생목록 인덱스 0 이 아니면 -1 하여 객체 리턴
       }
     });
+    if (!result) return;
     result.length > 0 && setSrc(result[0]);
     setPlay(true);
   };
 
   // 다음버튼 클릭시 호출, 내용은 이전버튼 클릭의 반대임
   const handleNext = () => {
-    const result = bgmsList.filter((e, i) => {
+    const result = audios?.filter((e, i) => {
       if (!audioRef.current) return;
-      if (Number(audioRef.current.dataset.num) === bgmsList.length - 1) {
+      if (Number(audioRef.current.dataset.num) === audios?.length - 1) {
         return; //마지막 곡에서 다음버튼 클릭하면 다시 0번으로..추가하기..
       } else {
         return i === Number(audioRef.current.dataset.num) + 1;
       }
     });
+    if (!result) return;
     result.length > 0 && setSrc(result[0]);
     setPlay(true);
   };
@@ -241,10 +242,10 @@ export default function VanPlayer({ bgmsList }: VanPlayerProps) {
             preload="metadata"
             // autoPlay
             // muted
-            data-name={src.title}
-            data-num={src.number}
+            data-name={src?.title}
+            data-num={src?.number}
             ref={audioRef}
-            src={src.url as string}
+            src={src?.url as string}
             onLoadedData={handleLoad}
             onCanPlayThrough={handleFullyloaded}
             onDurationChange={handleDuration}
@@ -361,12 +362,12 @@ export default function VanPlayer({ bgmsList }: VanPlayerProps) {
 
           {listOpen && (
             <div className={styles.music_info}>
-              {bgmsList.length > 0 &&
-                bgmsList.map((item, index) => (
+              {audios &&
+                audios?.map((item, index) => (
                   <div key={(item.title as string) + index}>
                     <p
                       style={{
-                        color: src.number === index ? 'aqua' : 'lightblue',
+                        color: src?.number === index ? 'aqua' : 'lightblue',
                         pointerEvents: load ? 'auto' : 'none',
                         fontFamily: 'auto',
                       }}
