@@ -1,34 +1,62 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## Vanko.live
 
-## Getting Started
+### 음악가 홈페이지
 
-First, run the development server:
+개발기간: 2023.10 ~ 2024.01  
+플랫폼: web  
+개발인원: FE 1명(개인프로젝트)  
+담당역할: 프론트엔드
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
+### 개발 환경
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+언어: TypeScript ^5, HTML/CSS  
+프레임워크: Next.js 13, React 18  
+데이터베이스: Supabase Baas
+라이브러리: zustand, tailwind, Three.js
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+### 주요 기능
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+#### ✅ 관리자 페이지 
+🔹 음악가 본인만 사용할 수 있는 어드민 페이지를 구성했습니다.  
+🔹 어드민페이지에서 메인페이지에 노출될 콘텐츠를 CRUD 할 수 있습니다.
 
-## Learn More
+#### ✅ 웹 음원 재생기
+🔹 음악가가 어드민 페이지에서 곡을 선정하고 등록할 수 있습니다.  
+🔹 선정된 음원은 메인 페이지의 웹 음원 재생기를 통해 감상이 가능합니다.
 
-To learn more about Next.js, take a look at the following resources:
+#### ✅ 음악 비쥬얼라이저 페이지 제작 중
+🔹 특별히 선정된 음악들은 개별 페이지에서 음악의 정체성을 드러내는 비쥬얼라이저로 제작하고 있습니다.  
+🔹 현재 2곡에 대해 개별 페이지가 작성되어 있으며, 이 페이지들은 실 서비스를 통해 유저 피드백을 받아 UX를 개선 적용 하였습니다. 
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 트러블 슈팅
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+#### ✅ ISR 적용
+🔹 문제 : 정적인 포트폴리오 사이트로 속도와 SEO가 중요하고 관리자가 업데이트시 즉각 반영되어야 했습니다.  
+🔹 해결 : ISR을 적용하여 Next.js의 route handler 에서 revalidatePath 시 즉각 업데이트 되도록 했습니다.  
+🔹 성과 : 관리자 페이지 외에는 스태틱페이지로 빠른 응답속도를 유지하면서도 편리하게 데이터를 업데이트 할 수 있습니다.
 
-## Deploy on Vercel
+#### ✅ react-three-fiber 사용
+🔹 문제 : 클래스로 작성되었던 기존 코드에서는 react의 선언형 프로그래밍의 장점을 누리기가 힘들었습니다.  
+🔹 해결 : react-three-fiber 라이브러리를 도입하여 컴포넌트 형태로 리팩토링 하였습니다.  
+🔹 성과 : 결과적으로 react 에 더욱 적합한 방식으로 개발이 가능해졌습니다.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+#### ✅ next-font 사용
+🔹 문제 : 웹폰트 사용시 느린 로딩 속도로 인해 글꼴이 늦게 반영되는 문제가 있었습니다.  
+🔹 해결 : Next.js에서 제공하는 next/font 모듈을 사용해 웹폰트 로딩을 최적화 하였습니다.  
+🔹 성과 : 로딩 속도가 향상되었고, FOUT 현상이 제거되어 일관된 경험을 제공할 수 있었습니다.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+### 회고
+
+#### 좋았던 점
+음악별 웹 비쥬얼라이저 제작 
+
+음악가가 웹 비쥬얼라이저로 제작하고 싶은 음악이 있다면 계속해서 사이드프로젝트로 한 곡씩 비쥬얼라이저 제작을 하기로 했습니다.
+매번 새롭고 재미난 기술을 사용하여 음악을 웹으로 해석하는 작업은 정말 즐거운 작업이라고 생각합니다.
+
+#### 아쉬운 점
+발표일정
+
+현재 공개된 2개의 비주얼라이저 외에도 여러개의 아이디어들이 프로토타입으로 제작되었지만 아직 협의중으로 많이 공개가 되지 못하고 있습니다. 차근차근 진행하여 공개하려고 합니다.
+
+
+
