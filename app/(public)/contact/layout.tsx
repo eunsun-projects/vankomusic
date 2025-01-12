@@ -10,7 +10,7 @@ export default function ContactLayout({ children }: { children: React.ReactNode 
         className={knewave.className}
         style={{
           minHeight: 'calc(var(--vh, 1vh) * 100)',
-          overflowY: 'auto',
+          // overflowY: 'auto',
           backgroundImage: 'url(/assets/img/starpixel.webp)',
           backgroundSize: '25rem',
           backgroundRepeat: 'repeat',
