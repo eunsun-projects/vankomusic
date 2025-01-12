@@ -570,7 +570,7 @@ export default function SeonangTemplate() {
         <div className={styles.waterdec}>
           <animated.p
             style={{
-              position: 'absolute',
+              // position: 'absolute',
               width: '100%',
               opacity: opacity,
               fontFamily: 'DOSGothic',

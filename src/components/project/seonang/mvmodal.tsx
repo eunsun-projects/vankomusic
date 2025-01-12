@@ -50,7 +50,9 @@ export default function MvModal({ setShowModal }: MvModalProps) {
           fontFamily: 'DosGothic',
         }}
       >
-        <span ref={xRef}>X</span>
+        <span ref={xRef} className="cursor-pointer">
+          X
+        </span>
       </div>
       <div className={styles.centerbox}>
         <div className={styles.centerdiv}>
