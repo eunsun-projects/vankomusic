@@ -734,11 +734,16 @@
   top: 48%;
   left: 50%;
   transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.2rem;
 }
 .download {
   text-align: center;
   padding: 0 0.5rem;
-  margin-top: 0.5rem;
+  /* margin-top: 0.5rem; */
   box-sizing: border-box;
   font-size: 2rem;
   border: 3px ridge gold;
