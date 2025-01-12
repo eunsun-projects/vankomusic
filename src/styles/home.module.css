@@ -27,7 +27,7 @@
   margin: 0 auto;
   padding: 1rem 0;
   width: 40rem;
-  height: 2rem;
+  /* height: 2rem; */
   letter-spacing: 2px;
   font-size: 0.8rem;
   text-align: center;
@@ -112,6 +112,7 @@
   font-size: 0.8rem;
   font-family: var(--font-vast), 'DungGeunMo';
   border: 10px outset grey;
+  border-collapse: separate;
 }
 .vantable .vantableko {
   font-family: var(--font-vast), 'DungGeunMo';
@@ -156,6 +157,7 @@
   text-decoration: none;
 }
 .arcbtn {
+  box-sizing: content-box;
   color: #00ff2b;
   text-align: center;
   /* font-family: 'Silkscreen', 'cursive'; */
@@ -176,7 +178,7 @@
 .visitcount {
   font-size: 0.9rem;
   opacity: 0.7;
-  padding-top: 0.2rem;
+  /* padding-top: 0.2rem; */
   letter-spacing: 3px;
 }
 .maingallery {
@@ -185,9 +187,10 @@
   place-items: center;
   grid-template-columns: repeat(4, 1fr);
   margin: 0 auto;
-  padding: 3rem 0 2rem;
+  padding: 3rem 0 3rem;
   width: 40rem;
-  height: 20rem;
+  gap: 1rem;
+  /* height: 20rem; */
 }
 .gallerybox {
   width: 9rem;
@@ -260,7 +263,7 @@
   animation: marquee 25s linear infinite;
 }
 .marqueecontent p {
-  width: 40rem;
+  min-width: 41rem;
   line-height: 2rem;
   margin-top: 0.2rem;
 }

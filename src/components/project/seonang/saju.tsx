@@ -216,7 +216,9 @@ export default function Saju({ closeUnse, mobile, android }: SajuProps) {
       <div className={styles.unseone}>
         <div className={styles.ggongdiv}></div>
         <div className={styles.unsebackground}>
-          <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-end' }}>
+          <div
+            style={{ width: '100%', display: 'flex', justifyContent: 'flex-end', height: '10px' }}
+          >
             <p onClick={closeUnse} className={styles.x}>
               X
             </p>

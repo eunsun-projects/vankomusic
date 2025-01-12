@@ -28,6 +28,7 @@
   height: 100vh;
   overflow-y: auto;
   /* min-height: 100vh; */
+  background-color: rgb(0, 0, 0);
 }
 .ffdpage::-webkit-scrollbar {
   background-color: rgb(0, 0, 0);
