@@ -33,28 +33,72 @@ export type Database = {
         }
         Relationships: []
       }
+      timecapsules: {
+        Row: {
+          color: string
+          created_at: string
+          description: string
+          id: string
+          password: string
+          position: number[]
+          title: string
+          updated_at: string
+          user_email: string
+        }
+        Insert: {
+          color?: string
+          created_at?: string
+          description?: string
+          id?: string
+          password?: string
+          position: number[]
+          title?: string
+          updated_at: string
+          user_email?: string
+        }
+        Update: {
+          color?: string
+          created_at?: string
+          description?: string
+          id?: string
+          password?: string
+          position?: number[]
+          title?: string
+          updated_at?: string
+          user_email?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "timecapsules_user_email_fkey"
+            columns: ["user_email"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["email"]
+          },
+        ]
+      }
       users: {
         Row: {
           avatar: string | null
           created_at: string
-          email: string | null
-          id: number
+          email: string
+          id: string
           isAdmin: boolean | null
           nickname: string | null
         }
         Insert: {
           avatar?: string | null
           created_at?: string
-          email?: string | null
-          id?: number
+          email: string
+          id: string
           isAdmin?: boolean | null
           nickname?: string | null
         }
         Update: {
           avatar?: string | null
           created_at?: string
-          email?: string | null
-          id?: number
+          email?: string
+          id?: string
           isAdmin?: boolean | null
           nickname?: string | null
         }
@@ -234,4 +278,19 @@ export type Enums<
   ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
     ? PublicSchema["Enums"][PublicEnumNameOrOptions]
+    : never
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof PublicSchema["CompositeTypes"]
+    | { schema: keyof Database },
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never = never,
+> = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
+    ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
