@@ -7,6 +7,7 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const provider = searchParams.get('provider');
+  const next = searchParams.get('next') ?? '/';
 
   const queryClient = new QueryClient();
   const supabase = createClient();
@@ -29,7 +30,7 @@ export async function GET(request: NextRequest) {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: provider as Provider,
     options: {
-      redirectTo: `${getURL()}api/auth/callback`,
+      redirectTo: `${getURL()}api/auth/callback?next=${next}`,
     },
   });
 

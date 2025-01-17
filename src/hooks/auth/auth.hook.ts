@@ -6,7 +6,13 @@ import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 
 export default function useAuth() {
-  const [isLogInStart, setIsLogInStart] = useState(false);
+  const [isLogInStart, setIsLogInStart] = useState<{
+    isStart: boolean;
+    next?: string;
+  }>({
+    isStart: false,
+    next: undefined,
+  });
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const { data: user, isPending: isUserPending, error: userError } = useUserQuery();
@@ -14,12 +20,20 @@ export default function useAuth() {
     data: loginData,
     isPending: isLogInPending,
     error: logInError,
-  } = useLogInQuery({ provider: 'google', isStart: isLogInStart });
+  } = useLogInQuery({
+    provider: 'google',
+    isStart: isLogInStart.isStart,
+    next: isLogInStart.next,
+  });
   const { mutate: logOutMutate } = useLogOutMutation();
   const router = useRouter();
 
-  const loginWithProvider = useCallback(() => {
-    setIsLogInStart(true);
+  const loginWithProvider = useCallback((next?: string) => {
+    setIsLogInStart((prev) => ({
+      ...prev,
+      isStart: true,
+      next,
+    }));
   }, []);
 
   const logOut = useCallback(() => {

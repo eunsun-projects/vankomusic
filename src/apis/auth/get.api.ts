@@ -2,8 +2,11 @@ import { Users } from '@/types/vanko.type';
 import fetchWrapper from '@/utils/common/fetchWrapper';
 import { OAuthResponse } from '@supabase/supabase-js';
 
-export async function getLogInWithProvider(provider: string): Promise<OAuthResponse['data']> {
-  const url = `/api/auth/provider?provider=${provider}`;
+export async function getLogInWithProvider(
+  provider: string,
+  next?: string,
+): Promise<OAuthResponse['data']> {
+  const url = `/api/auth/provider?provider=${provider}&next=${next}`;
   const data = await fetchWrapper<OAuthResponse['data']>(url, {
     method: 'GET',
   });
