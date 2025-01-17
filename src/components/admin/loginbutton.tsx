@@ -18,7 +18,7 @@ export default function LoginButton() {
       }}
     >
       <span>구글로 로그인 해 주세요.</span>
-      <div className={styles.loginbtn} onClick={loginWithProvider}>
+      <div className={styles.loginbtn} onClick={() => loginWithProvider('/vankoadmin')}>
         로그인
       </div>
     </div>
