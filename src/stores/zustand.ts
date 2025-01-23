@@ -7,8 +7,10 @@ export interface TimeCapsuleState {
   timeCapsules: TimeCapsule[];
   setFocusedObject: (focusedObject: FocusedObject | null) => void;
   setTimeCapsules: (timeCapsules: TimeCapsule[]) => void;
-  updateTimeCapsule: (object: THREE.Mesh) => void;
+  updateTimeCapsuleObject: (object: THREE.Mesh) => void;
   addTimeCapsule: (timeCapsule: TimeCapsule) => void;
+  editTimeCapsule: (timeCapsule: TimeCapsule) => void;
+  deleteTimeCapsule: (timeCapsule: TimeCapsule) => void;
 }
 
 export const useTimeCapsuleStore = create<TimeCapsuleState>((set) => ({
@@ -20,11 +22,21 @@ export const useTimeCapsuleStore = create<TimeCapsuleState>((set) => ({
     set((state) => ({
       timeCapsules: [...(state.timeCapsules || []), timeCapsule],
     })),
-  updateTimeCapsule: (object: THREE.Mesh) =>
+  updateTimeCapsuleObject: (object: THREE.Mesh) =>
     set((state) => ({
       timeCapsules: state.timeCapsules.map((timeCapsule) =>
         !timeCapsule.object ? { ...timeCapsule, object } : timeCapsule,
       ),
+    })),
+  editTimeCapsule: (newTimeCapsule: TimeCapsule) =>
+    set((state) => ({
+      timeCapsules: state.timeCapsules.map((timeCapsule) =>
+        timeCapsule.id === newTimeCapsule.id ? { ...timeCapsule, ...newTimeCapsule } : timeCapsule,
+      ),
+    })),
+  deleteTimeCapsule: (timeCapsule: TimeCapsule) =>
+    set((state) => ({
+      timeCapsules: state.timeCapsules.filter((t) => t.id !== timeCapsule.id),
     })),
 }));
 
