@@ -18,14 +18,15 @@ function EachSphere({ timeCapsule }: EachSphereProps) {
   const sphereRef = useRef<THREE.Mesh>(null);
   const cameraTargetRef = useRef<THREE.Vector3>(new THREE.Vector3());
   const previousFocusedObject = useRef<THREE.Mesh | null>(null);
-  const { focusedObject, timeCapsules, setFocusedObject, updateTimeCapsule } = useTimeCapsuleStore(
-    useShallow((state: TimeCapsuleState) => ({
-      focusedObject: state.focusedObject,
-      timeCapsules: state.timeCapsules,
-      setFocusedObject: state.setFocusedObject,
-      updateTimeCapsule: state.updateTimeCapsule,
-    })),
-  );
+  const { focusedObject, timeCapsules, setFocusedObject, updateTimeCapsuleObject } =
+    useTimeCapsuleStore(
+      useShallow((state: TimeCapsuleState) => ({
+        focusedObject: state.focusedObject,
+        timeCapsules: state.timeCapsules,
+        setFocusedObject: state.setFocusedObject,
+        updateTimeCapsuleObject: state.updateTimeCapsuleObject,
+      })),
+    );
   const initialTimeCapsulesLength = useRef(timeCapsules.length);
 
   const handleClick = (e: ThreeEvent<MouseEvent>) => {
@@ -100,7 +101,7 @@ function EachSphere({ timeCapsule }: EachSphereProps) {
         timeCapsule: timeCapsules[timeCapsules.length - 1],
       });
     }
-  }, [timeCapsules, setFocusedObject, updateTimeCapsule]);
+  }, [timeCapsules, setFocusedObject]);
 
   useEffect(() => {
     if (!sphereRef.current) return;
@@ -108,8 +109,8 @@ function EachSphere({ timeCapsule }: EachSphereProps) {
       name: 'timeCapsule',
       timeCapsule,
     };
-    updateTimeCapsule(sphereRef.current);
-  }, [timeCapsule, updateTimeCapsule]);
+    updateTimeCapsuleObject(sphereRef.current);
+  }, [timeCapsule, updateTimeCapsuleObject]);
 
   return (
     <Sphere

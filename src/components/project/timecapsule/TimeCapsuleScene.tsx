@@ -9,7 +9,7 @@ import TimeCapsuleCamera from './TimeCapsuleCamera';
 
 function TimeCapsuleScene() {
   const { camera, scene } = useThree();
-  const { updateTimeCapsule } = useTimeCapsuleStore();
+  const { updateTimeCapsuleObject } = useTimeCapsuleStore();
 
   useEffect(() => {
     if (camera instanceof THREE.PerspectiveCamera) {
@@ -37,10 +37,10 @@ function TimeCapsuleScene() {
     if (!scene) return;
     scene.traverse((child) => {
       if (child.userData.name === 'timeCapsule') {
-        updateTimeCapsule(child as THREE.Mesh);
+        updateTimeCapsuleObject(child as THREE.Mesh);
       }
     });
-  }, [scene, updateTimeCapsule]);
+  }, [scene, updateTimeCapsuleObject]);
 
   return (
     <>

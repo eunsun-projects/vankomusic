@@ -1,7 +1,11 @@
 'use client';
 
 import useAuth from '@/hooks/auth/auth.hook';
-import { useTimeCapsulesMutation } from '@/hooks/mutations/timecapsules.mutation';
+import {
+  useDeleteTimeCapsulesMutation,
+  useEditTimeCapsulesMutation,
+  useTimeCapsulesMutation,
+} from '@/hooks/mutations/timecapsules.mutation';
 import { useTimeCapsuleStore } from '@/stores/zustand';
 import { FocusedObject, TimeCapsule } from '@/types/projects.type';
 import cn from '@/utils/common/cn';
@@ -20,9 +24,8 @@ type OpenState = {
   isModalOpen: boolean;
   isListOpen: boolean;
   isLogInOpen: boolean;
+  isEditNow: boolean;
 };
-
-// const userUUID = uuidv4();
 
 function TimeCapsuleUI() {
   const { focusedObject, timeCapsules, setFocusedObject, addTimeCapsule } = useTimeCapsuleStore(
@@ -34,13 +37,16 @@ function TimeCapsuleUI() {
     })),
   );
   const { user, loginWithProvider, logOut } = useAuth();
-  const { mutateAsync: mutateTimeCapsule } = useTimeCapsulesMutation();
+  const { mutateAsync: mutateAddTimeCapsule } = useTimeCapsulesMutation();
+  const { mutateAsync: mutateEditTimeCapsule } = useEditTimeCapsulesMutation();
+  const { mutateAsync: mutateDeleteTimeCapsule } = useDeleteTimeCapsulesMutation();
   const [isOpen, setIsOpen] = useState<OpenState>({
     isFormOpen: false,
     isPasswordOpen: false,
     isModalOpen: false,
     isListOpen: false,
     isLogInOpen: false,
+    isEditNow: false,
   });
 
   const {
@@ -48,6 +54,7 @@ function TimeCapsuleUI() {
     handleSubmit,
     formState: { errors },
     setError,
+    setValue,
     reset,
   } = useForm<TimeCapsule>();
 
@@ -72,7 +79,7 @@ function TimeCapsuleUI() {
     }));
   };
 
-  const handleClickList = (timeCapsule: TimeCapsule) => {
+  const handleClickList = (timeCapsule: TimeCapsule) => () => {
     const selectedTimeCapsule: FocusedObject = {
       object: timeCapsule.object as Mesh,
       timeCapsule,
@@ -87,7 +94,34 @@ function TimeCapsuleUI() {
     }));
   };
 
-  const onAddSubmit = async (data: TimeCapsule) => {
+  const handleClickEdit = (timeCapsule: TimeCapsule) => () => {
+    setIsOpen((prev) => ({
+      ...prev,
+      isPasswordOpen: false,
+      isModalOpen: false,
+      isListOpen: false,
+      isFormOpen: true,
+      isEditNow: true,
+    }));
+    setFocusedObject({
+      object: timeCapsule.object as Mesh,
+      timeCapsule,
+    });
+    setValue('title', timeCapsule.title);
+    setValue('description', timeCapsule.description);
+    setValue('password', timeCapsule.password);
+  };
+
+  const handleClickDelete = (timeCapsule: TimeCapsule) => () => {
+    if (confirm('정말 삭제하시겠습니까?')) {
+      const payload = {
+        id: timeCapsule.id,
+      };
+      mutateDeleteTimeCapsule(payload);
+    }
+  };
+
+  const onSubmit = async (data: TimeCapsule) => {
     if (!user) return;
     const timeCapsulePayload: Partial<TimeCapsule> = {
       user_email: user.email,
@@ -97,14 +131,30 @@ function TimeCapsuleUI() {
       position: [generateRandomPosition(), generateRandomPosition(), generateRandomPosition()],
       color: generateColor(),
     };
-    const response = await mutateTimeCapsule(timeCapsulePayload);
-    console.log(response);
+    let response: TimeCapsule;
+    if (isOpen.isEditNow) {
+      timeCapsulePayload.id = focusedObject?.timeCapsule?.id;
+      response = await mutateEditTimeCapsule(timeCapsulePayload);
+    } else {
+      response = await mutateAddTimeCapsule(timeCapsulePayload);
+    }
     addTimeCapsule(response);
+    const timeCapsule = timeCapsules.find((timeCapsule) => timeCapsule.id === response.id);
+    if (timeCapsule) {
+      setFocusedObject({
+        object: timeCapsule.object as Mesh,
+        timeCapsule,
+      });
+    }
+    reset();
     setIsOpen((prev) => ({
       ...prev,
       isFormOpen: false,
+      isEditNow: false,
+      isPasswordOpen: true,
+      isModalOpen: false,
+      isListOpen: false,
     }));
-    reset();
   };
 
   const onPasswordSubmit = (data: TimeCapsule) => {
@@ -134,7 +184,7 @@ function TimeCapsuleUI() {
     if (focusedObject?.timeCapsule) {
       setIsOpen((prev) => ({
         ...prev,
-        isPasswordOpen: true,
+        isPasswordOpen: prev.isFormOpen ? false : true,
       }));
     }
   }, [focusedObject]);
@@ -200,17 +250,19 @@ function TimeCapsuleUI() {
           {timeCapsules
             .filter((timeCapsule) => timeCapsule.user_email === user?.email)
             .map((timeCapsule) => (
-              <div
-                key={timeCapsule.created_at}
-                className="cursor-pointer"
-                onClick={() => handleClickList(timeCapsule)}
-              >
-                <ul>
-                  <li>
-                    {'✔ '}
-                    {timeCapsule.title}
-                    {' - '}
-                    {format(new Date(timeCapsule.created_at), 'yyyy-MM-dd HH:mm:ss')}
+              <div key={timeCapsule.created_at} className="cursor-pointer">
+                <ul className="min-w-[375px]">
+                  <li className="flex gap-2 items-center justify-between">
+                    <span>{'✔ '}</span>
+                    <span className="max-w-[80px] truncate" onClick={handleClickList(timeCapsule)}>
+                      {timeCapsule.title}
+                    </span>
+                    <span>{' - '}</span>
+                    <span className="text-xs">
+                      {format(new Date(timeCapsule.created_at), 'yy-MM-dd HH:mm:ss')}
+                    </span>
+                    <span onClick={handleClickEdit(timeCapsule)}>수정</span>
+                    <span onClick={handleClickDelete(timeCapsule)}>삭제</span>
                   </li>
                 </ul>
               </div>
@@ -282,7 +334,7 @@ function TimeCapsuleUI() {
       )}
       {isOpen.isFormOpen && (
         <form
-          onSubmit={handleSubmit(onAddSubmit)}
+          onSubmit={handleSubmit(onSubmit)}
           className="absolute right-1/2 top-1/2 translate-x-1/2 -translate-y-1/2 flex flex-col gap-2 bg-neutral-800/50 text-neutral-200 border border-neutral-700 pointer-events-auto p-2 rounded-md hover:bg-neutral-800/70 active:bg-neutral-800/90"
         >
           <div className="flex justify-end">
@@ -314,7 +366,7 @@ function TimeCapsuleUI() {
             placeholder="비밀번호"
             {...register('password')}
           />
-          <button type="submit">보관</button>
+          <button type="submit">{isOpen.isEditNow ? '수정' : '보관'}</button>
         </form>
       )}
     </div>
