@@ -19,3 +19,39 @@ export async function POST(request: Request) {
 
   return NextResponse.json(data, { status: 200 });
 }
+
+export async function PUT(request: Request) {
+  const timeCapsule: TimeCapsule = await request.json();
+  const supabase = createClient();
+
+  const { data, error }: { data: TimeCapsule | null; error: PostgrestError | null } = await supabase
+    .from('timecapsules')
+    .update(timeCapsule)
+    .eq('id', timeCapsule.id)
+    .select()
+    .single();
+
+  if (error) {
+    return NextResponse.json(error.message, { status: 500 });
+  }
+
+  return NextResponse.json(data, { status: 200 });
+}
+
+export async function DELETE(request: Request) {
+  const timeCapsule: TimeCapsule = await request.json();
+  const supabase = createClient();
+
+  const { data, error }: { data: TimeCapsule | null; error: PostgrestError | null } = await supabase
+    .from('timecapsules')
+    .delete()
+    .eq('id', timeCapsule.id)
+    .select()
+    .single();
+
+  if (error) {
+    return NextResponse.json(error.message, { status: 500 });
+  }
+
+  return NextResponse.json(data, { status: 200 });
+}
