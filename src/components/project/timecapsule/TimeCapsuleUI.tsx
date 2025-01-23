@@ -1,6 +1,7 @@
 'use client';
 
 import useAuth from '@/hooks/auth/auth.hook';
+import { useTimeCapsulesMutation } from '@/hooks/mutations/timecapsules.mutation';
 import { useTimeCapsuleStore } from '@/stores/zustand';
 import { FocusedObject, TimeCapsule } from '@/types/projects.type';
 import cn from '@/utils/common/cn';
@@ -11,7 +12,6 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { IoClose } from 'react-icons/io5';
 import { Mesh } from 'three';
-import { v4 as uuidv4 } from 'uuid';
 import { useShallow } from 'zustand/react/shallow';
 
 type OpenState = {
@@ -22,18 +22,19 @@ type OpenState = {
   isLogInOpen: boolean;
 };
 
-const userUUID = uuidv4();
+// const userUUID = uuidv4();
 
 function TimeCapsuleUI() {
-  const { focusedObject, timeCapsules, setFocusedObject, setTimeCapsules } = useTimeCapsuleStore(
+  const { focusedObject, timeCapsules, setFocusedObject, addTimeCapsule } = useTimeCapsuleStore(
     useShallow((state) => ({
       focusedObject: state.focusedObject,
       timeCapsules: state.timeCapsules,
       setFocusedObject: state.setFocusedObject,
-      setTimeCapsules: state.setTimeCapsules,
+      addTimeCapsule: state.addTimeCapsule,
     })),
   );
   const { user, loginWithProvider, logOut } = useAuth();
+  const { mutateAsync: mutateTimeCapsule } = useTimeCapsulesMutation();
   const [isOpen, setIsOpen] = useState<OpenState>({
     isFormOpen: false,
     isPasswordOpen: false,
@@ -86,19 +87,19 @@ function TimeCapsuleUI() {
     }));
   };
 
-  const onAddSubmit = (data: TimeCapsule) => {
-    const newTimeCapsule: TimeCapsule = {
-      userId: userUUID,
+  const onAddSubmit = async (data: TimeCapsule) => {
+    if (!user) return;
+    const timeCapsulePayload: Partial<TimeCapsule> = {
+      user_email: user.email,
       title: data.title,
       description: data.description,
       password: data.password,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
       position: [generateRandomPosition(), generateRandomPosition(), generateRandomPosition()],
       color: generateColor(),
-      object: null,
     };
-    setTimeCapsules(newTimeCapsule);
+    const response = await mutateTimeCapsule(timeCapsulePayload);
+    console.log(response);
+    addTimeCapsule(response);
     setIsOpen((prev) => ({
       ...prev,
       isFormOpen: false,
@@ -158,7 +159,8 @@ function TimeCapsuleUI() {
             'bg-neutral-800/50 text-neutral-200 border border-neutral-700 pointer-events-auto p-2 rounded-md hover:bg-neutral-800/70 active:bg-neutral-800/90 opacity-0',
             {
               'opacity-100':
-                timeCapsules.filter((timeCapsule) => timeCapsule.userId === userUUID).length > 0,
+                timeCapsules.filter((timeCapsule) => timeCapsule.user_email === user?.email)
+                  .length > 0,
             },
           )}
           onClick={handleClickListOpen}
@@ -196,10 +198,10 @@ function TimeCapsuleUI() {
             />
           </div>
           {timeCapsules
-            .filter((timeCapsule) => timeCapsule.userId === userUUID)
+            .filter((timeCapsule) => timeCapsule.user_email === user?.email)
             .map((timeCapsule) => (
               <div
-                key={timeCapsule.createdAt}
+                key={timeCapsule.created_at}
                 className="cursor-pointer"
                 onClick={() => handleClickList(timeCapsule)}
               >
@@ -208,7 +210,7 @@ function TimeCapsuleUI() {
                     {'✔ '}
                     {timeCapsule.title}
                     {' - '}
-                    {format(new Date(timeCapsule.createdAt), 'yyyy-MM-dd HH:mm:ss')}
+                    {format(new Date(timeCapsule.created_at), 'yyyy-MM-dd HH:mm:ss')}
                   </li>
                 </ul>
               </div>

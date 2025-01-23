@@ -4,7 +4,7 @@ import { TimeCapsuleState, useTimeCapsuleStore } from '@/stores/zustand';
 import { TimeCapsule } from '@/types/projects.type';
 import { Sphere } from '@react-three/drei';
 import { ThreeEvent, useFrame, useThree } from '@react-three/fiber';
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { useShallow } from 'zustand/react/shallow';
@@ -34,6 +34,10 @@ function EachSphere({ timeCapsule }: EachSphereProps) {
       setFocusedObject({ object, timeCapsule });
     }
   };
+
+  const color = useMemo(() => {
+    return new THREE.Color(timeCapsule.color);
+  }, [timeCapsule.color]);
 
   useFrame(() => {
     if (!sphereRef.current || !controls) return;
@@ -119,15 +123,11 @@ function EachSphere({ timeCapsule }: EachSphereProps) {
       onPointerOut={() => (document.body.style.cursor = 'default')}
     >
       <Sphere scale={0.8} position={[0, 0, 0]}>
-        <meshStandardMaterial
-          color={timeCapsule.color}
-          emissive={timeCapsule.color}
-          emissiveIntensity={0.01}
-        />
+        <meshStandardMaterial color={color} emissive={color} emissiveIntensity={0.01} />
       </Sphere>
       <meshStandardMaterial
-        color={timeCapsule.color}
-        emissive={timeCapsule.color}
+        color={color}
+        emissive={color}
         emissiveIntensity={1}
         opacity={0.1}
         transparent
