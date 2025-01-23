@@ -10,7 +10,8 @@ function AdminLoginSequence() {
   const isAdmin =
     user?.email === process.env.NEXT_PUBLIC_SCREEN_MAIL ||
     user?.email === process.env.NEXT_PUBLIC_VANKO_MAIL ||
-    user?.email === process.env.NEXT_PUBLIC_EUNOH_MAIL;
+    user?.email === process.env.NEXT_PUBLIC_EUNOH_MAIL ||
+    user?.email === process.env.NEXT_PUBLIC_EUNOH_MAIL_2;
 
   return <>{isAdmin ? <AdminTemplate /> : <LoginButton />}</>;
 }

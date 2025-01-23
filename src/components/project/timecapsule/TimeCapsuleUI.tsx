@@ -1,5 +1,11 @@
 'use client';
 
+import useAuth from '@/hooks/auth/auth.hook';
+import {
+  useDeleteTimeCapsulesMutation,
+  useEditTimeCapsulesMutation,
+  useTimeCapsulesMutation,
+} from '@/hooks/mutations/timecapsules.mutation';
 import { useTimeCapsuleStore } from '@/stores/zustand';
 import { FocusedObject, TimeCapsule } from '@/types/projects.type';
 import cn from '@/utils/common/cn';
@@ -10,80 +16,154 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { IoClose } from 'react-icons/io5';
 import { Mesh } from 'three';
-import { v4 as uuidv4 } from 'uuid';
 import { useShallow } from 'zustand/react/shallow';
 
-const userUUID = uuidv4();
+type OpenState = {
+  isFormOpen: boolean;
+  isPasswordOpen: boolean;
+  isModalOpen: boolean;
+  isListOpen: boolean;
+  isLogInOpen: boolean;
+  isEditNow: boolean;
+};
 
 function TimeCapsuleUI() {
-  const { focusedObject, timeCapsules, setFocusedObject, setTimeCapsules } = useTimeCapsuleStore(
+  const { focusedObject, timeCapsules, setFocusedObject, addTimeCapsule } = useTimeCapsuleStore(
     useShallow((state) => ({
       focusedObject: state.focusedObject,
       timeCapsules: state.timeCapsules,
       setFocusedObject: state.setFocusedObject,
-      setTimeCapsules: state.setTimeCapsules,
+      addTimeCapsule: state.addTimeCapsule,
     })),
   );
-  const [isFormOpen, setIsFormOpen] = useState(false);
-  const [isPasswordOpen, setIsPasswordOpen] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isListOpen, setIsListOpen] = useState(false);
+  const { user, loginWithProvider, logOut } = useAuth();
+  const { mutateAsync: mutateAddTimeCapsule } = useTimeCapsulesMutation();
+  const { mutateAsync: mutateEditTimeCapsule } = useEditTimeCapsulesMutation();
+  const { mutateAsync: mutateDeleteTimeCapsule } = useDeleteTimeCapsulesMutation();
+  const [isOpen, setIsOpen] = useState<OpenState>({
+    isFormOpen: false,
+    isPasswordOpen: false,
+    isModalOpen: false,
+    isListOpen: false,
+    isLogInOpen: false,
+    isEditNow: false,
+  });
 
   const {
     register,
     handleSubmit,
     formState: { errors },
     setError,
+    setValue,
     reset,
   } = useForm<TimeCapsule>();
 
-  const handleClickAdd = () => {
-    setIsPasswordOpen(false);
-    setIsModalOpen(false);
-    setIsListOpen(false);
-    setIsFormOpen((prev) => !prev);
+  const handleClickLogInOrFormOpen = () => {
+    if (user) {
+      setIsOpen((prev) => ({
+        ...prev,
+        isFormOpen: !prev.isFormOpen,
+      }));
+      return;
+    }
+    setIsOpen((prev) => ({
+      ...prev,
+      isLogInOpen: !prev.isLogInOpen,
+    }));
   };
 
   const handleClickListOpen = () => {
-    setIsPasswordOpen(false);
-    setIsModalOpen(false);
-    setIsFormOpen(false);
-    setIsListOpen((prev) => !prev);
+    setIsOpen((prev) => ({
+      ...prev,
+      isListOpen: !prev.isListOpen,
+    }));
   };
 
-  const handleClickList = (timeCapsule: TimeCapsule) => {
+  const handleClickList = (timeCapsule: TimeCapsule) => () => {
     const selectedTimeCapsule: FocusedObject = {
       object: timeCapsule.object as Mesh,
       timeCapsule,
     };
     setFocusedObject(selectedTimeCapsule);
-    setIsPasswordOpen(true);
-    setIsModalOpen(false);
-    setIsFormOpen(false);
-    setIsListOpen(false);
+    setIsOpen((prev) => ({
+      ...prev,
+      isPasswordOpen: true,
+      isModalOpen: false,
+      isFormOpen: false,
+      isListOpen: false,
+    }));
   };
 
-  const onAddSubmit = (data: TimeCapsule) => {
-    const newTimeCapsule: TimeCapsule = {
-      userId: userUUID,
+  const handleClickEdit = (timeCapsule: TimeCapsule) => () => {
+    setIsOpen((prev) => ({
+      ...prev,
+      isPasswordOpen: false,
+      isModalOpen: false,
+      isListOpen: false,
+      isFormOpen: true,
+      isEditNow: true,
+    }));
+    setFocusedObject({
+      object: timeCapsule.object as Mesh,
+      timeCapsule,
+    });
+    setValue('title', timeCapsule.title);
+    setValue('description', timeCapsule.description);
+    setValue('password', timeCapsule.password);
+  };
+
+  const handleClickDelete = (timeCapsule: TimeCapsule) => () => {
+    if (confirm('정말 삭제하시겠습니까?')) {
+      const payload = {
+        id: timeCapsule.id,
+      };
+      mutateDeleteTimeCapsule(payload);
+    }
+  };
+
+  const onSubmit = async (data: TimeCapsule) => {
+    if (!user) return;
+    const timeCapsulePayload: Partial<TimeCapsule> = {
+      user_email: user.email,
       title: data.title,
       description: data.description,
       password: data.password,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
       position: [generateRandomPosition(), generateRandomPosition(), generateRandomPosition()],
       color: generateColor(),
-      object: null,
     };
-    setTimeCapsules(newTimeCapsule);
-    setIsFormOpen(false);
+    let response: TimeCapsule;
+    if (isOpen.isEditNow) {
+      timeCapsulePayload.id = focusedObject?.timeCapsule?.id;
+      response = await mutateEditTimeCapsule(timeCapsulePayload);
+    } else {
+      response = await mutateAddTimeCapsule(timeCapsulePayload);
+    }
+    addTimeCapsule(response);
+    const timeCapsule = timeCapsules.find((timeCapsule) => timeCapsule.id === response.id);
+    if (timeCapsule) {
+      setFocusedObject({
+        object: timeCapsule.object as Mesh,
+        timeCapsule,
+      });
+    }
     reset();
+    setIsOpen((prev) => ({
+      ...prev,
+      isFormOpen: false,
+      isEditNow: false,
+      isPasswordOpen: true,
+      isModalOpen: false,
+      isListOpen: false,
+    }));
   };
 
   const onPasswordSubmit = (data: TimeCapsule) => {
     if (data.password === focusedObject?.timeCapsule?.password) {
-      setIsPasswordOpen(false);
-      setIsModalOpen(true);
+      setIsOpen((prev) => ({
+        ...prev,
+        isPasswordOpen: false,
+        isModalOpen: true,
+      }));
       reset();
     } else {
       setError('password', { message: '비밀번호가 틀렸습니다.' });
@@ -93,15 +173,32 @@ function TimeCapsuleUI() {
   useEffect(() => {
     console.log(focusedObject);
     if (!focusedObject) {
-      setIsFormOpen(false);
-      setIsPasswordOpen(false);
-      setIsModalOpen(false);
+      setIsOpen((prev) => ({
+        ...prev,
+        isFormOpen: false,
+        isPasswordOpen: false,
+        isModalOpen: false,
+      }));
       return;
     }
     if (focusedObject?.timeCapsule) {
-      setIsPasswordOpen(true);
+      setIsOpen((prev) => ({
+        ...prev,
+        isPasswordOpen: prev.isFormOpen ? false : true,
+      }));
     }
   }, [focusedObject]);
+
+  useEffect(() => {
+    // console.log('user ======>', user);
+    if (user) {
+      setIsOpen((prev) => ({
+        ...prev,
+        isLogInOpen: false,
+        isFormOpen: true,
+      }));
+    }
+  }, [user]);
 
   return (
     <div className="fixed w-full h-full select-none z-50 pointer-events-none">
@@ -112,7 +209,8 @@ function TimeCapsuleUI() {
             'bg-neutral-800/50 text-neutral-200 border border-neutral-700 pointer-events-auto p-2 rounded-md hover:bg-neutral-800/70 active:bg-neutral-800/90 opacity-0',
             {
               'opacity-100':
-                timeCapsules.filter((timeCapsule) => timeCapsule.userId === userUUID).length > 0,
+                timeCapsules.filter((timeCapsule) => timeCapsule.user_email === user?.email)
+                  .length > 0,
             },
           )}
           onClick={handleClickListOpen}
@@ -122,36 +220,49 @@ function TimeCapsuleUI() {
         <button
           type="button"
           className="bg-neutral-800/50 text-neutral-200 border border-neutral-700 pointer-events-auto p-2 rounded-md hover:bg-neutral-800/70 active:bg-neutral-800/90"
-          onClick={handleClickAdd}
+          onClick={handleClickLogInOrFormOpen}
         >
           ????
         </button>
+        {user && (
+          <button
+            className="bg-neutral-800/50 text-neutral-200 border border-neutral-700 pointer-events-auto p-2 rounded-md hover:bg-neutral-800/70 active:bg-neutral-800/90"
+            onClick={logOut}
+          >
+            Sign Out
+          </button>
+        )}
       </div>
-      {isListOpen && (
+      {isOpen.isListOpen && (
         <div className="absolute right-1/2 top-1/2 translate-x-1/2 -translate-y-1/2 bg-neutral-800/50 text-neutral-200 border border-neutral-700 pointer-events-auto p-2 rounded-md hover:bg-neutral-800/70 active:bg-neutral-800/90">
           <div className="flex justify-end">
             <IoClose
               className="cursor-pointer"
               onClick={() => {
-                setIsListOpen(false);
+                setIsOpen((prev) => ({
+                  ...prev,
+                  isListOpen: false,
+                }));
                 setFocusedObject(null);
               }}
             />
           </div>
           {timeCapsules
-            .filter((timeCapsule) => timeCapsule.userId === userUUID)
+            .filter((timeCapsule) => timeCapsule.user_email === user?.email)
             .map((timeCapsule) => (
-              <div
-                key={timeCapsule.createdAt}
-                className="cursor-pointer"
-                onClick={() => handleClickList(timeCapsule)}
-              >
-                <ul>
-                  <li>
-                    {'✔ '}
-                    {timeCapsule.title}
-                    {' - '}
-                    {format(new Date(timeCapsule.createdAt), 'yyyy-MM-dd HH:mm:ss')}
+              <div key={timeCapsule.created_at} className="cursor-pointer">
+                <ul className="min-w-[375px]">
+                  <li className="flex gap-2 items-center justify-between">
+                    <span>{'✔ '}</span>
+                    <span className="max-w-[80px] truncate" onClick={handleClickList(timeCapsule)}>
+                      {timeCapsule.title}
+                    </span>
+                    <span>{' - '}</span>
+                    <span className="text-xs">
+                      {format(new Date(timeCapsule.created_at), 'yy-MM-dd HH:mm:ss')}
+                    </span>
+                    <span onClick={handleClickEdit(timeCapsule)}>수정</span>
+                    <span onClick={handleClickDelete(timeCapsule)}>삭제</span>
                   </li>
                 </ul>
               </div>
@@ -172,13 +283,16 @@ function TimeCapsuleUI() {
           <p>{errors.password.message}</p>
         </div>
       )}
-      {isModalOpen && (
+      {isOpen.isModalOpen && (
         <div className="absolute right-1/2 top-1/2 translate-x-1/2 -translate-y-1/2 min-w-[300px] bg-neutral-800/50 text-neutral-200 border border-neutral-700 pointer-events-auto p-2 rounded-md hover:bg-neutral-800/70 active:bg-neutral-800/90">
           <div className="flex justify-end">
             <IoClose
               className="cursor-pointer"
               onClick={() => {
-                setIsModalOpen(false);
+                setIsOpen((prev) => ({
+                  ...prev,
+                  isModalOpen: false,
+                }));
                 setFocusedObject(null);
               }}
             />
@@ -187,7 +301,12 @@ function TimeCapsuleUI() {
           <p>{focusedObject?.timeCapsule?.description}</p>
         </div>
       )}
-      {isPasswordOpen && !errors.password?.message && (
+      {isOpen.isLogInOpen && !errors.password?.message && !user && (
+        <div className="absolute right-1/2 top-1/2 translate-x-1/2 -translate-y-1/2 bg-neutral-800/50 text-neutral-200 border border-neutral-700 pointer-events-auto p-2 rounded-md hover:bg-neutral-800/70 active:bg-neutral-800/90">
+          <button onClick={() => loginWithProvider('/timecapsule')}>구글로 로그인</button>
+        </div>
+      )}
+      {isOpen.isPasswordOpen && !errors.password?.message && (
         <form
           onSubmit={handleSubmit(onPasswordSubmit)}
           className="absolute right-1/2 top-1/2 translate-x-1/2 -translate-y-1/2 flex flex-col gap-2 bg-neutral-800/50 text-neutral-200 border border-neutral-700 pointer-events-auto p-2 rounded-md hover:bg-neutral-800/70 active:bg-neutral-800/90"
@@ -196,7 +315,10 @@ function TimeCapsuleUI() {
             <IoClose
               className="cursor-pointer"
               onClick={() => {
-                setIsPasswordOpen(false);
+                setIsOpen((prev) => ({
+                  ...prev,
+                  isPasswordOpen: false,
+                }));
                 setFocusedObject(null);
               }}
             />
@@ -210,16 +332,19 @@ function TimeCapsuleUI() {
           <button type="submit">확인</button>
         </form>
       )}
-      {isFormOpen && (
+      {isOpen.isFormOpen && (
         <form
-          onSubmit={handleSubmit(onAddSubmit)}
+          onSubmit={handleSubmit(onSubmit)}
           className="absolute right-1/2 top-1/2 translate-x-1/2 -translate-y-1/2 flex flex-col gap-2 bg-neutral-800/50 text-neutral-200 border border-neutral-700 pointer-events-auto p-2 rounded-md hover:bg-neutral-800/70 active:bg-neutral-800/90"
         >
           <div className="flex justify-end">
             <IoClose
               className="cursor-pointer"
               onClick={() => {
-                setIsFormOpen(false);
+                setIsOpen((prev) => ({
+                  ...prev,
+                  isFormOpen: false,
+                }));
                 setFocusedObject(null);
               }}
             />
@@ -241,7 +366,7 @@ function TimeCapsuleUI() {
             placeholder="비밀번호"
             {...register('password')}
           />
-          <button type="submit">보관</button>
+          <button type="submit">{isOpen.isEditNow ? '수정' : '보관'}</button>
         </form>
       )}
     </div>

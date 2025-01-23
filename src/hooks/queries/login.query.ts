@@ -6,12 +6,13 @@ import { useQuery } from '@tanstack/react-query';
 interface LogInQueryProps {
   provider: string;
   isStart: boolean;
+  next?: string;
 }
 
-export function useLogInQuery({ provider, isStart }: LogInQueryProps) {
+export function useLogInQuery({ provider, isStart, next }: LogInQueryProps) {
   return useQuery<OAuthResponse['data']>({
-    queryKey: [QUERY_KEY_USER, provider],
-    queryFn: () => getLogInWithProvider(provider),
+    queryKey: [QUERY_KEY_USER, provider, next],
+    queryFn: () => getLogInWithProvider(provider, next),
     enabled: !!provider && isStart,
   });
 }

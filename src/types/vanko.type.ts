@@ -10,3 +10,4 @@ export type Visits = Tables<'visits'>;
 export type ErrorResponse = {
   error: string;
 };
+export type TimeCapsulesFromSupabase = Tables<'timecapsules'>;

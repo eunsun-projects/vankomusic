@@ -1,14 +1,9 @@
 import * as THREE from 'three';
+import { Tables } from './supabase';
 
-export interface TimeCapsule {
-  userId: string;
-  title: string;
-  description: string;
-  password: string;
-  createdAt: string;
-  updatedAt: string;
-  position: number[];
-  color: THREE.Color;
+export type TimeCapsuleFromSupabase = Tables<'timecapsules'>;
+
+export interface TimeCapsule extends TimeCapsuleFromSupabase {
   object: THREE.Mesh | null;
 }
 

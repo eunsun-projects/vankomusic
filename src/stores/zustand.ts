@@ -1,6 +1,4 @@
 import { FocusedObject, TimeCapsule } from '@/types/projects.type';
-import { generateColor } from '@/utils/projects/timecapsule/generateColor';
-import { generateRandomPosition } from '@/utils/projects/timecapsule/generatePosition';
 import * as THREE from 'three';
 import { create } from 'zustand';
 
@@ -8,38 +6,52 @@ export interface TimeCapsuleState {
   focusedObject: FocusedObject | null;
   timeCapsules: TimeCapsule[];
   setFocusedObject: (focusedObject: FocusedObject | null) => void;
-  setTimeCapsules: (timeCapsule: TimeCapsule) => void;
-  updateTimeCapsule: (object: THREE.Mesh) => void;
+  setTimeCapsules: (timeCapsules: TimeCapsule[]) => void;
+  updateTimeCapsuleObject: (object: THREE.Mesh) => void;
+  addTimeCapsule: (timeCapsule: TimeCapsule) => void;
+  editTimeCapsule: (timeCapsule: TimeCapsule) => void;
+  deleteTimeCapsule: (timeCapsule: TimeCapsule) => void;
 }
-
-const makeInitialTimecapSules = () => {
-  return Array.from({ length: 10 }, () => ({
-    userId: 'user123',
-    title: 'New Capsule',
-    description: 'This is a new time capsule',
-    password: 'secure',
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    position: [generateRandomPosition(), generateRandomPosition(), generateRandomPosition()],
-    color: generateColor(),
-    object: null,
-  }));
-};
-
-const initialTimeCapsules = makeInitialTimecapSules();
 
 export const useTimeCapsuleStore = create<TimeCapsuleState>((set) => ({
   focusedObject: null,
-  timeCapsules: initialTimeCapsules,
+  timeCapsules: [],
   setFocusedObject: (focusedObject: FocusedObject | null) => set({ focusedObject }),
-  setTimeCapsules: (timeCapsule: TimeCapsule) =>
+  setTimeCapsules: (timeCapsules: TimeCapsule[]) => set({ timeCapsules }),
+  addTimeCapsule: (timeCapsule: TimeCapsule) =>
     set((state) => ({
       timeCapsules: [...(state.timeCapsules || []), timeCapsule],
     })),
-  updateTimeCapsule: (object: THREE.Mesh) =>
+  updateTimeCapsuleObject: (object: THREE.Mesh) =>
     set((state) => ({
       timeCapsules: state.timeCapsules.map((timeCapsule) =>
         !timeCapsule.object ? { ...timeCapsule, object } : timeCapsule,
       ),
     })),
+  editTimeCapsule: (newTimeCapsule: TimeCapsule) =>
+    set((state) => ({
+      timeCapsules: state.timeCapsules.map((timeCapsule) =>
+        timeCapsule.id === newTimeCapsule.id ? { ...timeCapsule, ...newTimeCapsule } : timeCapsule,
+      ),
+    })),
+  deleteTimeCapsule: (timeCapsule: TimeCapsule) =>
+    set((state) => ({
+      timeCapsules: state.timeCapsules.filter((t) => t.id !== timeCapsule.id),
+    })),
 }));
+
+// const makeInitialTimecapSules = () => {
+//   return Array.from({ length: 10 }, () => ({
+//     userId: 'user123',
+//     title: 'New Capsule',
+//     description: 'This is a new time capsule',
+//     password: 'secure',
+//     createdAt: new Date().toISOString(),
+//     updatedAt: new Date().toISOString(),
+//     position: [generateRandomPosition(), generateRandomPosition(), generateRandomPosition()],
+//     color: generateColor(),
+//     object: null,
+//   }));
+// };
+
+// const initialTimeCapsules = makeInitialTimecapSules();
