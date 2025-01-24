@@ -30,7 +30,7 @@ export const useTimeCapsuleStore = create<TimeCapsuleState>((set) => ({
   updateTimeCapsuleObject: (object: THREE.Mesh) =>
     set((state) => ({
       timeCapsules: state.timeCapsules.map((timeCapsule) =>
-        !timeCapsule.object ? { ...timeCapsule, object } : timeCapsule,
+        timeCapsule.id === object.name ? { ...timeCapsule, object } : timeCapsule,
       ),
     })),
   editTimeCapsule: (newTimeCapsule: TimeCapsule) =>

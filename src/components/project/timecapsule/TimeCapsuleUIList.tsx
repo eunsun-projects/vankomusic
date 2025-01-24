@@ -56,7 +56,7 @@ function TimeCapsuleUIList({ setIsOpen }: TimeCapsuleUIListProps) {
   };
 
   return (
-    <div className="absolute right-1/2 top-1/2 translate-x-1/2 -translate-y-1/2 bg-neutral-800/50 text-neutral-200 border border-neutral-700 pointer-events-auto p-2 rounded-md hover:bg-neutral-800/70 active:bg-neutral-800/90">
+    <div className="absolute right-1/2 top-1/2 translate-x-1/2 -translate-y-1/2 bg-neutral-800/50 text-neutral-200 border border-neutral-700 pointer-events-auto p-1 rounded-md hover:bg-neutral-800/70 active:bg-neutral-800/90">
       <div className="flex justify-end">
         <IoClose
           className="cursor-pointer"
@@ -72,15 +72,15 @@ function TimeCapsuleUIList({ setIsOpen }: TimeCapsuleUIListProps) {
       {timeCapsules
         .filter((timeCapsule) => timeCapsule.user_email === user?.email)
         .map((timeCapsule) => (
-          <div key={timeCapsule.created_at} className="cursor-pointer">
+          <div key={timeCapsule.created_at} className="cursor-pointer text-xs">
             <ul className="min-w-[375px]">
               <li className="flex gap-2 items-center justify-between">
                 <span>{'✔ '}</span>
-                <span className="max-w-[80px] truncate" onClick={handleClickList(timeCapsule)}>
+                <span className="w-28 truncate" onClick={handleClickList(timeCapsule)}>
                   {timeCapsule.title}
                 </span>
                 <span>{' - '}</span>
-                <span className="text-xs">
+                <span className="w-44 text-xs">
                   {format(new Date(timeCapsule.created_at), 'yy-MM-dd HH:mm:ss')}
                 </span>
                 <span onClick={handleClickEdit(timeCapsule)}>수정</span>

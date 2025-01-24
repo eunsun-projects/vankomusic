@@ -33,7 +33,6 @@ function TimeCapsuleUI() {
       })),
     );
   const { user, loginWithProvider, logOut } = useAuth();
-
   const [isOpen, setIsOpen] = useState<TimeCapsuleUIState>({
     isFormOpen: false,
     isPasswordOpen: false,
@@ -42,26 +41,26 @@ function TimeCapsuleUI() {
     isLogInOpen: false,
     isEditNow: false,
   });
-
   const methods = useForm<TimeCapsule>();
 
   const handleClickLogInOrFormOpen = () => {
-    if (user) {
-      setIsOpen((prev) => ({
-        ...prev,
-        isFormOpen: !prev.isFormOpen,
-      }));
-      return;
-    }
     setIsOpen((prev) => ({
       ...prev,
-      isLogInOpen: !prev.isLogInOpen,
+      isPasswordOpen: false,
+      isModalOpen: false,
+      isListOpen: false,
+      isFormOpen: user ? true : false,
+      isLogInOpen: user ? false : true,
     }));
   };
 
   const handleClickListOpen = () => {
     setIsOpen((prev) => ({
       ...prev,
+      isLogInOpen: false,
+      isFormOpen: false,
+      isModalOpen: false,
+      isPasswordOpen: false,
       isListOpen: !prev.isListOpen,
     }));
   };
@@ -86,23 +85,16 @@ function TimeCapsuleUI() {
   }, [focusedObject]);
 
   useEffect(() => {
-    console.log('user ======>', user);
-    // if (user && !queryStringTimeCapsuleId) {
-    //   setIsOpen((prev) => ({
-    //     ...prev,
-    //     isLogInOpen: false,
-    //     isFormOpen: prev.isPasswordOpen ? false : true,
-    //   }));
-    // }
-  }, [user]);
-
-  useEffect(() => {
     if (!timeCapsules || !queryStringTimeCapsuleId) return;
     const timeCapsule = timeCapsules.find(
       (timeCapsule) => timeCapsule.id === queryStringTimeCapsuleId,
     );
     if (timeCapsule) setFocusedObject({ timeCapsule });
   }, [queryStringTimeCapsuleId, setFocusedObject, timeCapsules]);
+
+  useEffect(() => {
+    console.log('user ======>', user);
+  }, [user]);
 
   return (
     <FormProvider {...methods}>
