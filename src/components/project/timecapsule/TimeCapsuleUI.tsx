@@ -67,21 +67,21 @@ function TimeCapsuleUI() {
 
   useEffect(() => {
     console.log(focusedObject);
-    if (!focusedObject) {
+    if (!focusedObject?.timeCapsule) {
       setIsOpen((prev) => ({
         ...prev,
         isFormOpen: false,
         isPasswordOpen: false,
         isModalOpen: false,
+        isListOpen: false,
+        isLogInOpen: false,
       }));
       return;
     }
-    if (focusedObject?.timeCapsule) {
-      setIsOpen((prev) => ({
-        ...prev,
-        isPasswordOpen: prev.isFormOpen ? false : true,
-      }));
-    }
+    setIsOpen((prev) => ({
+      ...prev,
+      isPasswordOpen: prev.isFormOpen ? false : true,
+    }));
   }, [focusedObject]);
 
   useEffect(() => {
@@ -89,7 +89,7 @@ function TimeCapsuleUI() {
     const timeCapsule = timeCapsules.find(
       (timeCapsule) => timeCapsule.id === queryStringTimeCapsuleId,
     );
-    if (timeCapsule) setFocusedObject({ isIdle: false, timeCapsule });
+    if (timeCapsule) setFocusedObject({ isIdle: true, timeCapsule });
   }, [queryStringTimeCapsuleId, setFocusedObject, timeCapsules]);
 
   useEffect(() => {

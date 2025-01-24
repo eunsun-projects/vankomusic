@@ -55,36 +55,46 @@ function TimeCapsuleUIList({ setIsOpen }: TimeCapsuleUIListProps) {
     }
   };
 
+  const handleClose = () => {
+    setIsOpen((prev) => ({
+      ...prev,
+      isListOpen: false,
+      isFormOpen: false,
+      isPasswordOpen: false,
+      isModalOpen: false,
+      isLogInOpen: false,
+    }));
+    setFocusedObject({ isIdle: null, timeCapsule: null });
+  };
+
   return (
     <div className="absolute right-1/2 top-1/2 translate-x-1/2 -translate-y-1/2 bg-neutral-800/50 text-neutral-200 border border-neutral-700 pointer-events-auto p-1 rounded-md hover:bg-neutral-800/70 active:bg-neutral-800/90">
       <div className="flex justify-end">
-        <IoClose
-          className="cursor-pointer"
-          onClick={() => {
-            setIsOpen((prev) => ({
-              ...prev,
-              isListOpen: false,
-            }));
-            setFocusedObject({ isIdle: true, timeCapsule: null });
-          }}
-        />
+        <IoClose className="cursor-pointer" onClick={handleClose} />
       </div>
       {timeCapsules
         .filter((timeCapsule) => timeCapsule.user_email === user?.email)
         .map((timeCapsule) => (
-          <div key={timeCapsule.created_at} className="cursor-pointer text-xs">
-            <ul className="min-w-[375px]">
+          <div key={timeCapsule.created_at} className="text-xs">
+            <ul className="min-w-[372px]">
               <li className="flex gap-2 items-center justify-between">
                 <span>{'✔ '}</span>
-                <span className="w-28 truncate" onClick={handleClickList(timeCapsule)}>
+                <span
+                  className="w-24 md:w-28 truncate cursor-pointer"
+                  onClick={handleClickList(timeCapsule)}
+                >
                   {timeCapsule.title}
                 </span>
                 <span>{' - '}</span>
-                <span className="w-44 text-xs">
+                <span className="w-36 md:w-44 text-xs">
                   {format(new Date(timeCapsule.created_at), 'yy-MM-dd HH:mm:ss')}
                 </span>
-                <span onClick={handleClickEdit(timeCapsule)}>수정</span>
-                <span onClick={handleClickDelete(timeCapsule)}>삭제</span>
+                <span className="cursor-pointer" onClick={handleClickEdit(timeCapsule)}>
+                  수정
+                </span>
+                <span className="cursor-pointer" onClick={handleClickDelete(timeCapsule)}>
+                  삭제
+                </span>
               </li>
             </ul>
           </div>

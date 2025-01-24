@@ -9,8 +9,9 @@ import { useTimeCapsuleStore } from '@/stores/zustand';
 import { TimeCapsule } from '@/types/projects.type';
 import { generateColor } from '@/utils/projects/timecapsule/generateColor';
 import { generateRandomPosition } from '@/utils/projects/timecapsule/generatePosition';
-import { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { IoClose } from 'react-icons/io5';
 import { useShallow } from 'zustand/react/shallow';
 import { TimeCapsuleUIState } from './TimeCapsuleUI';
@@ -33,6 +34,21 @@ function TimeCapsuleUIForm({ isOpen, setIsOpen }: TimeCapsuleUIFormProps) {
   const { user } = useAuth();
   const { mutateAsync: mutateAddTimeCapsule } = useTimeCapsulesMutation();
   const { mutateAsync: mutateEditTimeCapsule } = useEditTimeCapsulesMutation();
+  const [showPassword, setShowPassword] = useState(false);
+  const addedTimeCapsule = useRef<TimeCapsule | null>(null);
+
+  const togglePasswordVisibility = () => setShowPassword((prevShowPassword) => !prevShowPassword);
+  const handleClose = () => {
+    setIsOpen((prev) => ({
+      ...prev,
+      isFormOpen: false,
+      isPasswordOpen: false,
+      isModalOpen: false,
+      isListOpen: false,
+      isLogInOpen: false,
+    }));
+    setFocusedObject({ isIdle: isOpen.isEditNow ? true : null, timeCapsule: null });
+  };
 
   const onSubmit = async (data: TimeCapsule) => {
     if (!user) return;
@@ -52,18 +68,27 @@ function TimeCapsuleUIForm({ isOpen, setIsOpen }: TimeCapsuleUIFormProps) {
       response = await mutateAddTimeCapsule(timeCapsulePayload);
     }
     addTimeCapsule(response);
-    const timeCapsule = timeCapsules.find((timeCapsule) => timeCapsule.id === response.id);
-    if (timeCapsule) setFocusedObject({ isIdle: false, timeCapsule });
-    reset();
-    setIsOpen((prev) => ({
-      ...prev,
-      isFormOpen: false,
-      isEditNow: false,
-      isPasswordOpen: true,
-      isModalOpen: false,
-      isListOpen: false,
-    }));
+    addedTimeCapsule.current = response;
   };
+
+  useEffect(() => {
+    if (!addedTimeCapsule.current) return;
+    const timeCapsule = timeCapsules.find(
+      (timeCapsule) => timeCapsule.object?.name === addedTimeCapsule.current?.id,
+    );
+    if (timeCapsule?.object) {
+      setFocusedObject({ isIdle: false, timeCapsule });
+      setIsOpen((prev) => ({
+        ...prev,
+        isFormOpen: false,
+        isEditNow: false,
+        isPasswordOpen: true,
+        isModalOpen: false,
+        isListOpen: false,
+      }));
+      reset();
+    }
+  }, [timeCapsules, reset, setFocusedObject, setIsOpen]);
 
   return (
     <form
@@ -71,16 +96,7 @@ function TimeCapsuleUIForm({ isOpen, setIsOpen }: TimeCapsuleUIFormProps) {
       className="absolute right-1/2 top-1/2 translate-x-1/2 -translate-y-1/2 flex flex-col gap-2 bg-neutral-800/50 text-neutral-200 border border-neutral-700 pointer-events-auto p-2 rounded-md hover:bg-neutral-800/70 active:bg-neutral-800/90"
     >
       <div className="flex justify-end">
-        <IoClose
-          className="cursor-pointer"
-          onClick={() => {
-            setIsOpen((prev) => ({
-              ...prev,
-              isFormOpen: false,
-            }));
-            setFocusedObject({ isIdle: true, timeCapsule: null });
-          }}
-        />
+        <IoClose className="cursor-pointer" onClick={handleClose} />
       </div>
       <input
         className="bg-neutral-700 text-neutral-200"
@@ -93,12 +109,17 @@ function TimeCapsuleUIForm({ isOpen, setIsOpen }: TimeCapsuleUIFormProps) {
         placeholder="내용"
         {...register('description')}
       />
-      <input
-        className="bg-neutral-700 text-neutral-200"
-        type="password"
-        placeholder="비밀번호"
-        {...register('password')}
-      />
+      <div className="w-full flex items-center">
+        <input
+          className="w-full bg-neutral-700 text-neutral-200"
+          type={showPassword ? 'text' : 'password'}
+          placeholder="비밀번호"
+          {...register('password')}
+        />
+        <div className="absolute right-3 cursor-pointer" onClick={togglePasswordVisibility}>
+          {showPassword ? <FaEye className="text-xs" /> : <FaEyeSlash className="text-xs" />}
+        </div>
+      </div>
       <button type="submit">{isOpen.isEditNow ? '수정' : '보관'}</button>
     </form>
   );

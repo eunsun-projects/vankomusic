@@ -1,17 +1,20 @@
 'use client';
 
-import { TimeCapsule } from '@/types/projects.type';
+import { useTimeCapsuleStore } from '@/stores/zustand';
+import { TimeCapsuleFromSupabase } from '@/types/projects.type';
 import { Sphere } from '@react-three/drei';
 import { ThreeEvent } from '@react-three/fiber';
 import { forwardRef, useMemo } from 'react';
 import * as THREE from 'three';
 
 interface EachSphereProps {
-  timeCapsule: TimeCapsule;
+  timeCapsule: TimeCapsuleFromSupabase;
   onClick: (e: ThreeEvent<MouseEvent>) => void;
 }
 
 function SphereStar({ timeCapsule, onClick }: EachSphereProps, ref: React.Ref<THREE.Mesh>) {
+  const { focusedObject } = useTimeCapsuleStore();
+
   const color = useMemo(() => {
     return new THREE.Color(timeCapsule.color);
   }, [timeCapsule.color]);
@@ -20,7 +23,7 @@ function SphereStar({ timeCapsule, onClick }: EachSphereProps, ref: React.Ref<TH
     <Sphere
       ref={ref}
       name={timeCapsule.id}
-      scale={0.25}
+      scale={focusedObject?.timeCapsule?.id === timeCapsule.id ? 0.4 : 0.25}
       position={
         new THREE.Vector3(timeCapsule.position[0], timeCapsule.position[1], timeCapsule.position[2])
       }
@@ -34,7 +37,7 @@ function SphereStar({ timeCapsule, onClick }: EachSphereProps, ref: React.Ref<TH
       <meshStandardMaterial
         color={color}
         emissive={color}
-        emissiveIntensity={1}
+        emissiveIntensity={0.01}
         opacity={0.1}
         transparent
       />

@@ -1,4 +1,3 @@
-import { useTimeCapsuleStore } from '@/stores/zustand';
 import { Sphere, Stars } from '@react-three/drei';
 import { useThree } from '@react-three/fiber';
 import { useEffect } from 'react';
@@ -8,8 +7,7 @@ import RotatingSpheres from './RotatingSpheres';
 import TimeCapsuleCamera from './TimeCapsuleCamera';
 
 function TimeCapsuleScene() {
-  const { camera, scene } = useThree();
-  const { updateTimeCapsuleObject } = useTimeCapsuleStore();
+  const { camera } = useThree();
 
   useEffect(() => {
     if (camera instanceof THREE.PerspectiveCamera) {
@@ -33,21 +31,12 @@ function TimeCapsuleScene() {
     }
   }, [camera]);
 
-  useEffect(() => {
-    if (!scene) return;
-    scene.traverse((child) => {
-      if (child.userData.name === 'timeCapsule') {
-        updateTimeCapsuleObject(child as THREE.Mesh);
-      }
-    });
-  }, [scene, updateTimeCapsuleObject]);
-
   return (
     <>
       <ambientLight intensity={0.01} />
       <Sphere scale={0.01} position={[0, 0, 0]}>
         <meshStandardMaterial color="white" emissive="white" emissiveIntensity={2} />
-        <pointLight position={[0, 0, 0]} intensity={50000} color="white" power={10000} />
+        <pointLight position={[0, 0, 0]} intensity={5000} color="white" power={3300} />
       </Sphere>
       <RotatingSpheres />
       <Stars count={2500} depth={20} radius={3.5} saturation={1} factor={0.3} speed={3} />

@@ -4,10 +4,10 @@ import { Tables } from './supabase';
 export type TimeCapsuleFromSupabase = Tables<'timecapsules'>;
 
 export interface TimeCapsule extends TimeCapsuleFromSupabase {
-  object?: THREE.Mesh | null;
+  object: THREE.Mesh | null;
 }
 
 export interface FocusedObject {
-  isIdle: boolean;
+  isIdle: boolean | null;
   timeCapsule: TimeCapsule | null;
 }

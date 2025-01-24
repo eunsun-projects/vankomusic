@@ -15,14 +15,13 @@ const TimeCapsuleCanvas = dynamic(() => import('./TimeCapsuleCanvas'), {
 function TimeCapsuleTemplate() {
   const searchParams = useSearchParams();
   const queryStringTimeCapsuleId = searchParams.get('id');
-  const { data: timeCapsules, isPending, error } = useTimeCapsulesQuery();
-  const { setTimeCapsules, setQueryStringTimeCapsuleId } = useTimeCapsuleStore();
+  const { data: timeCapsulesFromSupabase, isPending, error } = useTimeCapsulesQuery();
+  const { setTimeCapsulesWithoutObject, setQueryStringTimeCapsuleId } = useTimeCapsuleStore();
 
   useEffect(() => {
-    if (timeCapsules) {
-      setTimeCapsules(timeCapsules);
-    }
-  }, [timeCapsules, setTimeCapsules]);
+    if (!timeCapsulesFromSupabase) return;
+    setTimeCapsulesWithoutObject(timeCapsulesFromSupabase);
+  }, [timeCapsulesFromSupabase, setTimeCapsulesWithoutObject]);
 
   useEffect(() => {
     if (queryStringTimeCapsuleId) {
