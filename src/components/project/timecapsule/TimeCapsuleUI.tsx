@@ -89,7 +89,7 @@ function TimeCapsuleUI() {
     const timeCapsule = timeCapsules.find(
       (timeCapsule) => timeCapsule.id === queryStringTimeCapsuleId,
     );
-    if (timeCapsule) setFocusedObject({ timeCapsule });
+    if (timeCapsule) setFocusedObject({ isIdle: false, timeCapsule });
   }, [queryStringTimeCapsuleId, setFocusedObject, timeCapsules]);
 
   useEffect(() => {

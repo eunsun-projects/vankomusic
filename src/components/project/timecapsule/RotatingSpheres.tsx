@@ -22,15 +22,15 @@ function RotatingSpheres() {
   const groupRef = useRef<THREE.Group>(null);
   const sphereRef = useRef<THREE.Mesh>(null);
   const cameraTargetRef = useRef<THREE.Vector3>(new THREE.Vector3());
+  const initialCameraState = useRef<{ position: THREE.Vector3; fov: number }>({
+    position: new THREE.Vector3(0, 6, 5), // 초기 카메라 위치
+    fov: 75, // 초기 FOV
+  });
   const { camera, controls } = useThree();
 
   const handleClick = useCallback(
     (timeCapsule: TimeCapsule) => (e: ThreeEvent<MouseEvent>) => {
-      // const object = e.eventObject;
-      // if (object instanceof THREE.Mesh) {
-      //   setFocusedObject({ timeCapsule });
-      // }
-      setFocusedObject({ timeCapsule });
+      setFocusedObject({ isIdle: false, timeCapsule });
     },
     [setFocusedObject],
   );
@@ -39,17 +39,9 @@ function RotatingSpheres() {
     if (!groupRef.current) return;
     groupRef.current.rotation.y += 0.01 * delta; // 속도 조절
 
-    if (!sphereRef.current || !controls || !focusedObject?.timeCapsule.object) return;
-    if (focusedObject) {
-      let target;
-
-      if (focusedObject.instanceId !== undefined) {
-        target = new THREE.Vector3().setFromMatrixPosition(
-          focusedObject.timeCapsule.object.matrixWorld,
-        );
-      } else {
-        target = focusedObject.timeCapsule.object.position.clone();
-      }
+    if (!sphereRef.current || !controls) return;
+    if (focusedObject?.timeCapsule?.object) {
+      const target = focusedObject.timeCapsule.object.position.clone();
 
       const smoothness = 0.05;
       cameraTargetRef.current.lerp(target, smoothness);
@@ -61,16 +53,25 @@ function RotatingSpheres() {
         camera.fov = THREE.MathUtils.lerp(camera.fov, targetFOV, smoothness);
         camera.updateProjectionMatrix(); // Zoom 변경 후 프로젝션 매트릭스 업데이트
       }
-
-      (controls as OrbitControls).target.copy(cameraTargetRef.current);
       (controls as OrbitControls).update();
-    } else {
-      // 초기 카메라 상태 복귀
+      (controls as OrbitControls).target.copy(cameraTargetRef.current);
+    }
+
+    if (focusedObject?.isIdle) {
+      // 초기 카메라 상태 복구
+      const { position } = initialCameraState.current;
+
+      camera.position.lerp(position, 0.05); // 초기 위치로 복귀
+      camera.lookAt(0, 0, 0); // 초기 시점을 원점으로 설정
+
       if (camera instanceof THREE.PerspectiveCamera) {
         const targetFOV = 135; // 초기 줌 레벨
-        camera.fov = THREE.MathUtils.lerp(camera.fov, targetFOV, 0.05);
+        camera.fov = THREE.MathUtils.lerp(camera.fov, targetFOV, 0.05); // 초기 FOV로 복귀
         camera.updateProjectionMatrix();
       }
+
+      (controls as OrbitControls).target.lerp(new THREE.Vector3(0, 0, 0), 0.05); // 컨트롤 초기화
+      (controls as OrbitControls).update();
     }
   });
 
@@ -89,7 +90,7 @@ function RotatingSpheres() {
         (child.material as THREE.MeshStandardMaterial).emissiveIntensity = 0.01;
         return;
       }
-      if (child.name === focusedObject.timeCapsule.id) {
+      if (child.name === focusedObject.timeCapsule?.id) {
         (child.material as THREE.MeshStandardMaterial).emissiveIntensity = 4;
       } else {
         (child.material as THREE.MeshStandardMaterial).emissiveIntensity = 0.01;

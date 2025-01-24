@@ -22,7 +22,7 @@ function TimeCapsuleUIModal({ setIsOpen }: TimeCapsuleUIModalProps) {
               ...prev,
               isModalOpen: false,
             }));
-            setFocusedObject(null);
+            setFocusedObject({ isIdle: true, timeCapsule: null });
           }}
         />
       </div>

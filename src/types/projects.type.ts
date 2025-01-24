@@ -8,6 +8,6 @@ export interface TimeCapsule extends TimeCapsuleFromSupabase {
 }
 
 export interface FocusedObject {
-  instanceId?: number;
-  timeCapsule: TimeCapsule;
+  isIdle: boolean;
+  timeCapsule: TimeCapsule | null;
 }

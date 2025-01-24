@@ -21,7 +21,7 @@ function TimeCapsuleUIList({ setIsOpen }: TimeCapsuleUIListProps) {
   const { mutateAsync: mutateDeleteTimeCapsule } = useDeleteTimeCapsulesMutation();
 
   const handleClickList = (timeCapsule: TimeCapsule) => () => {
-    setFocusedObject({ timeCapsule });
+    setFocusedObject({ isIdle: false, timeCapsule });
     setIsOpen((prev) => ({
       ...prev,
       isPasswordOpen: true,
@@ -40,7 +40,7 @@ function TimeCapsuleUIList({ setIsOpen }: TimeCapsuleUIListProps) {
       isFormOpen: true,
       isEditNow: true,
     }));
-    setFocusedObject({ timeCapsule });
+    setFocusedObject({ isIdle: false, timeCapsule });
     setValue('title', timeCapsule.title);
     setValue('description', timeCapsule.description);
     setValue('password', timeCapsule.password);
@@ -65,7 +65,7 @@ function TimeCapsuleUIList({ setIsOpen }: TimeCapsuleUIListProps) {
               ...prev,
               isListOpen: false,
             }));
-            setFocusedObject(null);
+            setFocusedObject({ isIdle: true, timeCapsule: null });
           }}
         />
       </div>

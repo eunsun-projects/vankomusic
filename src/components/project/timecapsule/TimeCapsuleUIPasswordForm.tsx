@@ -45,7 +45,7 @@ function TimeCapsuleUIPasswordForm({ setIsOpen }: TimeCapsuleUIPasswordFormProps
               ...prev,
               isPasswordOpen: false,
             }));
-            setFocusedObject(null);
+            setFocusedObject({ isIdle: true, timeCapsule: null });
           }}
         />
       </div>

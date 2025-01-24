@@ -53,7 +53,7 @@ function TimeCapsuleUIForm({ isOpen, setIsOpen }: TimeCapsuleUIFormProps) {
     }
     addTimeCapsule(response);
     const timeCapsule = timeCapsules.find((timeCapsule) => timeCapsule.id === response.id);
-    if (timeCapsule) setFocusedObject({ timeCapsule });
+    if (timeCapsule) setFocusedObject({ isIdle: false, timeCapsule });
     reset();
     setIsOpen((prev) => ({
       ...prev,
@@ -78,7 +78,7 @@ function TimeCapsuleUIForm({ isOpen, setIsOpen }: TimeCapsuleUIFormProps) {
               ...prev,
               isFormOpen: false,
             }));
-            setFocusedObject(null);
+            setFocusedObject({ isIdle: true, timeCapsule: null });
           }}
         />
       </div>
