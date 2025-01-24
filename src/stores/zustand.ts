@@ -5,6 +5,8 @@ import { create } from 'zustand';
 export interface TimeCapsuleState {
   focusedObject: FocusedObject | null;
   timeCapsules: TimeCapsule[];
+  queryStringTimeCapsuleId: string;
+  setQueryStringTimeCapsuleId: (queryStringTimeCapsuleId: string) => void;
   setFocusedObject: (focusedObject: FocusedObject | null) => void;
   setTimeCapsules: (timeCapsules: TimeCapsule[]) => void;
   updateTimeCapsuleObject: (object: THREE.Mesh) => void;
@@ -16,6 +18,9 @@ export interface TimeCapsuleState {
 export const useTimeCapsuleStore = create<TimeCapsuleState>((set) => ({
   focusedObject: null,
   timeCapsules: [],
+  queryStringTimeCapsuleId: '',
+  setQueryStringTimeCapsuleId: (queryStringTimeCapsuleId: string) =>
+    set({ queryStringTimeCapsuleId }),
   setFocusedObject: (focusedObject: FocusedObject | null) => set({ focusedObject }),
   setTimeCapsules: (timeCapsules: TimeCapsule[]) => set({ timeCapsules }),
   addTimeCapsule: (timeCapsule: TimeCapsule) =>
