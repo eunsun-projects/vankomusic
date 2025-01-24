@@ -1,7 +1,6 @@
 import { PUBLIC_URL } from '@/constants/common.constant';
 import { createClient } from '@/utils/supabase/server';
 import { Provider } from '@supabase/supabase-js';
-import { QueryClient } from '@tanstack/react-query';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
@@ -9,7 +8,6 @@ export async function GET(request: NextRequest) {
   const provider = searchParams.get('provider');
   const next = searchParams.get('next') ?? '/';
 
-  const queryClient = new QueryClient();
   const supabase = createClient();
   if (!PUBLIC_URL) {
     return NextResponse.json({ error: 'PUBLIC_URL is not set' }, { status: 401 });
