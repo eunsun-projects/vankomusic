@@ -1,12 +1,12 @@
 {
   "compilerOptions": {
-    "target": "esnext", // 추가: 컴파일 타겟 설정
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true, // 기존 JS 파일을 함께 사용하려면 true 유지
     "skipLibCheck": true,
     "strict": true, // 엄격한 타입 검사를 위해 true 설정
     "noEmit": true, // 컴파일 결과물을 생성하지 않음
     "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "module": "esnext",
     "moduleResolution": "bundler", // Next.js 13 이상에서는 "bundler" 권장
     "resolveJsonModule": true,
@@ -21,15 +21,9 @@
     "paths": {
       "@/*": ["./src/*"],
       "@/app/*": ["./app/*"]
-    }
+    },
+    "target": "esnext"
   },
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    ".next/types/**/*.ts",
-    "**/*.css",
-    "declaration.d.ts"
-  ],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "exclude": ["node_modules"]
 }

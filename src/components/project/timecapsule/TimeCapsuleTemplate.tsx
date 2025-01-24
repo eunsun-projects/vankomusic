@@ -4,6 +4,7 @@ import Loading from '@/app/loading';
 import { useTimeCapsulesQuery } from '@/hooks/queries/timecapsules.query';
 import { useTimeCapsuleStore } from '@/stores/zustand';
 import dynamic from 'next/dynamic';
+import { useSearchParams } from 'next/navigation';
 import { Suspense, useEffect } from 'react';
 import TimeCapsuleUI from './TimeCapsuleUI';
 
@@ -12,14 +13,21 @@ const TimeCapsuleCanvas = dynamic(() => import('./TimeCapsuleCanvas'), {
 });
 
 function TimeCapsuleTemplate() {
-  const { data: timeCapsules, isPending, error } = useTimeCapsulesQuery();
-  const { setTimeCapsules } = useTimeCapsuleStore();
+  const searchParams = useSearchParams();
+  const queryStringTimeCapsuleId = searchParams.get('id');
+  const { data: timeCapsulesFromSupabase, isPending, error } = useTimeCapsulesQuery();
+  const { setTimeCapsulesWithoutObject, setQueryStringTimeCapsuleId } = useTimeCapsuleStore();
 
   useEffect(() => {
-    if (timeCapsules) {
-      setTimeCapsules(timeCapsules);
+    if (!timeCapsulesFromSupabase) return;
+    setTimeCapsulesWithoutObject(timeCapsulesFromSupabase);
+  }, [timeCapsulesFromSupabase, setTimeCapsulesWithoutObject]);
+
+  useEffect(() => {
+    if (queryStringTimeCapsuleId) {
+      setQueryStringTimeCapsuleId(queryStringTimeCapsuleId);
     }
-  }, [timeCapsules, setTimeCapsules]);
+  }, [queryStringTimeCapsuleId, setQueryStringTimeCapsuleId]);
 
   useEffect(() => {
     if (error) {
