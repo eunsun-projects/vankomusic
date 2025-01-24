@@ -8,7 +8,6 @@ export interface TimeCapsule extends TimeCapsuleFromSupabase {
 }
 
 export interface FocusedObject {
-  object: THREE.Mesh;
   instanceId?: number;
-  timeCapsule?: TimeCapsule;
+  timeCapsule: TimeCapsule;
 }

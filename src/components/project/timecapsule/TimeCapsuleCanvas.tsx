@@ -10,9 +10,9 @@ function TimeCapsuleCanvas() {
 
   const handlePointerMissed = () => {
     console.log('pointer missed');
-    if (focusedObject?.object.material) {
-      (focusedObject?.object.material as THREE.MeshStandardMaterial).emissiveIntensity = 0.03;
-    }
+    if (!focusedObject?.timeCapsule.object) return;
+    (focusedObject.timeCapsule.object.material as THREE.MeshStandardMaterial).emissiveIntensity =
+      0.03;
     setFocusedObject(null);
   };
 

@@ -32,7 +32,7 @@ function EachSphere({ timeCapsule }: EachSphereProps) {
   const handleClick = (e: ThreeEvent<MouseEvent>) => {
     const object = e.eventObject;
     if (object instanceof THREE.Mesh) {
-      setFocusedObject({ object, timeCapsule });
+      setFocusedObject({ timeCapsule });
     }
   };
 
@@ -41,14 +41,16 @@ function EachSphere({ timeCapsule }: EachSphereProps) {
   }, [timeCapsule.color]);
 
   useFrame(() => {
-    if (!sphereRef.current || !controls) return;
+    if (!sphereRef.current || !controls || !focusedObject?.timeCapsule.object) return;
     if (focusedObject) {
       let target;
 
       if (focusedObject.instanceId !== undefined) {
-        target = new THREE.Vector3().setFromMatrixPosition(focusedObject.object.matrixWorld);
+        target = new THREE.Vector3().setFromMatrixPosition(
+          focusedObject.timeCapsule.object.matrixWorld,
+        );
       } else {
-        target = focusedObject.object.position.clone();
+        target = focusedObject.timeCapsule.object.position.clone();
       }
 
       const smoothness = 0.05;
@@ -75,29 +77,28 @@ function EachSphere({ timeCapsule }: EachSphereProps) {
   });
 
   useEffect(() => {
-    if (!focusedObject) {
+    if (!previousFocusedObject.current) return;
+    if (!focusedObject || !focusedObject.timeCapsule.object) {
       if (previousFocusedObject.current) {
         (previousFocusedObject.current?.material as THREE.MeshStandardMaterial).emissiveIntensity =
           0.01;
       }
       return;
     }
-    if (previousFocusedObject.current?.uuid !== focusedObject.object.uuid) {
-      if (previousFocusedObject.current) {
-        (previousFocusedObject.current?.material as THREE.MeshStandardMaterial).emissiveIntensity =
-          0.01;
-      }
-      (focusedObject.object.material as THREE.MeshStandardMaterial).emissiveIntensity = 4;
+    if (previousFocusedObject.current?.uuid !== focusedObject.timeCapsule.object.uuid) {
+      (previousFocusedObject.current?.material as THREE.MeshStandardMaterial).emissiveIntensity =
+        0.01;
+      (focusedObject.timeCapsule.object.material as THREE.MeshStandardMaterial).emissiveIntensity =
+        4;
     } else {
       (previousFocusedObject.current?.material as THREE.MeshStandardMaterial).emissiveIntensity = 4;
     }
-    previousFocusedObject.current = focusedObject.object;
+    previousFocusedObject.current = focusedObject.timeCapsule.object;
   }, [focusedObject, controls]);
 
   useEffect(() => {
     if (timeCapsules.length > initialTimeCapsulesLength.current) {
       setFocusedObject({
-        object: sphereRef.current as THREE.Mesh,
         timeCapsule: timeCapsules[timeCapsules.length - 1],
       });
     }
