@@ -4,7 +4,7 @@ import { PostgrestError } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 
 export async function GET() {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const {
     data: timeCapsules,

@@ -4,7 +4,7 @@ import { PostgrestError } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 
 export async function GET() {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { data: audios, error }: { data: Audios[] | null; error: PostgrestError | null } =
     await supabase.from('audios').select('*').order('number', { ascending: true });

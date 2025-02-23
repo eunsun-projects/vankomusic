@@ -5,7 +5,7 @@ import { NextResponse } from 'next/server';
 
 export async function POST(request: Request) {
   const timeCapsule: TimeCapsule = await request.json();
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { data, error }: { data: TimeCapsule | null; error: PostgrestError | null } = await supabase
     .from('timecapsules')
@@ -22,7 +22,7 @@ export async function POST(request: Request) {
 
 export async function PUT(request: Request) {
   const timeCapsule: TimeCapsule = await request.json();
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { data, error }: { data: TimeCapsule | null; error: PostgrestError | null } = await supabase
     .from('timecapsules')
@@ -40,7 +40,7 @@ export async function PUT(request: Request) {
 
 export async function DELETE(request: Request) {
   const timeCapsule: TimeCapsule = await request.json();
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { data, error }: { data: TimeCapsule | null; error: PostgrestError | null } = await supabase
     .from('timecapsules')

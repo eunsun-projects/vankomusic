@@ -7,7 +7,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
   const curationList: Videos[] = await request.json();
-  const supabase = createClient();
+  const supabase = await createClient();
   const queryClient = new QueryClient();
 
   // curationList에서 중복된 id를 가진 레코드 제거

@@ -6,7 +6,7 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function POST(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const mode = searchParams.get('mode');
-  const supabase = createClient();
+  const supabase = await createClient();
 
   if (mode === 'add') {
     const formData = await request.formData();
@@ -87,7 +87,7 @@ export async function POST(request: NextRequest) {
 }
 
 export async function DELETE(request: NextRequest) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const audioData: Audios = await request.json();
 
   const {

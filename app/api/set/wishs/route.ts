@@ -6,7 +6,7 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function POST(request: NextRequest) {
   const wish: Wishs = await request.json();
 
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { data, error }: { data: Wishs[] | null; error: PostgrestError | null } = await supabase
     .from('wishs')
