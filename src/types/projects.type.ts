@@ -11,3 +11,9 @@ export interface FocusedObject {
   isIdle: boolean | null;
   timeCapsule: TimeCapsule | null;
 }
+
+export type StarFromSupabase = Tables<'stars'>;
+
+export interface Star extends StarFromSupabase {
+  object: THREE.Mesh | null;
+}

@@ -33,6 +33,50 @@ export type Database = {
         }
         Relationships: []
       }
+      stars: {
+        Row: {
+          color: string
+          created_at: string
+          id: string
+          last_touched_at: string
+          positions: number[]
+          power: number
+          sowon: string | null
+          updated_at: string
+          user_email: string
+        }
+        Insert: {
+          color: string
+          created_at?: string
+          id?: string
+          last_touched_at?: string
+          positions: number[]
+          power?: number
+          sowon?: string | null
+          updated_at?: string
+          user_email: string
+        }
+        Update: {
+          color?: string
+          created_at?: string
+          id?: string
+          last_touched_at?: string
+          positions?: number[]
+          power?: number
+          sowon?: string | null
+          updated_at?: string
+          user_email?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Stars_user_email_fkey"
+            columns: ["user_email"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["email"]
+          },
+        ]
+      }
       timecapsules: {
         Row: {
           color: string
@@ -83,7 +127,8 @@ export type Database = {
           created_at: string
           email: string
           id: string
-          isAdmin: boolean | null
+          isAdmin: boolean
+          isStarStart: boolean
           nickname: string | null
         }
         Insert: {
@@ -91,7 +136,8 @@ export type Database = {
           created_at?: string
           email: string
           id: string
-          isAdmin?: boolean | null
+          isAdmin: boolean
+          isStarStart?: boolean
           nickname?: string | null
         }
         Update: {
@@ -99,7 +145,8 @@ export type Database = {
           created_at?: string
           email?: string
           id?: string
-          isAdmin?: boolean | null
+          isAdmin?: boolean
+          isStarStart?: boolean
           nickname?: string | null
         }
         Relationships: []
