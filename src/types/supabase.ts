@@ -53,7 +53,7 @@ export type Database = {
           password?: string
           position: number[]
           title?: string
-          updated_at: string
+          updated_at?: string
           user_email?: string
         }
         Update: {
