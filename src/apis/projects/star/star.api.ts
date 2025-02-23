@@ -7,22 +7,22 @@ export async function getStars(email: string) {
   return data;
 }
 
-export async function postStar(email: string, star: StarFromSupabase) {
+export async function postStar(star: StarFromSupabase) {
   const url = `/api/set/stars`;
   const data = await fetchWrapper<Star>(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, star }),
+    body: JSON.stringify({ star }),
   });
   return data;
 }
 
-export async function putStar(email: string, star: StarFromSupabase) {
+export async function putStar(star: StarFromSupabase) {
   const url = `/api/set/stars`;
   const data = await fetchWrapper<Star>(url, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, star }),
+    body: JSON.stringify({ star }),
   });
   return data;
 }

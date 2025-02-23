@@ -14,8 +14,7 @@ export function useStarQuery(email: string) {
 export function usePostStarMutation() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ email, star }: { email: string; star: StarFromSupabase }) =>
-      postStar(email, star),
+    mutationFn: (star: StarFromSupabase) => postStar(star),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [QUERY_KEY_STAR] });
     },
@@ -25,8 +24,7 @@ export function usePostStarMutation() {
 export function usePutStarMutation() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ email, star }: { email: string; star: StarFromSupabase }) =>
-      putStar(email, star),
+    mutationFn: (star: StarFromSupabase) => putStar(star),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [QUERY_KEY_STAR] });
     },
