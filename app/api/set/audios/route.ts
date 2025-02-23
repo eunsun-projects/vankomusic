@@ -121,10 +121,11 @@ export async function DELETE(request: NextRequest) {
     number: index,
   }));
 
-  const {
-    data: finalData,
-    error: finalError,
-  }: { data: Audios[] | null; error: PostgrestError | null } = await supabase
+  if (!reorderedAudios) {
+    return NextResponse.json({ message: 'No audios to reorder' }, { status: 400 });
+  }
+
+  const { data: finalData, error: finalError } = await supabase
     .from('audios')
     .upsert(reorderedAudios)
     .select();
