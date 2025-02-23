@@ -43,6 +43,10 @@ export async function DELETE(request: NextRequest) {
   const videos: PartialVideos = await request.json();
   const supabase = await createClient();
 
+  if (!videos.id) {
+    return NextResponse.json({ error: 'id is required' }, { status: 400 });
+  }
+
   const { data, error }: { data: Videos | null; error: PostgrestError | null } = await supabase
     .from('videos')
     .update({ isPublic: false })
