@@ -12,7 +12,7 @@ export const metadata = basicMeta;
 export const viewport = basicViewport;
 
 async function TimeCapsulePage() {
-  const userId = getUserFromHeaders();
+  const userId = await getUserFromHeaders();
 
   const queryClient = new QueryClient();
   await queryClient.prefetchQuery({
