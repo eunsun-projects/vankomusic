@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "genTypes": "exec supabase gen types typescript --project-id \"ogogxjchotsapmsgsqmz\" --schema public > src/types/supabase.ts"
+    "genTypes": "supabase gen types typescript --project-id \"ogogxjchotsapmsgsqmz\" --schema public > src/types/supabase.ts"
   },
   "dependencies": {
     "@emailjs/browser": "^3.11.0",
