@@ -54,11 +54,15 @@ export const useTimeCapsuleStore = create<TimeCapsuleState>((set) => ({
 }));
 
 export interface StarState {
+  funnel: number;
   star: Star | null;
   setStar: (star: Star) => void;
+  setFunnel: (funnel: number) => void;
 }
 
 export const useStarStore = create<StarState>((set) => ({
+  funnel: 0,
   star: null,
   setStar: (star: Star) => set({ star }),
+  setFunnel: (funnel: number) => set({ funnel }),
 }));

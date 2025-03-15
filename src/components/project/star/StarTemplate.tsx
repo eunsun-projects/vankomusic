@@ -1,7 +1,13 @@
 'use client';
 
+import StarDialog from './StarDialog';
+
 function StarTemplate() {
-  return <div>StarTemplate</div>;
+  return (
+    <section className="flex items-center justify-center h-full w-full">
+      <StarDialog />
+    </section>
+  );
 }
 
 export default StarTemplate;
