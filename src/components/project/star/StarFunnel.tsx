@@ -74,7 +74,7 @@ function StarFunnel() {
     <>
       <Skeleton className="w-40 h-40 rounded-xl bg-neutral-200" />
 
-      <DialogHeader className="w-full h-full flex flex-col justify-center items-center min-h-[120px]">
+      <DialogHeader className="w-full h-full flex flex-col justify-center items-center min-h-[140px]">
         <div className="flex flex-col gap-2">
           <DialogTitle>{data[funnel].title}</DialogTitle>
           <DialogDescription className="whitespace-pre-line max-w-[300px]">

@@ -1,7 +1,7 @@
 'use client';
 
 import { useStarStore } from '@/stores/zustand';
-import { Dialog, DialogContent } from '@radix-ui/react-dialog';
+import { Dialog, DialogContent, DialogOverlay, Portal } from '@radix-ui/react-dialog';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 import { useShallow } from 'zustand/react/shallow';
@@ -30,10 +30,15 @@ function StarDialog() {
   }, [funnel, pathname, router]);
 
   return (
-    <Dialog open={true}>
-      <DialogContent className="sm:min-w-[425px] border-2 rounded-lg border-white flex flex-col items-center justify-center text-white p-4">
-        <StarFunnel />
-      </DialogContent>
+    <Dialog defaultOpen>
+      <Portal>
+        <DialogOverlay className="fixed inset-0 bg-black/50 z-50" />
+        <div className="flex items-center justify-center h-full w-full">
+          <DialogContent className="fixed z-[100] sm:min-w-[425px] border-2 rounded-lg border-white flex flex-col items-center justify-center text-white p-4 bg-black">
+            <StarFunnel />
+          </DialogContent>
+        </div>
+      </Portal>
     </Dialog>
   );
 }
