@@ -2,23 +2,13 @@
 
 import { Button } from '@/components/ui/button';
 import { DialogFooter, DialogHeader } from '@/components/ui/dialog';
-import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Textarea } from '@/components/ui/textarea';
 import useAuth from '@/hooks/auth/auth.hook';
 import { useStarStore } from '@/stores/zustand';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { DialogDescription, DialogTitle } from '@radix-ui/react-dialog';
 import { usePathname } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 import { useShallow } from 'zustand/react/shallow';
-
-const formSchema = z.object({
-  sowon: z.string().min(2, { message: '소원은 2글자 이상 입력해주세요.' }).max(50, {
-    message: '소원은 50글자 이하로 입력해주세요.',
-  }),
-});
+import StarForm from './StarForm';
 
 const data = [
   {
@@ -63,18 +53,6 @@ const data = [
 
 function StarFunnel() {
   const pathname = usePathname();
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      sowon: '',
-    },
-  });
-
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
-  }
 
   const { funnel, setFunnel } = useStarStore(
     useShallow((state) => ({
@@ -87,8 +65,6 @@ function StarFunnel() {
   const handleClickNext = () => {
     if (funnel === 1) {
       loginWithProvider(`${pathname}?funnel=2`);
-    } else if (funnel === 2) {
-      onSubmit(form.getValues());
     } else if (funnel < 5) {
       setFunnel(funnel + 1);
     }
@@ -107,34 +83,7 @@ function StarFunnel() {
         </div>
       </DialogHeader>
 
-      {funnel === 2 && (
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-8 w-full h-full flex flex-col justify-center items-center"
-          >
-            <FormField
-              control={form.control}
-              name="sowon"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Textarea
-                      placeholder="소원을 입력해주세요"
-                      {...field}
-                      className="w-[280px] min-h-[100px]"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <Button type="submit" variant="secondary" onClick={handleClickNext}>
-              {data[funnel].button}
-            </Button>
-          </form>
-        </Form>
-      )}
+      {funnel === 2 && <StarForm button={data[funnel].button} />}
 
       {funnel !== 2 && (
         <DialogFooter>
