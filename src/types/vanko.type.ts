@@ -11,3 +11,4 @@ export type ErrorResponse = {
   error: string;
 };
 export type TimeCapsulesFromSupabase = Tables<'timecapsules'>;
+export type StarsFromSupabase = Tables<'stars'>;
