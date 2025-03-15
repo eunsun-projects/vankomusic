@@ -1,11 +1,11 @@
 import { getStars, postStar, putStar } from '@/apis/projects/star/star.api';
-import { QUERY_KEY_STAR } from '@/constants/query.constant';
+import { QUERY_KEY_STARS } from '@/constants/query.constant';
 import { StarFromSupabase } from '@/types/projects.type';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 export function useStarQuery(email: string) {
   return useQuery<StarFromSupabase[]>({
-    queryKey: [QUERY_KEY_STAR],
+    queryKey: [QUERY_KEY_STARS],
     queryFn: () => getStars(email),
     enabled: !!email,
   });
@@ -16,7 +16,7 @@ export function usePostStarMutation() {
   return useMutation({
     mutationFn: (star: StarFromSupabase) => postStar(star),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [QUERY_KEY_STAR] });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEY_STARS] });
     },
   });
 }
@@ -26,7 +26,7 @@ export function usePutStarMutation() {
   return useMutation({
     mutationFn: (star: StarFromSupabase) => putStar(star),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [QUERY_KEY_STAR] });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEY_STARS] });
     },
   });
 }
