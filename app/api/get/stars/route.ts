@@ -12,16 +12,16 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Email is required' }, { status: 400 });
   }
 
-  const { data: stars, error }: { data: StarFromSupabase | null; error: PostgrestError | null } =
+  const { data: star, error }: { data: StarFromSupabase | null; error: PostgrestError | null } =
     await supabase.from('stars').select('*').eq('user_email', email).single();
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  if (!stars) {
+  if (!star) {
     return NextResponse.json({ message: 'Stars not found' }, { status: 200 });
   }
 
-  return NextResponse.json(stars, { status: 200 });
+  return NextResponse.json(star, { status: 200 });
 }
