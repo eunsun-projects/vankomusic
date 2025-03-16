@@ -15,5 +15,5 @@ export interface FocusedObject {
 export type StarFromSupabase = Tables<'stars'>;
 
 export interface Star extends StarFromSupabase {
-  object: THREE.Mesh | null;
+  object?: THREE.Mesh | null;
 }

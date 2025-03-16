@@ -56,7 +56,11 @@ export const useTimeCapsuleStore = create<TimeCapsuleState>((set) => ({
 export interface StarState {
   isDialogOpen: boolean;
   funnel: number;
+  focusedStar: Star | null;
+  stars: Star[];
   star: Star | null;
+  setFocusedStar: (focusedStar: Star) => void;
+  setStars: (stars: Star[]) => void;
   setStar: (star: Star) => void;
   setFunnel: (funnel: number) => void;
   setIsDialogOpen: (isDialogOpen: boolean) => void;
@@ -65,7 +69,11 @@ export interface StarState {
 export const useStarStore = create<StarState>((set) => ({
   isDialogOpen: false,
   funnel: 0,
+  focusedStar: null,
+  stars: [],
   star: null,
+  setFocusedStar: (focusedStar: Star) => set({ focusedStar }),
+  setStars: (stars: Star[]) => set({ stars }),
   setStar: (star: Star) => set({ star }),
   setFunnel: (funnel: number) => set({ funnel }),
   setIsDialogOpen: (isDialogOpen: boolean) => set({ isDialogOpen }),
