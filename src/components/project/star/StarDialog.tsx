@@ -14,7 +14,7 @@ function StarDialog() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const { user } = useAuth();
-  const { data: stars } = useStarQuery(user?.email ?? null);
+  const { data: star } = useStarQuery(user?.email ?? null);
   const { isDialogOpen, setIsDialogOpen, funnel, setFunnel } = useStarStore(
     useShallow((state) => ({
       isDialogOpen: state.isDialogOpen,
@@ -26,19 +26,29 @@ function StarDialog() {
 
   // 쿼리스트링으로 접속시
   useEffect(() => {
-    if (user && stars && 'id' in stars) return;
     const queryFunnel = searchParams.get('funnel');
-    if (queryFunnel) {
-      setFunnel(Number(queryFunnel));
+    if (!queryFunnel) return;
+    const funnelNumber = Number(queryFunnel);
+    if (funnelNumber > 1) {
+      if (user && star && 'id' in star) return;
+    } else {
+      setFunnel(funnelNumber);
     }
-  }, [searchParams, setFunnel, user, stars]);
+  }, [searchParams, setFunnel, user, star]);
 
   // 쿼리스트링 없이 접속했을시
   useEffect(() => {
-    if (user && stars && 'id' in stars) return;
-    setIsDialogOpen(true);
+    if (funnel >= 1) {
+      console.log(star);
+      if (user && star && 'id' in star) {
+        setIsDialogOpen(false);
+        return;
+      }
+    } else {
+      setIsDialogOpen(true);
+    }
     router.push(pathname + '?funnel=' + funnel);
-  }, [funnel, pathname, router, user, stars, setIsDialogOpen]);
+  }, [funnel, pathname, router, user, star, setIsDialogOpen]);
 
   return (
     <Dialog open={isDialogOpen}>
