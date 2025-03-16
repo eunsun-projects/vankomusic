@@ -2,6 +2,7 @@
 
 import { Sphere, Stars } from '@react-three/drei';
 import BloomEffect from '../timecapsule/BloomEffect';
+import Spheres from './Spheres';
 import StarCamera from './StarCamera';
 
 function StarScene() {
@@ -12,7 +13,7 @@ function StarScene() {
         <meshStandardMaterial color="white" emissive="white" emissiveIntensity={2} />
         <pointLight position={[0, 0, 0]} intensity={5000} color="white" power={3300} />
       </Sphere>
-      {/* <RotatingSpheres /> */}
+      <Spheres />
       <Stars count={2500} depth={20} radius={3.5} saturation={1} factor={0.3} speed={3} />
       <BloomEffect />
       <StarCamera />
