@@ -54,19 +54,28 @@ const data = [
 function StarFunnel() {
   const pathname = usePathname();
 
-  const { funnel, setFunnel } = useStarStore(
+  const { funnel, setFunnel, setIsDialogOpen } = useStarStore(
     useShallow((state) => ({
       funnel: state.funnel,
       setFunnel: state.setFunnel,
+      setIsDialogOpen: state.setIsDialogOpen,
     })),
   );
   const { user, loginWithProvider } = useAuth();
 
   const handleClickNext = () => {
-    if (funnel === 1) {
-      loginWithProvider(`${pathname}?funnel=2`);
-    } else if (funnel < 5) {
+    if (funnel === 0) {
       setFunnel(funnel + 1);
+    } else if (funnel === 1) {
+      loginWithProvider(`${pathname}?funnel=2`);
+    } else if (funnel > 1 && funnel < 5) {
+      if (!user) {
+        loginWithProvider(`${pathname}?funnel=2`);
+      } else {
+        setFunnel(funnel + 1);
+      }
+    } else if (funnel === 5) {
+      setIsDialogOpen(false);
     }
   };
 
