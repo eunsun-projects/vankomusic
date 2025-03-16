@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
   }
 
   if (!stars) {
-    return NextResponse.json({ error: 'Stars not found' }, { status: 404 });
+    return NextResponse.json({ message: 'Stars not found' }, { status: 200 });
   }
 
   return NextResponse.json(stars, { status: 200 });
