@@ -37,7 +37,10 @@ function StarDialog() {
   }, [searchParams, setFunnel, user, star]);
 
   // 쿼리스트링 없이 접속했을시
+  // 로그인 상태면서 이미 별이 있으면 모달 닫기
   useEffect(() => {
+    const isFirst = localStorage.getItem('isFirst');
+    if (isFirst === 'false') return;
     if (funnel >= 1) {
       console.log(star);
       if (user && star && 'id' in star) {
@@ -53,7 +56,9 @@ function StarDialog() {
   return (
     <Dialog open={isDialogOpen}>
       <Portal>
-        <DialogOverlay className="fixed inset-0 bg-black/50 z-50" />
+        <div>
+          <DialogOverlay className="fixed inset-0 bg-black/50 z-50" />
+        </div>
         <div className="flex items-center justify-center h-full w-full">
           <DialogContent className="fixed z-[100] sm:min-w-[425px] border-2 rounded-lg border-white flex flex-col items-center justify-center text-white p-4 bg-black">
             <StarFunnel />
