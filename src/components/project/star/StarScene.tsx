@@ -8,10 +8,10 @@ import StarCamera from './StarCamera';
 function StarScene() {
   return (
     <>
-      <ambientLight intensity={0.01} />
-      <Sphere scale={0.01} position={[0, 0, 0]}>
+      <ambientLight intensity={0.5} />
+      <Sphere scale={0.04} position={[0, 0, 0]}>
         <meshStandardMaterial color="white" emissive="white" emissiveIntensity={2} />
-        <pointLight position={[0, 0, 0]} intensity={5000} color="white" power={3300} />
+        <pointLight position={[0, 0, 0]} intensity={5000} color="white" power={1200} />
       </Sphere>
       <Spheres />
       <Stars count={2500} depth={20} radius={3.5} saturation={1} factor={0.3} speed={3} />
