@@ -27,6 +27,7 @@ export async function PUT(request: NextRequest) {
   const { data: starData, error } = await supabase
     .from('stars')
     .update({ ...star })
+    .eq('id', star.id)
     .select()
     .single();
 
