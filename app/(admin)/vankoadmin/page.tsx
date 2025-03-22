@@ -18,7 +18,7 @@ export const metadata = basicMeta;
 export const viewport = basicViewport;
 
 export default async function Vankoadmin() {
-  const userId = getUserFromHeaders();
+  const userId = await getUserFromHeaders();
 
   const queryClient = new QueryClient();
   await queryClient.prefetchQuery({

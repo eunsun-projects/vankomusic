@@ -1,4 +1,4 @@
-import { FocusedObject, TimeCapsule, TimeCapsuleFromSupabase } from '@/types/projects.type';
+import { FocusedObject, Star, TimeCapsule, TimeCapsuleFromSupabase } from '@/types/projects.type';
 import * as THREE from 'three';
 import { create } from 'zustand';
 
@@ -17,7 +17,6 @@ export interface TimeCapsuleState {
   deleteTimeCapsule: (timeCapsule: TimeCapsule) => void;
 }
 
-console.log('zustand restarted??');
 export const useTimeCapsuleStore = create<TimeCapsuleState>((set) => ({
   focusedObject: {
     isIdle: null,
@@ -54,18 +53,28 @@ export const useTimeCapsuleStore = create<TimeCapsuleState>((set) => ({
     })),
 }));
 
-// const makeInitialTimecapSules = () => {
-//   return Array.from({ length: 10 }, () => ({
-//     userId: 'user123',
-//     title: 'New Capsule',
-//     description: 'This is a new time capsule',
-//     password: 'secure',
-//     createdAt: new Date().toISOString(),
-//     updatedAt: new Date().toISOString(),
-//     position: [generateRandomPosition(), generateRandomPosition(), generateRandomPosition()],
-//     color: generateColor(),
-//     object: null,
-//   }));
-// };
+export interface StarState {
+  isDialogOpen: boolean;
+  funnel: number;
+  focusedStar: Star | null;
+  stars: Star[];
+  star: Star | null;
+  setFocusedStar: (focusedStar: Star) => void;
+  setStars: (stars: Star[]) => void;
+  setStar: (star: Star) => void;
+  setFunnel: (funnel: number) => void;
+  setIsDialogOpen: (isDialogOpen: boolean) => void;
+}
 
-// const initialTimeCapsules = makeInitialTimecapSules();
+export const useStarStore = create<StarState>((set) => ({
+  isDialogOpen: false,
+  funnel: 0,
+  focusedStar: null,
+  stars: [],
+  star: null,
+  setFocusedStar: (focusedStar: Star) => set({ focusedStar }),
+  setStars: (stars: Star[]) => set({ stars }),
+  setStar: (star: Star) => set({ star }),
+  setFunnel: (funnel: number) => set({ funnel }),
+  setIsDialogOpen: (isDialogOpen: boolean) => set({ isDialogOpen }),
+}));
