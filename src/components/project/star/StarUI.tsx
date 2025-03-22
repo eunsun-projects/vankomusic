@@ -33,7 +33,7 @@ function StarUI() {
       <p className="text-white text-2xl absolute top-10 left-10">
         {starFromSupabase && 'id' in starFromSupabase ? `소원력 : ${starFromSupabase.power}` : null}
       </p>
-      <h1 className="text-white text-4xl absolute bottom-16 left-1/2 -translate-x-1/2">
+      <h1 className="text-white text-2xl absolute bottom-16 left-1/2 -translate-x-1/2">
         {focusedStar?.sowon}
       </h1>
     </div>
