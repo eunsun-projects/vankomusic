@@ -25,15 +25,9 @@ function BloomEffect() {
     // UnrealBloomPass 추가
     const bloomPass = new UnrealBloomPass(
       new THREE.Vector2(size.width, size.height), // 해상도
-      1, // Bloom 강도
-      0.3, // Bloom 반경
+      0.4, // Bloom 강도
+      0.1, // Bloom 반경
       0.2, // Bloom 임계값
-      // 5, // strength
-      // 1.2, // radius
-      // 0, // threshold
-      // 3, // strength
-      // 0, // radius
-      // 0, // threshold
     );
     composerRef.current.addPass(bloomPass);
 
