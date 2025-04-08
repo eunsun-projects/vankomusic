@@ -5,7 +5,7 @@ import StarScene from './StarScene';
 
 function StarCanvas() {
   return (
-    <Canvas>
+    <Canvas gl={{ antialias: true, alpha: true }}>
       <StarScene />
     </Canvas>
   );
