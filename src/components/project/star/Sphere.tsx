@@ -4,7 +4,7 @@ import useAuth from '@/hooks/auth/auth.hook';
 import { useEditStarsMutation } from '@/hooks/mutations/stars.mutation';
 import { useStarStore } from '@/stores/zustand';
 import { StarFromSupabase } from '@/types/projects.type';
-import { Sphere, shaderMaterial } from '@react-three/drei';
+import { Ring, Sphere, shaderMaterial } from '@react-three/drei';
 import { extend, useFrame } from '@react-three/fiber';
 import { forwardRef, useEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
@@ -16,6 +16,10 @@ import vertexShader15 from '@/shaders/vertex15.glsl';
 // Import shaders for power level 25 (Jupiter)
 import fragmentShader25 from '@/shaders/fragment25.glsl';
 import vertexShader25 from '@/shaders/vertex25.glsl';
+
+// Import shaders for power level 40 (Saturn)
+import fragmentShader40 from '@/shaders/fragment40.glsl';
+import vertexShader40 from '@/shaders/vertex40.glsl';
 
 // Material for power level 15 (Moon)
 const MoonMaterial = shaderMaterial(
@@ -49,8 +53,24 @@ const JupiterMaterial = shaderMaterial(
   },
 );
 
+// Material for power level 40 (Saturn)
+const SaturnMaterial = shaderMaterial(
+  {
+    time: 0,
+    color: new THREE.Color(0xffffff),
+  },
+  vertexShader40,
+  fragmentShader40,
+  (material) => {
+    if (material) {
+      material.transparent = false;
+      material.side = THREE.DoubleSide;
+    }
+  },
+);
+
 // Register materials for JSX
-extend({ MoonMaterial, JupiterMaterial });
+extend({ MoonMaterial, JupiterMaterial, SaturnMaterial });
 
 // Add type declarations for the new materials
 declare global {
@@ -63,7 +83,12 @@ declare global {
         attach: string;
       };
       jupiterMaterial: {
-        // Added Jupiter material type
+        ref?: React.RefObject<THREE.ShaderMaterial>;
+        time?: number;
+        color?: THREE.ColorRepresentation;
+        attach: string;
+      };
+      saturnMaterial: {
         ref?: React.RefObject<THREE.ShaderMaterial>;
         time?: number;
         color?: THREE.ColorRepresentation;
@@ -75,16 +100,18 @@ declare global {
 
 interface SphereProps {
   star: StarFromSupabase;
+  name: string;
 }
 
-function PureSphere({ star }: SphereProps, ref: React.Ref<THREE.Mesh>) {
+function PureSphere({ star, name }: SphereProps, ref: React.Ref<THREE.Group | THREE.Mesh>) {
   const { focusedStar } = useStarStore();
   const { mutate: editStar, isPending, error } = useEditStarsMutation();
   const { user } = useAuth();
 
   // Refs for shader materials
   const moonMaterialRef = useRef<THREE.ShaderMaterial>(null);
-  const jupiterMaterialRef = useRef<THREE.ShaderMaterial>(null); // Added Jupiter ref
+  const jupiterMaterialRef = useRef<THREE.ShaderMaterial>(null);
+  const saturnMaterialRef = useRef<THREE.ShaderMaterial>(null);
 
   const sphereColor = useMemo(() => {
     try {
@@ -96,23 +123,25 @@ function PureSphere({ star }: SphereProps, ref: React.Ref<THREE.Mesh>) {
   }, [star]);
 
   useEffect(() => {
-    console.log(
-      'Star ID:',
-      star.id,
-      'Power:',
-      star.power,
-      'Using Jupiter shader:',
-      star.power >= 25,
-      'Using Moon shader:',
-      star.power >= 15 && star.power < 25,
-    );
+    let shaderType = 'Standard';
+    if (star.power >= 40) shaderType = 'Saturn';
+    else if (star.power >= 25) shaderType = 'Jupiter';
+    else if (star.power >= 15) shaderType = 'Moon';
+    console.log('Star ID:', star.id, 'Power:', star.power, 'Using Shader:', shaderType);
   }, [star.id, star.power]);
 
   // Update shader time uniform based on current material
   useFrame((state) => {
-    const currentMaterialRef =
-      star.power >= 25 ? jupiterMaterialRef : star.power >= 15 ? moonMaterialRef : null;
-    if (currentMaterialRef?.current) {
+    let currentMaterialRef: React.RefObject<THREE.ShaderMaterial> | null = null;
+    if (star.power >= 40) {
+      currentMaterialRef = saturnMaterialRef;
+    } else if (star.power >= 25) {
+      currentMaterialRef = jupiterMaterialRef;
+    } else if (star.power >= 15) {
+      currentMaterialRef = moonMaterialRef;
+    }
+
+    if (currentMaterialRef?.current?.uniforms?.time) {
       currentMaterialRef.current.uniforms.time.value = state.clock.elapsedTime;
     }
   });
@@ -153,32 +182,76 @@ function PureSphere({ star }: SphereProps, ref: React.Ref<THREE.Mesh>) {
     }
   }, [error]);
 
-  // Determine scale based on power level
+  // Determine scale based on power level (Keep Saturn same size as Jupiter for now)
   const scale = useMemo(() => {
     const baseScale = focusedStar?.id === star.id ? 0.4 : 0.25;
-    if (star.power >= 25) return baseScale * 1.5; // Larger scale for Jupiter
+    if (star.power >= 25) return baseScale * 1.5; // Jupiter and Saturn scale
     return baseScale;
   }, [star.power, focusedStar, star.id]);
 
-  return (
-    <Sphere
-      ref={ref}
-      name={star.id}
-      scale={scale} // Apply dynamic scale
-      position={new THREE.Vector3(star.positions[0], star.positions[1], star.positions[2])}
-      onClick={handleClick}
-      onPointerOver={() => (document.body.style.cursor = 'pointer')}
-      onPointerOut={() => (document.body.style.cursor = 'default')}
-    >
-      {star.power >= 25 ? (
-        <jupiterMaterial ref={jupiterMaterialRef} color={sphereColor} time={0} attach="material" />
-      ) : star.power >= 15 ? (
-        <moonMaterial ref={moonMaterialRef} color={sphereColor} time={0} attach="material" />
-      ) : (
-        <meshStandardMaterial color={sphereColor} emissive={sphereColor} emissiveIntensity={0.1} />
-      )}
-    </Sphere>
-  );
+  const ringInnerRadius = scale * 1.5; // Adjust as needed
+  const ringOuterRadius = scale * 2.2; // Adjust as needed
+
+  // Return a group containing the Sphere and conditionally the Ring
+  if (star.power >= 40) {
+    // Return Group for Saturn + Ring
+    return (
+      <group
+        ref={ref as React.Ref<THREE.Group>} // Cast ref
+        name={star.id} // Name the group
+        position={new THREE.Vector3(star.positions[0], star.positions[1], star.positions[2])}
+        onClick={handleClick}
+        onPointerOver={() => (document.body.style.cursor = 'pointer')}
+        onPointerOut={() => (document.body.style.cursor = 'default')}
+      >
+        <Sphere scale={scale}>
+          <saturnMaterial ref={saturnMaterialRef} color={sphereColor} time={0} attach="material" />
+        </Sphere>
+        <Ring args={[ringInnerRadius, ringOuterRadius, 64]} rotation={[Math.PI / 2, 0, 0]}>
+          <meshStandardMaterial
+            color="#FFE0B2"
+            emissive="#FFB74D"
+            emissiveIntensity={0.25}
+            metalness={0.7}
+            roughness={0.2}
+            side={THREE.DoubleSide}
+            transparent
+            opacity={0.85}
+          />
+        </Ring>
+      </group>
+    );
+  } else {
+    // Return Sphere directly for Moon, Jupiter, or Standard
+    return (
+      <Sphere
+        ref={ref as React.Ref<THREE.Mesh>} // Cast ref
+        name={star.id} // Name the sphere
+        scale={scale}
+        position={new THREE.Vector3(star.positions[0], star.positions[1], star.positions[2])}
+        onClick={handleClick}
+        onPointerOver={() => (document.body.style.cursor = 'pointer')}
+        onPointerOut={() => (document.body.style.cursor = 'default')}
+      >
+        {star.power >= 25 ? (
+          <jupiterMaterial
+            ref={jupiterMaterialRef}
+            color={sphereColor}
+            time={0}
+            attach="material"
+          />
+        ) : star.power >= 15 ? (
+          <moonMaterial ref={moonMaterialRef} color={sphereColor} time={0} attach="material" />
+        ) : (
+          <meshStandardMaterial
+            color={sphereColor}
+            emissive={sphereColor}
+            emissiveIntensity={0.1}
+          />
+        )}
+      </Sphere>
+    );
+  }
 }
 
 const SphereStar = forwardRef(PureSphere);
