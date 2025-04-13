@@ -27,14 +27,13 @@ function Spheres() {
   );
 
   const groupRef = useRef<THREE.Group>(null);
-  const sphereRef = useRef<THREE.Mesh>(null);
   const cameraTargetRef = useRef<THREE.Vector3>(new THREE.Vector3());
 
   useFrame((state, delta) => {
     if (!groupRef.current) return;
     // groupRef.current.rotation.y += 0.004 * delta; // 속도 조절
 
-    if (!sphereRef.current || !state.controls) return;
+    if (!state.controls) return;
     if (focusedStar?.object) {
       const target = focusedStar.object.position.clone();
 
@@ -53,53 +52,73 @@ function Spheres() {
     }
   });
 
-  // 별의 three.js 객체를 stars 배열에 추가
+  // useEffect to associate star data with Three.js objects
   useEffect(() => {
-    // 그룹을 반복문 돌면서 각 자식 요소의 이름(uuid임)을 확인하여 업데이트
-    if (!groupRef.current) return;
-    const updatedStars = groupRef.current.children.map((child) => {
-      const matchedStar = starsFromSupabase?.find((star) => star.id === child.name);
-      if (matchedStar) {
-        const newStar = { ...matchedStar, object: child as THREE.Mesh };
-        return newStar;
-      }
-      return matchedStar;
-    });
+    if (!groupRef.current || !starsFromSupabase) return;
+
+    const updatedStars = groupRef.current.children
+      .map((child) => {
+        // Child can be Mesh (power < 40) or Group (power >= 40)
+        const matchedStar = starsFromSupabase.find((star) => star.id === child.name);
+        if (matchedStar) {
+          // Associate the direct child (Mesh or Group) with the star data
+          // Ensure the object type matches what focusedStar expects (likely the Group/Mesh itself)
+          return { ...matchedStar, object: child as THREE.Mesh | THREE.Group };
+        }
+        return undefined; // Return undefined if no match
+      })
+      .filter((star) => star !== undefined); // Filter out undefined and type guard
+
     setStars(updatedStars as Star[]);
+    // console.log('Updated stars with objects:', updatedStars);
   }, [starsFromSupabase, setStars]);
 
-  // 포커스된 별 설정
-  // 테이블 업데이트 되면 focusedStar 도 여기서 업데이트함
+  // useEffect to set focused star
   useEffect(() => {
     if (!starFromSupabase || !('id' in starFromSupabase) || !user) return;
     if (stars.length === 0) return;
 
-    const star = stars.find((star) => star.id === starFromSupabase.id);
-    if (!star) return;
+    // Find the star object (Mesh or Group) associated in the previous effect
+    const starObjectData = stars.find((s) => s.id === starFromSupabase.id);
+    if (!starObjectData?.object) return;
 
-    const mergedStar = { ...starFromSupabase, ...star };
+    // Merge Supabase data with the object reference
+    const mergedStar = { ...starFromSupabase, object: starObjectData.object };
     setFocusedStar(mergedStar);
-  }, [star, stars, setFocusedStar, user, starFromSupabase]);
+    // console.log('Focused star set:', mergedStar);
+  }, [starFromSupabase, stars, setFocusedStar, user]); // Removed star dependency as it seemed incorrect
 
-  // 포커스된 별의 밝기 조정
+  // useEffect to adjust emissive intensity
   useEffect(() => {
-    groupRef.current?.traverse((child) => {
-      if (!(child instanceof THREE.Mesh)) return;
-      if (!focusedStar) {
-        (child.material as THREE.MeshStandardMaterial).emissiveIntensity = 0.01;
-        return;
+    if (!groupRef.current) return;
+
+    groupRef.current.children.forEach((child) => {
+      let targetMesh: THREE.Mesh | undefined = undefined;
+
+      // Find the mesh to apply emissive to
+      if (child instanceof THREE.Mesh) {
+        // If child is directly a Mesh (power < 40)
+        targetMesh = child;
+      } else if (child instanceof THREE.Group && child.children.length > 0) {
+        // If child is a Group (power >= 40), find the Sphere Mesh inside
+        // Assuming the Sphere is the first Mesh child, adjust if structure changes
+        targetMesh = child.children.find((c): c is THREE.Mesh => c instanceof THREE.Mesh);
       }
-      if (child.name === focusedStar.id) {
-        (child.material as THREE.MeshStandardMaterial).emissiveIntensity = 1;
-      } else {
-        (child.material as THREE.MeshStandardMaterial).emissiveIntensity = 0.01;
+
+      if (targetMesh && targetMesh.material) {
+        // Ensure material is MeshStandardMaterial or has emissiveIntensity
+        const material = targetMesh.material as THREE.MeshStandardMaterial;
+        if ('emissiveIntensity' in material) {
+          const isFocused = focusedStar?.id === child.name; // Compare with the group/mesh name
+          material.emissiveIntensity = isFocused ? 1 : 0.01;
+        }
       }
     });
   }, [focusedStar]);
 
   return (
     <group ref={groupRef}>
-      {starsFromSupabase?.map((star) => <SphereStar ref={sphereRef} key={star.id} star={star} />)}
+      {starsFromSupabase?.map((star) => <SphereStar key={star.id} star={star} name={star.id} />)}
     </group>
   );
 }
