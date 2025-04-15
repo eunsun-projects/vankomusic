@@ -1,12 +1,13 @@
-// Fragment shader for Jupiter-like surface
+// Fragment shader combining Jupiter and Saturn effects with cross-fading
 uniform float time;
-uniform vec3 color; // Base color (might not be heavily used for Jupiter)
+uniform vec3 color; // Base color passed from component (used for Saturn blend)
+uniform float mixWeight; // 0.0 = Jupiter, 1.0 = Saturn
 
 varying vec2 vUv;
 varying vec3 vNormal;
 varying vec3 vPosition;
 
-// --- Noise Functions (Simplex noise approximation for better swirls) ---
+// --- Simplex Noise Functions (consistent) ---
 vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
 vec2 mod289(vec2 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
 vec3 permute(vec3 x) { return mod289(((x*34.0)+1.0)*x); }
@@ -34,51 +35,68 @@ float snoise(vec2 v) {
 }
 // --- End Noise Functions ---
 
-// Function to create Jupiter bands
-vec3 createJupiterBands(vec2 uv, float time) {
+// --- Jupiter Surface Calculation (from original fragment25) ---
+vec3 createJupiterBands(vec2 uv, float t) {
     vec2 scaledUv = uv;
-    scaledUv.x += sin(uv.y * 8.0 + time * 0.15) * 0.06; // Horizontal swirl
-    scaledUv.y += cos(uv.x * 6.0 + time * 0.08) * 0.03; // Vertical distortion
-
-    float band = sin(scaledUv.y * 12.0 + time * 0.25); // Base bands frequency
-    float bandNoise = snoise(scaledUv * 4.0 + time * 0.1) * 0.5 + 0.5; // Noise for band breakup
+    scaledUv.x += sin(uv.y * 8.0 + t * 0.15) * 0.06;
+    scaledUv.y += cos(uv.x * 6.0 + t * 0.08) * 0.03;
+    float band = sin(scaledUv.y * 12.0 + t * 0.25);
+    float bandNoise = snoise(scaledUv * 4.0 + t * 0.1) * 0.5 + 0.5;
     band = mix(band, bandNoise, 0.45);
-
-    // Jupiter color palette
-    vec3 color1 = vec3(0.9, 0.75, 0.6); // Creamy white
-    vec3 color2 = vec3(0.7, 0.5, 0.3);  // Light brown/orange
-    vec3 color3 = vec3(0.5, 0.3, 0.15); // Darker brown/reddish
-
-    // Mix colors based on bands
-    vec3 finalColor = mix(color1, color2, smoothstep(0.2, 0.6, band));
-    finalColor = mix(finalColor, color3, smoothstep(0.7, 0.85, sin(scaledUv.y * 18.0 + bandNoise * 1.5)));
-
-    // Fine texture noise
-    float fineNoise = snoise(scaledUv * 35.0 + time * 0.06) * 0.5 + 0.5;
-    finalColor *= (0.9 + 0.1 * fineNoise);
-
-    // Great Red Spot approximation
-    vec2 spotUv = uv - vec2(0.65, 0.4); // Spot position
-    float spotDist = length(spotUv * vec2(1.0, 1.8)); // Elliptical shape
-    float spotIntensity = smoothstep(0.18, 0.08, spotDist); // Fade edges
-
+    vec3 color1 = vec3(0.9, 0.75, 0.6);
+    vec3 color2 = vec3(0.7, 0.5, 0.3);
+    vec3 color3 = vec3(0.5, 0.3, 0.15);
+    vec3 jupiterColor = mix(color1, color2, smoothstep(0.2, 0.6, band));
+    jupiterColor = mix(jupiterColor, color3, smoothstep(0.7, 0.85, sin(scaledUv.y * 18.0 + bandNoise * 1.5)));
+    float fineNoise = snoise(scaledUv * 35.0 + t * 0.06) * 0.5 + 0.5;
+    jupiterColor *= (0.9 + 0.1 * fineNoise);
+    vec2 spotUv = uv - vec2(0.65, 0.4);
+    float spotDist = length(spotUv * vec2(1.0, 1.8));
+    float spotIntensity = smoothstep(0.18, 0.08, spotDist);
     if (spotIntensity > 0.0) {
-        float spotNoise = snoise(spotUv * 18.0 + time * 0.6); // Internal swirl
-        vec3 spotColor = vec3(0.6, 0.15, 0.1); // Deep red
+        float spotNoise = snoise(spotUv * 18.0 + t * 0.6);
+        vec3 spotColor = vec3(0.6, 0.15, 0.1);
         vec3 spotHighlight = vec3(0.9, 0.7, 0.6);
         spotColor = mix(spotColor, spotHighlight, smoothstep(0.4, 0.7, spotNoise));
-        finalColor = mix(finalColor, spotColor, spotIntensity * 0.9); // Blend spot
+        jupiterColor = mix(jupiterColor, spotColor, spotIntensity * 0.9);
     }
-
-    return finalColor;
+    return jupiterColor;
 }
+// --- End Jupiter Calculation ---
+
+// --- Saturn Surface Calculation (from original fragment40) ---
+vec3 createSaturnBands(vec2 uv, float t, vec3 baseColor) {
+    vec2 distortedUv = uv;
+    distortedUv.x += snoise(uv * vec2(1.0, 2.5) + t * 0.05) * 0.05;
+    distortedUv.y += snoise(uv * vec2(2.0, 1.0) + t * 0.03) * 0.06;
+    float band = sin((distortedUv.y + snoise(distortedUv * 1.5 + t * 0.08) * 0.15) * 10.0);
+    float bandNoise = snoise(distortedUv * 6.0 + t * 0.1);
+    band = mix(band, bandNoise, 0.5);
+    band = (band + 1.0) * 0.5;
+    vec3 color1 = vec3(1.0, 0.9, 0.65);
+    vec3 color2 = vec3(0.9, 0.75, 0.5);
+    vec3 color3 = vec3(0.7, 0.5, 0.35);
+    vec3 surfaceColor = mix(color1, color2, smoothstep(0.3, 0.6, band));
+    surfaceColor = mix(surfaceColor, color3, smoothstep(0.7, 0.8, sin(distortedUv.y * 20.0 + bandNoise * 1.2)));
+    surfaceColor = mix(surfaceColor, baseColor, 0.2);
+    float fineNoise = snoise(distortedUv * 50.0 + t * 0.02);
+    surfaceColor *= (0.95 + 0.05 * fineNoise);
+    return surfaceColor;
+}
+// --- End Saturn Calculation ---
 
 void main() {
-  vec3 jupiterColor = createJupiterBands(vUv, time);
+    // Calculate both colors
+    vec3 jupiterColorResult = createJupiterBands(vUv, time);
+    vec3 saturnColorResult = createSaturnBands(vUv, time, color); // Pass base color for Saturn blend
 
-  // Basic lighting
-  float light = dot(vNormal, normalize(vec3(0.5, 0.5, 1.0)));
-  vec3 finalColor = jupiterColor * (0.7 + 0.3 * light);
+    // Mix the results based on mixWeight
+    vec3 mixedColor = mix(jupiterColorResult, saturnColorResult, mixWeight);
 
-  gl_FragColor = vec4(finalColor, 1.0);
+    // Apply basic lighting to the final mixed color
+    float light = dot(vNormal, normalize(vec3(0.5, 0.5, 1.0)));
+    light = smoothstep(0.0, 1.0, light);
+    vec3 finalColor = mixedColor * (0.65 + 0.35 * light); // Use lighting similar to Saturn's for consistency
+
+    gl_FragColor = vec4(finalColor, 1.0);
 }

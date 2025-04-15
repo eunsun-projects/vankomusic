@@ -29,11 +29,12 @@ import vertexShader60 from '@/shaders/vertex60.glsl';
 import fragmentShader100 from '@/shaders/fragment100.glsl';
 import vertexShader100 from '@/shaders/vertex100.glsl';
 
-// Material for power level 15 (Moon)
+// Material for power level 15 (Moon) -> Now Moon/Jupiter Cross-fading
 const MoonMaterial = shaderMaterial(
   {
     time: 0,
     color: new THREE.Color(0xffffff),
+    mixWeight: 0.0, // Initialize mixWeight
   },
   vertexShader15,
   fragmentShader15,
@@ -45,13 +46,14 @@ const MoonMaterial = shaderMaterial(
   },
 );
 
-// Material for power level 25 (Jupiter)
+// Material for power level 25 (Jupiter) -> Now Jupiter/Saturn Cross-fading
 const JupiterMaterial = shaderMaterial(
   {
     time: 0,
-    color: new THREE.Color(0xffffff), // Base color (may not be used much)
+    color: new THREE.Color(0xffffff), // Base color (used by Saturn logic)
+    mixWeight: 0.0, // Initialize mixWeight
   },
-  vertexShader25,
+  vertexShader25, // Uses the standard vertex shader
   fragmentShader25,
   (material) => {
     if (material) {
@@ -61,14 +63,16 @@ const JupiterMaterial = shaderMaterial(
   },
 );
 
-// Material for power level 40 (Saturn)
+// Material for power level 40 (Saturn) -> Now Saturn/Power60 Cross-fading
 const SaturnMaterial = shaderMaterial(
   {
-    time: 0,
+    time: 0, // Used by Saturn vertex/fragment
+    uTime: 0, // Used by integrated Power 60 fragment logic
     color: new THREE.Color(0xffffff),
+    mixWeight: 0.0, // Initialize mixWeight
   },
-  vertexShader40,
-  fragmentShader40,
+  vertexShader40, // Uses vertex40 (which now also uses time)
+  fragmentShader40, // Uses fragment40 (which now combines Saturn/P60 and uses time & uTime)
   (material) => {
     if (material) {
       material.transparent = false;
@@ -77,15 +81,16 @@ const SaturnMaterial = shaderMaterial(
   },
 );
 
-// Material for power level 60
+// Material for power level 60 -> Now Power60/Power100 Cross-fading
 const Power60Material = shaderMaterial(
   {
     uTime: 0,
     uPointSize: 5.0, // Default point size, adjust as needed if using points
     color: new THREE.Color(0xffffff), // Base color (might be overridden by shader)
+    mixWeight: 0.0, // Initialize mixWeight
   },
-  vertexShader60,
-  fragmentShader60,
+  vertexShader60, // Uses vertex60
+  fragmentShader60, // Uses fragment60 (which now combines P60/P100)
   (material) => {
     if (material) {
       material.transparent = false;
@@ -122,18 +127,22 @@ declare global {
         ref?: React.RefObject<THREE.ShaderMaterial>;
         time?: number;
         color?: THREE.ColorRepresentation;
+        mixWeight?: number; // Add mixWeight prop
         attach: string;
       };
       jupiterMaterial: {
         ref?: React.RefObject<THREE.ShaderMaterial>;
         time?: number;
         color?: THREE.ColorRepresentation;
+        mixWeight?: number; // Add mixWeight prop
         attach: string;
       };
       saturnMaterial: {
         ref?: React.RefObject<THREE.ShaderMaterial>;
         time?: number;
+        uTime?: number; // Add uTime for P60 logic
         color?: THREE.ColorRepresentation;
+        mixWeight?: number; // Add mixWeight prop
         attach: string;
       };
       power60Material: {
@@ -141,6 +150,7 @@ declare global {
         uTime?: number;
         uPointSize?: number;
         color?: THREE.ColorRepresentation;
+        mixWeight?: number; // Add mixWeight prop
         attach: string;
       };
       power100Material: {
@@ -193,30 +203,88 @@ function PureSphere({ star, name }: SphereProps, ref: React.Ref<THREE.Group | TH
   // Update shader time uniform based on current material
   useFrame((state) => {
     let currentMaterialRef: React.RefObject<THREE.ShaderMaterial> | null = null;
+    let currentMixWeight_MoonJupiter = 0.0;
+    let currentMixWeight_JupiterSaturn = 0.0;
+    let currentMixWeight_SaturnPower60 = 0.0;
+    let currentMixWeight_Power60Power100 = 0.0;
+
     if (star.power >= 100) {
       currentMaterialRef = power100MaterialRef;
+      // Ensure previous mixes are complete
+      currentMixWeight_Power60Power100 = 1.0;
+      currentMixWeight_SaturnPower60 = 1.0;
+      currentMixWeight_JupiterSaturn = 1.0;
+      currentMixWeight_MoonJupiter = 1.0;
     } else if (star.power >= 60) {
       currentMaterialRef = power60MaterialRef;
+      // Calculate mixWeight for Power 60 -> Power 100 transition (Power 60-99)
+      currentMixWeight_Power60Power100 = Math.min(
+        1.0,
+        Math.max(0.0, (star.power - 60) / (100 - 60)),
+      );
+      // Ensure previous mixes are complete
+      currentMixWeight_SaturnPower60 = 1.0;
+      currentMixWeight_JupiterSaturn = 1.0;
+      currentMixWeight_MoonJupiter = 1.0;
     } else if (star.power >= 40) {
       currentMaterialRef = saturnMaterialRef;
+      // Calculate mixWeight for Saturn -> Power 60 transition (Power 40-59)
+      currentMixWeight_SaturnPower60 = Math.min(1.0, Math.max(0.0, (star.power - 40) / (60 - 40)));
+      // Ensure previous mix is complete
+      currentMixWeight_JupiterSaturn = 1.0;
     } else if (star.power >= 25) {
       currentMaterialRef = jupiterMaterialRef;
+      // Calculate mixWeight for Jupiter -> Saturn transition (Power 25-39)
+      // Ensure this is 1.0 if power >= 40
+      currentMixWeight_JupiterSaturn =
+        star.power >= 40 ? 1.0 : Math.min(1.0, Math.max(0.0, (star.power - 25) / (40 - 25)));
+      // Ensure previous mix is complete
+      currentMixWeight_MoonJupiter = 1.0;
     } else if (star.power >= 15) {
       currentMaterialRef = moonMaterialRef;
+      // Calculate mixWeight for Moon -> Jupiter transition (Power 15-24)
+      // Ensure this is 1.0 if power >= 25
+      currentMixWeight_MoonJupiter =
+        star.power >= 25 ? 1.0 : Math.min(1.0, Math.max(0.0, (star.power - 15) / (25 - 15)));
     }
 
+    // Update time for all relevant shaders that use it
     if (currentMaterialRef?.current?.uniforms?.time) {
       currentMaterialRef.current.uniforms.time.value = state.clock.elapsedTime;
     }
-    // Also update uTime for power60Material specifically
+    // uTime is used specifically by Power60 and Power100
     if (star.power >= 60 && power60MaterialRef.current?.uniforms?.uTime) {
       power60MaterialRef.current.uniforms.uTime.value = state.clock.elapsedTime;
-      // Update uPointSize if you plan dynamic sizing, otherwise keep default
-      // power60MaterialRef.current.uniforms.uPointSize.value = someDynamicValue;
     }
     // Update uTime for power100Material
     if (star.power >= 100 && power100MaterialRef.current?.uniforms?.uTime) {
       power100MaterialRef.current.uniforms.uTime.value = state.clock.elapsedTime;
+    }
+
+    // Update mixWeight for MoonMaterial specifically
+    if (currentMaterialRef === moonMaterialRef && moonMaterialRef.current?.uniforms?.mixWeight) {
+      moonMaterialRef.current.uniforms.mixWeight.value = currentMixWeight_MoonJupiter;
+    }
+    // Update mixWeight for JupiterMaterial specifically
+    if (
+      currentMaterialRef === jupiterMaterialRef &&
+      jupiterMaterialRef.current?.uniforms?.mixWeight
+    ) {
+      jupiterMaterialRef.current.uniforms.mixWeight.value = currentMixWeight_JupiterSaturn;
+    }
+    // Update mixWeight and uTime for SaturnMaterial specifically
+    if (currentMaterialRef === saturnMaterialRef && saturnMaterialRef.current?.uniforms) {
+      saturnMaterialRef.current.uniforms.mixWeight.value = currentMixWeight_SaturnPower60;
+      // Pass both time variables needed by the combined shader
+      saturnMaterialRef.current.uniforms.time.value = state.clock.elapsedTime;
+      saturnMaterialRef.current.uniforms.uTime.value = state.clock.elapsedTime;
+    }
+    // Update mixWeight for Power60Material specifically
+    if (
+      currentMaterialRef === power60MaterialRef &&
+      power60MaterialRef.current?.uniforms?.mixWeight
+    ) {
+      power60MaterialRef.current.uniforms.mixWeight.value = currentMixWeight_Power60Power100;
     }
   });
 
@@ -305,6 +373,7 @@ function PureSphere({ star, name }: SphereProps, ref: React.Ref<THREE.Group | TH
           ref={power60MaterialRef}
           uTime={0}
           uPointSize={5.0} // Pass initial value
+          mixWeight={0} // Initial mixWeight
           attach="material"
           // color={sphereColor} // Color is handled internally by shader
         />
@@ -322,7 +391,15 @@ function PureSphere({ star, name }: SphereProps, ref: React.Ref<THREE.Group | TH
         onPointerOut={() => (document.body.style.cursor = 'default')}
       >
         <Sphere scale={scale}>
-          <saturnMaterial ref={saturnMaterialRef} color={sphereColor} time={0} attach="material" />
+          {/* Power 40-59 uses SaturnMaterial with cross-fading */}
+          <saturnMaterial
+            ref={saturnMaterialRef}
+            color={sphereColor}
+            time={0}
+            uTime={0} // Pass initial uTime
+            mixWeight={0} // Initial mixWeight
+            attach="material"
+          />
         </Sphere>
         <Ring args={[ringInnerRadius, ringOuterRadius, 64]} rotation={[Math.PI / 2, 0, 0]}>
           <meshStandardMaterial
@@ -351,14 +428,23 @@ function PureSphere({ star, name }: SphereProps, ref: React.Ref<THREE.Group | TH
         onPointerOut={() => (document.body.style.cursor = 'default')}
       >
         {star.power >= 25 ? (
+          // Power 25 to 39 uses JupiterMaterial with cross-fading to Saturn
           <jupiterMaterial
             ref={jupiterMaterialRef}
-            color={sphereColor}
+            color={sphereColor} // Pass color for Saturn blend
             time={0}
+            mixWeight={0} // Initial value, updated by useFrame
             attach="material"
           />
         ) : star.power >= 15 ? (
-          <moonMaterial ref={moonMaterialRef} color={sphereColor} time={0} attach="material" />
+          // Power 15 to 24 uses MoonMaterial with cross-fading to Jupiter
+          <moonMaterial
+            ref={moonMaterialRef}
+            color={sphereColor}
+            time={0}
+            mixWeight={0} // Initial value, will be updated by useFrame
+            attach="material"
+          />
         ) : (
           <meshStandardMaterial
             color={sphereColor}

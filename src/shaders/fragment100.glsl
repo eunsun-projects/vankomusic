@@ -67,64 +67,78 @@ float fbm(vec3 p) {
     return value;
 }
 
-// Function for vibrant base color (similar to power 60 but maybe adjusted)
-vec3 vibrantBaseColor(float time, vec3 pos, float noise) {
-    float speed = 0.7;
-    float colorSeparation = 1.8;
-    float noiseInfluence = 0.6;
+// Function for intense Solar base color (red/yellow/orange focused)
+vec3 solarBaseColor(float time, vec3 pos, float noise) {
+    float speed = 0.6;
+    float colorSeparation = 2.0;
+    float noiseInfluence = 0.5;
 
-    float r = 0.6 + 0.4 * sin(time * speed * 1.1 + pos.x * colorSeparation + noise * noiseInfluence + 1.0);
-    float g = 0.5 + 0.5 * sin(time * speed * 1.3 + pos.y * colorSeparation + noise * noiseInfluence + 1.0);
-    float b = 0.4 + 0.4 * cos(time * speed * 0.9 + pos.z * colorSeparation + noise * noiseInfluence + 5.0);
+    // Emphasize Red and Yellow/Orange tones, minimize Blue/Green
+    float r = 0.7 + 0.3 * sin(time * speed * 1.0 + pos.x * colorSeparation + noise * noiseInfluence + 0.5);
+    float g = 0.4 + 0.3 * sin(time * speed * 1.2 + pos.y * colorSeparation + noise * noiseInfluence + 1.5); // Green acts more like Orange component
+    float b = 0.1 + 0.1 * cos(time * speed * 0.8 + pos.z * colorSeparation + noise * noiseInfluence + 3.0); // Blue is minimal
 
     vec3 base = vec3(r, g, b);
-    // Shift towards yellow/orange
-    // base = mix(base, vec3(1.0, 0.7, 0.2), 0.2); // Mix with orange
-    return base;
+
+    // Noise color shift also focused on warm tones
+    vec3 noiseColorShift = vec3(
+        0.5 + 0.5 * sin(noise * 8.0 + time * 0.2),
+        0.3 + 0.3 * cos(noise * 10.0 + time * 0.3),
+        0.05 + 0.05 * sin(noise * 12.0 + time * 0.1)
+    );
+
+    vec3 mixed = mix(base, noiseColorShift, 0.4 + 0.2 * sin(time * 0.4));
+
+    // Ensure strong yellow/red dominance
+    mixed.r = max(mixed.r, mixed.g * 1.2); // Ensure Red is generally higher than Green/Orange part
+    mixed.b *= 0.5; // Further suppress blue
+
+    return clamp(mixed, 0.0, 1.0);
 }
 
 void main() {
-    // Base vibrant color
-    vec3 color = vibrantBaseColor(uTime, vPosition, vNoise);
+    // Base Solar color
+    vec3 color = solarBaseColor(uTime, vPosition, vNoise);
 
-    // Solar texture using FBM
-    float textureSpeed = 0.2;
-    float textureScale = 3.0;
-    float textureIntensity = 0.5;
+    // Solar texture using FBM (adjusted for solar look)
+    float textureSpeed = 0.25;
+    float textureScale = 3.5; // Slightly larger scale features
+    float textureIntensity = 0.6;
     vec3 textureCoord = vPosition * textureScale + vec3(uTime * textureSpeed);
     float solarTexture = fbm(textureCoord);
     solarTexture = (solarTexture + 1.0) * 0.5; // Normalize to 0-1
 
-    // Modulate color with the solar texture
-    color *= (1.0 - textureIntensity) + solarTexture * textureIntensity * 1.1; // Make texture brighter
-    color = mix(color, vec3(1.0, 0.8, 0.3), solarTexture * 0.2); // Add yellow tint based on texture
+    // Modulate color with the solar texture (more contrast)
+    vec3 textureColor = mix(vec3(0.8, 0.3, 0.1), vec3(1.0, 0.9, 0.4), solarTexture); // Dark red to bright yellow
+    color = mix(color * 0.6, textureColor, textureIntensity);
+    color *= (1.0 + solarTexture * 0.5); // Add brightness based on texture peaks
 
-    // Solar Flare Effect
-    float flareTime = sin(uTime * 1.5 + vPosition.x * 5.0) * 0.5 + 0.5; // Time-based trigger
-    float flareNoiseCoordScale = 8.0;
-    float flareNoise = snoise(vPosition * flareNoiseCoordScale + uTime * 0.5); // Spatial noise for flare location
-    flareNoise = (flareNoise + 1.0) * 0.5; // Normalize 0-1
+    // Solar Flare Effect (more intense and warmer)
+    float flareTime = sin(uTime * 1.8 + vPosition.x * 6.0) * 0.5 + 0.5;
+    float flareNoiseCoordScale = 9.0;
+    float flareNoise = snoise(vPosition * flareNoiseCoordScale + uTime * 0.6);
+    flareNoise = (flareNoise + 1.0) * 0.5;
 
-    float flareIntensity = pow(max(0.0, flareTime - 0.95) * 20.0, 3.0); // Make flares sharp peaks
-    flareIntensity *= pow(flareNoise, 4.0); // Make flares localized by noise
+    float flareIntensity = pow(max(0.0, flareTime - 0.96) * 25.0, 3.5);
+    flareIntensity *= pow(flareNoise, 4.5);
 
-    vec3 flareColor = vec3(1.0, 0.9, 0.5); // Bright yellow/white flare
-    color += flareColor * flareIntensity * 1.5; // Add flare color additively
+    vec3 flareColor = vec3(1.2, 1.0, 0.6); // Very bright yellow/white flare
+    color += flareColor * flareIntensity * 1.8;
 
-    // Subtle glow based on vertex noise (keep from power 60)
-    color += vec3(vNoise * 0.08);
+    // Subtle glow based on vertex noise (warm color)
+    color += vec3(1.0, 0.6, 0.2) * vNoise * 0.1;
 
-    // Rim Glow / Halo Effect
-    // vec3 viewDirection = normalize(-vPosition); // Assumes camera at origin in view space
-    // float rimPower = 4.0; // Controls the tightness of the glow
-    // float rimIntensity = 1.2; // Controls the brightness of the glow
-    // float rim = pow(1.0 - max(dot(normalize(vNormal), viewDirection), 0.0), rimPower);
-    // vec3 rimColor = vec3(1.0, 0.85, 0.6); // Warm glow color
-    // color += rimColor * rim * rimIntensity;
+    // Rim Glow / Halo Effect (Warm Color)
+    vec3 viewDirection = normalize(-vPosition);
+    float rimPower = 3.0;
+    float rimIntensity = 1.5;
+    float rim = pow(1.0 - max(dot(normalize(vNormal), viewDirection), 0.0), rimPower);
+    vec3 rimColor = vec3(1.0, 0.7, 0.3); // Warm orange glow color
+    color += rimColor * rim * rimIntensity;
 
-    // Final adjustments (ensure color values don't go excessively high)
-    // color = pow(color, vec3(0.8)); // Apply gamma correction if needed
-    color = clamp(color, 0.0, 0.8); // Clamp slightly higher to allow for bright glow
+    // Final adjustments for intense solar look
+    color = pow(color, vec3(0.9)); // Slightly increase contrast
+    color = clamp(color, 0.0, 2.5); // Allow higher values for intense glow/flares
 
     gl_FragColor = vec4(color, 1.0);
 }
