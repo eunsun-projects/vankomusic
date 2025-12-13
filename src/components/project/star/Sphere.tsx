@@ -25,6 +25,10 @@ import vertexShader40 from '@/shaders/vertex40.glsl';
 import fragmentShader60 from '@/shaders/fragment60.glsl';
 import vertexShader60 from '@/shaders/vertex60.glsl';
 
+// Import shaders for power level 80 (Supernova)
+import fragmentShader80 from '@/shaders/fragment80.glsl';
+import vertexShader80 from '@/shaders/vertex80.glsl';
+
 // Import shaders for power level 100 (Sun)
 import fragmentShader100 from '@/shaders/fragment100.glsl';
 import vertexShader100 from '@/shaders/vertex100.glsl';
@@ -81,7 +85,7 @@ const SaturnMaterial = shaderMaterial(
   },
 );
 
-// Material for power level 60 -> Now Power60/Power100 Cross-fading
+// Material for power level 60 -> Now Power60/Power80 Cross-fading
 const Power60Material = shaderMaterial(
   {
     uTime: 0,
@@ -90,10 +94,28 @@ const Power60Material = shaderMaterial(
     mixWeight: 0.0, // Initialize mixWeight
   },
   vertexShader60, // Uses vertex60
-  fragmentShader60, // Uses fragment60 (which now combines P60/P100)
+  fragmentShader60, // Uses fragment60 (which now combines P60/P80)
   (material) => {
     if (material) {
       material.transparent = false;
+      material.side = THREE.DoubleSide;
+    }
+  },
+);
+
+// Material for power level 80 (Supernova) -> Now Power80/Power100 Cross-fading
+const Power80Material = shaderMaterial(
+  {
+    uTime: 0,
+    uPointSize: 5.0, // Consistent uniform, might be used differently
+    color: new THREE.Color(0xffffff), // Base color
+    mixWeight: 0.0, // Initialize mixWeight
+  },
+  vertexShader80, // Uses vertex80
+  fragmentShader80, // Uses fragment80 (which might combine P80/P100)
+  (material) => {
+    if (material) {
+      material.transparent = false; // Adjust if supernova effect needs transparency
       material.side = THREE.DoubleSide;
     }
   },
@@ -117,7 +139,14 @@ const Power100Material = shaderMaterial(
 );
 
 // Register materials for JSX
-extend({ MoonMaterial, JupiterMaterial, SaturnMaterial, Power60Material, Power100Material });
+extend({
+  MoonMaterial,
+  JupiterMaterial,
+  SaturnMaterial,
+  Power60Material,
+  Power80Material,
+  Power100Material,
+});
 
 // Add type declarations for the new materials
 declare global {
@@ -153,6 +182,14 @@ declare global {
         mixWeight?: number; // Add mixWeight prop
         attach: string;
       };
+      power80Material: {
+        ref?: React.RefObject<THREE.ShaderMaterial>;
+        uTime?: number;
+        uPointSize?: number;
+        color?: THREE.ColorRepresentation;
+        mixWeight?: number; // Add mixWeight prop
+        attach: string;
+      };
       power100Material: {
         ref?: React.RefObject<THREE.ShaderMaterial>;
         uTime?: number;
@@ -179,6 +216,7 @@ function PureSphere({ star, name }: SphereProps, ref: React.Ref<THREE.Group | TH
   const jupiterMaterialRef = useRef<THREE.ShaderMaterial>(null);
   const saturnMaterialRef = useRef<THREE.ShaderMaterial>(null);
   const power60MaterialRef = useRef<THREE.ShaderMaterial>(null);
+  const power80MaterialRef = useRef<THREE.ShaderMaterial>(null);
   const power100MaterialRef = useRef<THREE.ShaderMaterial>(null);
 
   const sphereColor = useMemo(() => {
@@ -193,6 +231,7 @@ function PureSphere({ star, name }: SphereProps, ref: React.Ref<THREE.Group | TH
   useEffect(() => {
     let shaderType = 'Standard';
     if (star.power >= 100) shaderType = 'Power100';
+    else if (star.power >= 80) shaderType = 'Power80';
     else if (star.power >= 60) shaderType = 'Power60';
     else if (star.power >= 40) shaderType = 'Saturn';
     else if (star.power >= 25) shaderType = 'Jupiter';
@@ -206,22 +245,33 @@ function PureSphere({ star, name }: SphereProps, ref: React.Ref<THREE.Group | TH
     let currentMixWeight_MoonJupiter = 0.0;
     let currentMixWeight_JupiterSaturn = 0.0;
     let currentMixWeight_SaturnPower60 = 0.0;
-    let currentMixWeight_Power60Power100 = 0.0;
+    let currentMixWeight_Power60Power80 = 0.0;
+    let currentMixWeight_Power80Power100 = 0.0;
 
     if (star.power >= 100) {
       currentMaterialRef = power100MaterialRef;
       // Ensure previous mixes are complete
-      currentMixWeight_Power60Power100 = 1.0;
+      currentMixWeight_Power80Power100 = 1.0;
+      currentMixWeight_Power60Power80 = 1.0;
+      currentMixWeight_SaturnPower60 = 1.0;
+      currentMixWeight_JupiterSaturn = 1.0;
+      currentMixWeight_MoonJupiter = 1.0;
+    } else if (star.power >= 80) {
+      currentMaterialRef = power80MaterialRef;
+      // Calculate mixWeight for Power 80 -> Power 100 transition (Power 80-99)
+      currentMixWeight_Power80Power100 = Math.min(
+        1.0,
+        Math.max(0.0, (star.power - 80) / (100 - 80)),
+      );
+      // Ensure previous mixes are complete
+      currentMixWeight_Power60Power80 = 1.0;
       currentMixWeight_SaturnPower60 = 1.0;
       currentMixWeight_JupiterSaturn = 1.0;
       currentMixWeight_MoonJupiter = 1.0;
     } else if (star.power >= 60) {
       currentMaterialRef = power60MaterialRef;
-      // Calculate mixWeight for Power 60 -> Power 100 transition (Power 60-99)
-      currentMixWeight_Power60Power100 = Math.min(
-        1.0,
-        Math.max(0.0, (star.power - 60) / (100 - 60)),
-      );
+      // Calculate mixWeight for Power 60 -> Power 80 transition (Power 60-79)
+      currentMixWeight_Power60Power80 = Math.min(1.0, Math.max(0.0, (star.power - 60) / (80 - 60)));
       // Ensure previous mixes are complete
       currentMixWeight_SaturnPower60 = 1.0;
       currentMixWeight_JupiterSaturn = 1.0;
@@ -252,7 +302,10 @@ function PureSphere({ star, name }: SphereProps, ref: React.Ref<THREE.Group | TH
     if (currentMaterialRef?.current?.uniforms?.time) {
       currentMaterialRef.current.uniforms.time.value = state.clock.elapsedTime;
     }
-    // uTime is used specifically by Power60 and Power100
+    // uTime is used specifically by Power60, Power80, and Power100
+    if (star.power >= 80 && power80MaterialRef.current?.uniforms?.uTime) {
+      power80MaterialRef.current.uniforms.uTime.value = state.clock.elapsedTime;
+    }
     if (star.power >= 60 && power60MaterialRef.current?.uniforms?.uTime) {
       power60MaterialRef.current.uniforms.uTime.value = state.clock.elapsedTime;
     }
@@ -279,12 +332,23 @@ function PureSphere({ star, name }: SphereProps, ref: React.Ref<THREE.Group | TH
       saturnMaterialRef.current.uniforms.time.value = state.clock.elapsedTime;
       saturnMaterialRef.current.uniforms.uTime.value = state.clock.elapsedTime;
     }
-    // Update mixWeight for Power60Material specifically
+    // Update mixWeight for Power60Material specifically (now 60->80)
     if (
       currentMaterialRef === power60MaterialRef &&
       power60MaterialRef.current?.uniforms?.mixWeight
     ) {
-      power60MaterialRef.current.uniforms.mixWeight.value = currentMixWeight_Power60Power100;
+      power60MaterialRef.current.uniforms.mixWeight.value = currentMixWeight_Power60Power80;
+    }
+    // Update mixWeight for Power80Material specifically (80->100)
+    if (
+      currentMaterialRef === power80MaterialRef &&
+      power80MaterialRef.current?.uniforms?.mixWeight
+    ) {
+      power80MaterialRef.current.uniforms.mixWeight.value = currentMixWeight_Power80Power100;
+      // Also update uTime if needed by this shader
+      if (power80MaterialRef.current.uniforms.uTime) {
+        power80MaterialRef.current.uniforms.uTime.value = state.clock.elapsedTime;
+      }
     }
   });
 
@@ -328,7 +392,8 @@ function PureSphere({ star, name }: SphereProps, ref: React.Ref<THREE.Group | TH
   const scale = useMemo(() => {
     const baseScale = focusedStar?.id === star.id ? 0.4 : 0.25;
     if (star.power >= 100) return baseScale * 5; // Even larger scale for Power 100
-    if (star.power >= 60) return baseScale * 2.0; // Larger scale for Power 60
+    if (star.power >= 80) return baseScale * 3.0; // Scale for Power 80 (Supernova-like?)
+    if (star.power >= 60) return baseScale * 2.0; // Scale for Power 60
     if (star.power >= 25) return baseScale * 1.5; // Scale for Jupiter and Saturn
     return baseScale; // Base scale for others
   }, [star.power, focusedStar, star.id]);
@@ -357,6 +422,28 @@ function PureSphere({ star, name }: SphereProps, ref: React.Ref<THREE.Group | TH
         />
       </Sphere>
     );
+  } else if (star.power >= 80) {
+    // Return Sphere for Power >= 80 (Supernova)
+    return (
+      <Sphere
+        ref={ref as React.Ref<THREE.Mesh>} // Cast ref to Mesh
+        name={star.id} // Name the sphere
+        scale={scale}
+        position={new THREE.Vector3(star.positions[0], star.positions[1], star.positions[2])}
+        onClick={handleClick}
+        onPointerOver={() => (document.body.style.cursor = 'pointer')}
+        onPointerOut={() => (document.body.style.cursor = 'default')}
+      >
+        <power80Material
+          ref={power80MaterialRef}
+          uTime={0}
+          uPointSize={5.0} // Pass initial value
+          mixWeight={0} // Initial mixWeight (for 80->100 fade)
+          attach="material"
+          // color={sphereColor} // Color might be handled internally
+        />
+      </Sphere>
+    );
   } else if (star.power >= 60) {
     // Return Sphere for Power >= 60
     return (
@@ -373,7 +460,7 @@ function PureSphere({ star, name }: SphereProps, ref: React.Ref<THREE.Group | TH
           ref={power60MaterialRef}
           uTime={0}
           uPointSize={5.0} // Pass initial value
-          mixWeight={0} // Initial mixWeight
+          mixWeight={0} // Initial mixWeight (now for 60->80 fade)
           attach="material"
           // color={sphereColor} // Color is handled internally by shader
         />

@@ -1,7 +1,7 @@
 precision mediump float;
 
 uniform float uTime;
-uniform float mixWeight; // 0.0 = Power 60, 1.0 = Power 100 (Solar)
+uniform float mixWeight; // 0.0 = Power 60, 1.0 = Power 80 (Supernova)
 
 varying vec3 vNormal;
 varying vec3 vPosition;
@@ -96,80 +96,52 @@ vec3 calculatePower60Color(float time, vec3 pos, float noise, vec3 normal) {
 }
 // --- End Power 60 Calculation ---
 
-// --- Power 100 (Solar) Color Calculation (Adjusted) ---
-vec3 solarBaseColorP100(float time, vec3 pos, float noise) {
-    float speed = 0.6;
-    float colorSeparation = 2.0;
-    float noiseInfluence = 0.5;
-    float r = 0.7 + 0.3 * sin(time * speed * 1.0 + pos.x * colorSeparation + noise * noiseInfluence + 0.5);
-    float g = 0.4 + 0.3 * sin(time * speed * 1.2 + pos.y * colorSeparation + noise * noiseInfluence + 1.5);
-    float b = 0.1 + 0.1 * cos(time * speed * 0.8 + pos.z * colorSeparation + noise * noiseInfluence + 3.0);
-    vec3 base = vec3(r, g, b);
-    vec3 noiseColorShift = vec3(0.5 + 0.5 * sin(noise * 8.0 + time * 0.2), 0.3 + 0.3 * cos(noise * 10.0 + time * 0.3), 0.05 + 0.05 * sin(noise * 12.0 + time * 0.1));
-    vec3 mixed = mix(base, noiseColorShift, 0.4 + 0.2 * sin(time * 0.4));
-    mixed.r = max(mixed.r, mixed.g * 1.2);
-    mixed.b *= 0.5;
-    return clamp(mixed, 0.0, 1.0);
+// --- Power 80 (Supernova) Color Calculation (Adapted from fragment80.glsl) ---
+// Need noise functions if not already present (they are)
+vec3 calculatePower80Color(float time, vec3 pos, float noise, vec3 normal) {
+    // Supernova Effect Logic (Simplified for mixing - using the state before whiteout/blend)
+    float effectDuration = 5.0; // Matches vertex/fragment 80 duration
+    float effectTime = mod(time, effectDuration);
+    float progress = effectTime / effectDuration;
+
+    // 1. Light Emission/Diffusion (using noise)
+    float noiseScale = mix(5.0, 15.0, progress);
+    float noiseSpeed = 0.5;
+    float p80noise = snoise(pos * noiseScale + vec3(time * noiseSpeed)); // Use a different name to avoid conflicts
+    p80noise = (p80noise + 1.0) * 0.5;
+
+    vec3 baseColor = vec3(0.8, 0.7, 0.6);
+    vec3 emissionColor = vec3(1.0, 1.0, 0.8);
+    float emissionIntensity = smoothstep(0.1, 0.7, progress) * (1.0 + p80noise * 2.0);
+
+    // 2. White Out Phase Influence (Start fading towards white but don't go fully white yet)
+    float whiteOutStart = 0.7;
+    float whiteOutDuration = 0.3;
+    float whiteOutProgress = clamp((progress - whiteOutStart) / whiteOutDuration, 0.0, 1.0);
+    // Less intense white for mixing purposes
+    vec3 whiteColor = vec3(1.0, 1.0, 1.0) * (1.0 + smoothstep(0.0, 1.0, whiteOutProgress) * 1.5); 
+
+    vec3 supernovaColor = baseColor + emissionColor * emissionIntensity;
+    // Gently mix towards white based on the whiteout progress for a smoother transition target
+    supernovaColor = mix(supernovaColor, whiteColor, smoothstep(0.0, 0.5, whiteOutProgress) * 0.5);
+
+    // Return the calculated supernova base color before P100 mixing
+    return clamp(supernovaColor, 0.0, 2.0); // Clamp moderately high
 }
-
-vec3 calculatePower100Color(float time, vec3 pos, float noise, vec3 normal) {
-    vec3 baseSolarColor = solarBaseColorP100(time, pos, noise);
-
-    // Solar texture using FBM
-    float textureSpeed = 0.25;
-    float textureScale = 3.5;
-    float textureIntensity = 0.75; // Increase intensity influence
-    vec3 textureCoord = pos * textureScale + vec3(time * textureSpeed);
-    float solarTexture = fbm(textureCoord);
-    solarTexture = (solarTexture + 1.0) * 0.5;
-
-    // Modulate color with solar texture - More contrast approach
-    vec3 darkColor = baseSolarColor * 0.5; // Darker base for texture troughs
-    vec3 brightColor = baseSolarColor + vec3(0.4, 0.2, 0.05); // Brighter peaks (Orange/Yellow shifted)
-    vec3 texturedColor = mix(darkColor, brightColor, pow(solarTexture, 1.5)); // Use pow for sharper contrast
-    vec3 color = mix(baseSolarColor, texturedColor, textureIntensity);
-
-    // Solar Flare Effect (Reduced intensity)
-    float flareTime = sin(time * 1.8 + pos.x * 6.0) * 0.5 + 0.5;
-    float flareNoiseCoordScale = 9.0;
-    float flareNoiseVal = snoise(pos * flareNoiseCoordScale + time * 0.6);
-    flareNoiseVal = (flareNoiseVal + 1.0) * 0.5;
-    float flareIntensity = pow(max(0.0, flareTime - 0.97) * 30.0, 4.0); // Slightly adjusted timing/power
-    flareIntensity *= pow(flareNoiseVal, 5.0); // More localized
-    vec3 flareColor = vec3(1.2, 1.0, 0.6);
-    color += flareColor * flareIntensity * 0.4; // Further reduced flare brightness multiplier
-
-    // Subtle glow based on vertex noise (Reduced intensity)
-    color += vec3(1.0, 0.6, 0.2) * noise * 0.03;
-
-    // Rim Glow / Halo Effect (Reduced intensity)
-    vec3 viewDirection = normalize(-pos);
-    float rimPower = 3.5; // Slightly tighter glow
-    float rimIntensity = 0.6; // Further reduced rim glow intensity
-    float rim = pow(1.0 - max(dot(normalize(normal), viewDirection), 0.0), rimPower);
-    vec3 rimColor = vec3(1.0, 0.7, 0.3);
-    color += rimColor * rim * rimIntensity;
-
-    // Final contrast adjustment (Subtle)
-    color = pow(color, vec3(0.98));
-
-    // Clamp is applied after mixing in main
-    return color;
-}
-// --- End Power 100 Calculation ---
+// --- End Power 80 Calculation ---
 
 void main() {
     // Calculate Power 60 color
     vec3 power60ColorResult = calculatePower60Color(uTime, vPosition, vNoise, vNormal);
 
-    // Calculate Power 100 color
-    vec3 power100ColorResult = calculatePower100Color(uTime, vPosition, vNoise, vNormal);
+    // Calculate Power 80 (Supernova base) color
+    vec3 power80ColorResult = calculatePower80Color(uTime, vPosition, vNoise, vNormal);
 
-    // Mix the results based on mixWeight
-    vec3 mixedColor = mix(power60ColorResult, power100ColorResult, mixWeight);
+    // Mix the results based on mixWeight (60 -> 80)
+    vec3 mixedColor = mix(power60ColorResult, power80ColorResult, mixWeight);
 
-    // Clamp the final mixed color (Lowered max clamp value again)
-    mixedColor = clamp(mixedColor, 0.0, 1.6); // Lowered max clamp from 1.8 to further control brightness
+    // Clamp the final mixed color
+    mixedColor = clamp(mixedColor, 0.0, 1.8); // Adjust clamp as needed
 
     gl_FragColor = vec4(mixedColor, 1.0);
 }
