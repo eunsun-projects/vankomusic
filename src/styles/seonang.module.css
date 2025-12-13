@@ -414,11 +414,11 @@
 
 /********** 운세 html **********/
 .x {
-	/* color: darkred; */
+	position: absolute;
+	z-index: 1000000;
 	color: wheat;
 	font-size: 1.5rem;
 	font-family: "DOSGothic";
-	/* margin-bottom: 0.5rem; */
 	text-align: right;
 	width: fit-content;
 	box-sizing: border-box;
