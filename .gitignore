@@ -42,3 +42,4 @@ vanko-firebase-key.json
 
 backup/
 /backup
+.env*
